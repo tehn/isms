@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-I. -I/usr/include -I/usr/local/include -std=c11 -Wall -L/usr/local/lib -lSDL2
+CFLAGS=-I. -I/usr/include -I/usr/local/include -std=c11 -Wall -L/usr/local/lib -lSDL2 -pthread -D_GNU_SOURCE
 DEPS = events.h metro.h
 OBJ = niil.o events.o metro.o
 
