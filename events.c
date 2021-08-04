@@ -141,8 +141,14 @@ void event_loop(void) {
 
 static void handle_event(union event_data *ev) {
   switch (ev->type) {
+    case EVENT_QUIT:
+      quit = true;
+      break;
     case EVENT_EXEC_CODE_LINE:
-      printf("event\n");
+      printf("codeline: %s\n", ev->exec_code_line.line);
+      break;
+    case EVENT_METRO:
+      printf("metro %i %i\n",ev->metro.id, ev->metro.stage);
       break;
   }
 

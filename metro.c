@@ -223,10 +223,10 @@ void metro_set_current_time(struct metro *t) {
 }
 
 void metro_bang(struct metro *t) {
-    //union event_data *ev = event_data_new(EVENT_METRO);
-    //ev->metro.id = t->idx;
-    //ev->metro.stage = t->stage;
-    //event_post(ev);
+    union event_data *ev = event_data_new(EVENT_METRO);
+    ev->metro.id = t->idx;
+    ev->metro.stage = t->stage;
+    event_post(ev);
 }
 
 void metro_sleep(struct metro *t) {
