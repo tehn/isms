@@ -1,10 +1,39 @@
-CC=gcc
-CFLAGS=-I. -I/usr/include -I/usr/local/include -std=c11 -Wall -L/usr/local/lib -lSDL2 -pthread -D_GNU_SOURCE -std=c11
-DEPS = events.h metro.h sdl.h
-OBJ = niil.o events.o metro.o sdl.o
+TARGET_EXEC ?= niil
+BUILD_DIR ?= ./build
+SRC_DIRS ?= ./src
 
-%.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+SRCS := $(shell find $(SRC_DIRS) -name *.cpp -or -name *.c -or -name *.s)
+OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 
-niil: $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS)
+DEPS := $(OBJS:.o=.d)
+
+INC_DIRS := $(shell find $(SRC_DIRS) -type d)
+INC_FLAGS := $(addprefix -I,$(INC_DIRS))
+
+#CPPFLAGS = $(INC_FLAGS) -MMD -MP -ggdb
+CFLAGS=-I/usr/include -I/usr/local/include -std=c11 -Wall\
+			 -L/usr/local/lib -lSDL2 -llua -lm -ldl -pthread -D_GNU_SOURCE
+
+# main target (C)
+$(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
+	$(CC) $(OBJS) -o $@ $(LDFLAGS) $(CFLAGS)
+
+# c source
+$(BUILD_DIR)/%.c.o: %.c
+	$(MKDIR_P) $(dir $@)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+.PHONY: clean
+clean:
+	$(RM) -r $(BUILD_DIR)
+
+-include $(DEPS)
+
+MKDIR_P ?= mkdir -p
+
+
+.PHONY: run
+run: $(BIN)
+	./build/niil
+
+

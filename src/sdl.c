@@ -128,7 +128,8 @@ int init_sdl(void) {
 }
 
 void deinit_sdl(void) {
-  printf("deinit_sdl\n");
+  printf(">>> SDL: deinit\n");
+  pthread_cancel(p);
 	free(pixels);
 	SDL_DestroyTexture(gTexture);
 	gTexture = NULL;
@@ -137,8 +138,6 @@ void deinit_sdl(void) {
 	SDL_DestroyWindow(gWindow);
 	gWindow = NULL;
 	SDL_Quit();
-  printf("end of sdl\n");
-  pthread_cancel(p);
 }
 
 

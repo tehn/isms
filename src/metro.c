@@ -264,4 +264,11 @@ void metro_cancel(struct metro *t) {
     }
 }
 
+void metros_deinit() {
+  printf(">>> METRO: deinit\n");
+  for(int i=0;i<MAX_NUM_METROS_OK;i++)
+    metro_stop(i);
+}
+
 #undef MAX_NUM_METROS_OK
+

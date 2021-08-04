@@ -16,3 +16,5 @@ extern void metro_stop(int idx);
 // NB: if the metro is running, its hard to say if new value will take effect
 // on current period or next period
 extern void metro_set_time(int idx, float sec);
+
+extern void metros_deinit(void);
