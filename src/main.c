@@ -17,6 +17,8 @@ int main(int argc, char **argv) {
   redraw(pixels);
   metro_start(1,1,5,0);
 
+  lua_run();
+
   event_loop();
 
   return 0;
@@ -25,9 +27,9 @@ int main(int argc, char **argv) {
 void init() {
   printf(">>>> INIT\n");
   init_event();
+  init_lua();
   init_metro();
   init_sdl();
-  init_lua();
 }
 
 void deinit() {

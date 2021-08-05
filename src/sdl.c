@@ -3,6 +3,12 @@
 #include <pthread.h>
 #include <unistd.h>
 
+#include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
+
+#include "lua.h"
+
 #include "event.h"
 #include "sdl.h"
 
@@ -15,6 +21,9 @@ int WIDTH = 8 * HOR + 8 * PAD * 2;
 int HEIGHT = 8 * (VER + 2) + 8 * PAD * 2;
 int FPS = 30, GUIDES = 1, BIGPIXEL = 0, ZOOM = 2;
 
+static int _redraw(lua_State *l);
+static int _clear(lua_State *l);
+static int _pixel(lua_State *l);
 
 void *sdl_loop(void *);
 static pthread_t p;
@@ -38,60 +47,10 @@ void putpixel(uint32_t *dst, int x, int y, int color) {
 }
 
 void redraw(uint32_t *dst) {
-	clear(dst);
-  putpixel(dst,20,20,0xFFFFFF);
-  putpixel(dst,30,30,0xAAAAAA);
 	SDL_UpdateTexture(gTexture, NULL, dst, WIDTH * sizeof(uint32_t));
 	SDL_RenderClear(gRenderer);
 	SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
 	SDL_RenderPresent(gRenderer);
-}
-
-
-void domouse(SDL_Event *event) {
-  /*
-	int ctrl = SDL_GetModState() & KMOD_LCTRL || SDL_GetModState() & KMOD_RCTRL;
-  */
-
-	switch(event->type) {
-	case SDL_MOUSEBUTTONUP:
-		if(event->button.button == SDL_BUTTON_LEFT)
-		if(event->button.button == SDL_BUTTON_RIGHT)
-		break;
-	case SDL_MOUSEBUTTONDOWN:
-		if(event->motion.y / ZOOM / 8 - PAD == VER + 1) {
-			return;
-		}
-		/*if(event->button.button == SDL_BUTTON_LEFT)
-		if(event->button.button == SDL_BUTTON_RIGHT)
-		if(event->button.button == SDL_BUTTON_MIDDLE)
-    */
-		redraw(pixels);
-		break;
-	case SDL_MOUSEMOTION:
-    /*
-		brush.x = screenpos(event->motion.x, brush.vx);
-		brush.y = screenpos(event->motion.y, brush.vy);
-    */
-		break;
-	}
-}
-
-void dokey(SDL_Event *event) {
-  /*
-	int shift = SDL_GetModState() & KMOD_LSHIFT || SDL_GetModState() & KMOD_RSHIFT;
-  */
-	int ctrl = SDL_GetModState() & KMOD_LCTRL || SDL_GetModState() & KMOD_RCTRL;
-	if(ctrl) {
-		switch(event->key.keysym.sym) {
-		case SDLK_n: printf("hello!\n"); break;
-		}
-	} else {
-		switch(event->key.keysym.sym) {
-		case SDLK_1: printf("one\n"); break;
-		case SDLK_ESCAPE: break;
-		}
-	}
 }
 
 int init_sdl(void) {
@@ -124,18 +83,32 @@ int init_sdl(void) {
     return error("SDL", "pthread failed");
   }
 
+  // lua
+  lua_newtable(L);
+  lua_reg_func("redraw",_redraw);
+  lua_reg_func("clear",_clear);
+  lua_reg_func("pixel",_pixel);
+  lua_setglobal(L,"screen");
+
 	return 1;
 }
 
 void deinit_sdl(void) {
   printf(">>> SDL: deinit\n");
   pthread_cancel(p);
+  printf(">>>1SDL: deinit\n");
 	free(pixels);
+  printf(">>>2SDL: deinit\n");
 	SDL_DestroyTexture(gTexture);
+  printf(">>>3SDL: deinit\n");
 	gTexture = NULL;
+  printf(">>>4SDL: deinit\n");
 	SDL_DestroyRenderer(gRenderer);
+  printf(">>>5SDL: deinit\n");
 	gRenderer = NULL;
+  printf(">>>6SDL: deinit\n");
 	SDL_DestroyWindow(gWindow);
+  printf(">>>7SDL: deinit\n");
 	gWindow = NULL;
 	SDL_Quit();
 }
@@ -144,21 +117,21 @@ void deinit_sdl(void) {
 void *sdl_loop(void *x) {
   (void)x;
 
+  union event_data *ev;
+
 	SDL_Event event;
   while(1) {
-    //int tick = SDL_GetTicks();
-		//if(tick < ticknext)
-			//SDL_Delay(ticknext - tick);
-		//ticknext = tick + (1000 / FPS);
 		while(SDL_PollEvent(&event) != 0) {
 			switch(event.type) {
 			//case SDL_MOUSEBUTTONUP:
 			//case SDL_MOUSEBUTTONDOWN:
 			//case SDL_MOUSEMOTION: //domouse(&event); break;
-			case SDL_KEYDOWN: dokey(&event); break;
+			case SDL_KEYDOWN: 
+        ev = event_data_new(EVENT_KEY);
+        ev->key.scancode = event.key.keysym.sym;
+        event_post(ev);
 			case SDL_QUIT:
-        printf("sdl event\n");
-        union event_data *ev = event_data_new(EVENT_QUIT);
+        ev = event_data_new(EVENT_QUIT);
         event_post(ev);
         break;
 			//case SDL_WINDOWEVENT:
@@ -168,4 +141,31 @@ void *sdl_loop(void *x) {
 		}
     sleep(0.001);
   }
+}
+
+
+///////
+
+int _redraw(lua_State *l) {
+    lua_check_num_args(0);
+    redraw(pixels);
+    lua_settop(l, 0);
+    return 0;
+}
+
+int _clear(lua_State *l) {
+    lua_check_num_args(0);
+    clear(pixels);
+    lua_settop(l, 0);
+    return 0;
+}
+
+int _pixel(lua_State *l) {
+    lua_check_num_args(3);
+    double x = luaL_checknumber(l, 1);
+    double y = luaL_checknumber(l, 2);
+    double c = luaL_checknumber(l, 3);
+    putpixel(pixels,x,y,c);
+    lua_settop(l, 0);
+    return 0;
 }

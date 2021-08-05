@@ -3,3 +3,9 @@ print("hello there")
 a = 8
 b = 3
 print(a+b)
+
+for i=1,200 do
+  screen.pixel(10+i,20,0xFFFFFF-i);
+end
+
+screen.redraw()

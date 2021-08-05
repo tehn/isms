@@ -5,6 +5,7 @@ typedef enum {
   EVENT_QUIT,                   // quit
   EVENT_EXEC_CODE_LINE,         // code to be executed by luavm
   EVENT_METRO,                  // metro
+  EVENT_KEY,                    // SDL keyboard input
 } event_t;
 
 extern void init_event(void);
@@ -29,8 +30,14 @@ struct event_metro {
     uint32_t stage;
 }; // +8
 
+struct event_key {
+  struct event_common common;
+    uint16_t scancode;
+}; // +4
+
 union event_data {
   uint32_t type;
   struct event_exec_code_line exec_code_line;
   struct event_metro metro;
+  struct event_key key;
 };

@@ -150,6 +150,9 @@ static void handle_event(union event_data *ev) {
     case EVENT_METRO:
       printf("e: metro: %i %i\n",ev->metro.id, ev->metro.stage);
       break;
+    case EVENT_KEY:
+      printf("e: key: %i\n",ev->key.scancode);
+      break;
   }
 
   event_data_free(ev);

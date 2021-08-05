@@ -13,12 +13,16 @@ void init_lua() {
   L = luaL_newstate();
   luaL_openlibs(L);
 
-  if (luaL_dofile(L, "lua/script.lua") == LUA_OK) {
-    lua_pop(L, lua_gettop(L));
-  }
 }
 
 void deinit_lua() {
   lua_close(L);
 }
+
+void lua_run() {
+  if (luaL_dofile(L, "lua/script.lua") == LUA_OK) {
+    lua_pop(L, lua_gettop(L));
+  }
+}
+
 
