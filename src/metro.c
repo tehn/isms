@@ -20,7 +20,7 @@
 #include <time.h>
 
 // norns
-#include "events.h"
+#include "event.h"
 #include "metro.h"
 
 #define MAX_NUM_METROS_OK 36
@@ -61,7 +61,7 @@ static void metro_cancel(struct metro *t);
 //------------------------
 //---- extern definitions
 
-void metros_init(void) {
+void init_metro(void) {
     for (int i = 0; i < MAX_NUM_METROS_OK; i++) {
         metros[i].status = METRO_STATUS_STOPPED;
         metros[i].seconds = 1.0;
@@ -264,7 +264,7 @@ void metro_cancel(struct metro *t) {
     }
 }
 
-void metros_deinit() {
+void deinit_metro() {
   printf(">>> METRO: deinit\n");
   for(int i=0;i<MAX_NUM_METROS_OK;i++)
     metro_stop(i);

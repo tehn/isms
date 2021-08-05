@@ -16,9 +16,6 @@ lua + osc + midi + grid + sdl
 - midi
 
 - event system
-  - threading (?)
-
 - external command entry (ie websocket)
-
 - build system
 - file structure

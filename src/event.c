@@ -9,7 +9,7 @@
 
 #include <pthread.h>
 
-#include "events.h"
+#include "event.h"
 
 //--- types and vars
 
@@ -76,7 +76,7 @@ static union event_data *evq_pop() {
 //-------------------------------
 //-- extern function definitions
 
-void events_init(void) {
+void init_event(void) {
   evq.size = 0;
   evq.head = NULL;
   evq.tail = NULL;
@@ -145,10 +145,10 @@ static void handle_event(union event_data *ev) {
       quit = true;
       break;
     case EVENT_EXEC_CODE_LINE:
-      printf("codeline: %s\n", ev->exec_code_line.line);
+      printf("e: codeline: %s\n", ev->exec_code_line.line);
       break;
     case EVENT_METRO:
-      printf("metro %i %i\n",ev->metro.id, ev->metro.stage);
+      printf("e: metro: %i %i\n",ev->metro.id, ev->metro.stage);
       break;
   }
 

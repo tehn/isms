@@ -3,7 +3,7 @@
 #include <pthread.h>
 #include <unistd.h>
 
-#include "events.h"
+#include "event.h"
 #include "sdl.h"
 
 SDL_Window *gWindow;

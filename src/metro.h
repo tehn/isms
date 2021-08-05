@@ -3,7 +3,8 @@
 extern const int MAX_NUM_METROS;
 
 // intialize the metros system
-extern void metros_init(void);
+extern void init_metro(void);
+extern void deinit_metro(void);
 
 // create a metro at the specified index
 // seconds < 0 == use previous period
@@ -17,4 +18,3 @@ extern void metro_stop(int idx);
 // on current period or next period
 extern void metro_set_time(int idx, float sec);
 
-extern void metros_deinit(void);
