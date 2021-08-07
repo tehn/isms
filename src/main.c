@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
 
   if (luaL_dostring(L, core) != LUA_OK) printf("ERROR: core.lua");
 
-  lua_run();
+  lua_run("example.lua");
 
   event_loop();
 

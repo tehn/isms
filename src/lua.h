@@ -17,4 +17,4 @@ extern lua_State *L;
 void init_lua();
 void deinit_lua();
 
-void lua_run();
+void lua_run(const char *);

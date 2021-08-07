@@ -19,8 +19,8 @@ void deinit_lua() {
   lua_close(L);
 }
 
-void lua_run() {
-  if (luaL_dofile(L, "lua/script.lua") == LUA_OK) {
+void lua_run(const char *filename) {
+  if (luaL_dofile(L, filename) == LUA_OK) {
     lua_pop(L, lua_gettop(L));
   }
 }
