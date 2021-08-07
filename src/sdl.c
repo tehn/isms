@@ -27,6 +27,7 @@ static int _pixel(lua_State *l);
 
 void *sdl_loop(void *);
 static pthread_t p;
+static pthread_mutex_t lock;
 
 int error(char *msg, const char *err) {
 	printf("Error %s: %s\n", msg, err);
@@ -121,6 +122,7 @@ void *sdl_loop(void *x) {
 
 	SDL_Event event;
   while(1) {
+    pthread_mutex_lock(&lock);
 		while(SDL_PollEvent(&event) != 0) {
 			switch(event.type) {
 			//case SDL_MOUSEBUTTONUP:
@@ -140,6 +142,7 @@ void *sdl_loop(void *x) {
 					//redraw(pixels);
 			}
 		}
+    pthread_mutex_unlock(&lock);
     sleep(0.001);
   }
 }

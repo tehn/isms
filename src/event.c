@@ -10,6 +10,7 @@
 #include <pthread.h>
 
 #include "event.h"
+#include "lua.h"
 
 //--- types and vars
 
@@ -151,7 +152,12 @@ static void handle_event(union event_data *ev) {
       printf("e: metro: %i %i\n",ev->metro.id, ev->metro.stage);
       break;
     case EVENT_KEY:
-      printf("e: key: %i\n",ev->key.scancode);
+      //printf("e: key: %i\n",ev->key.scancode);
+      lua_getglobal(L, "key");
+      lua_pushinteger(L, ev->key.scancode);
+      if (!(lua_pcall(L, 1, 0, 0) == LUA_OK)) {
+        printf("Error on run method\n");
+      }
       break;
   }
 

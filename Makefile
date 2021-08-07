@@ -25,7 +25,7 @@ $(BUILD_DIR)/%.c.o: %.c
 
 core:
 	echo 'const char* core = "\\n\' > src/core.h
-	sed -e 's/$$/\\n\\/' src/core.lua >> src/core.h
+	sed -e 's/\r$$/\\n\\/' src/core.lua >> src/core.h
 	echo '";' >> src/core.h
 
 
