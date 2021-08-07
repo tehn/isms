@@ -19,11 +19,7 @@ int main(int argc, char **argv) {
   redraw(pixels);
   metro_start(1,1,5,0);
 
-  if (luaL_loadstring(L, core) == LUA_OK) {
-    if (lua_pcall(L, 0, 1, 0) == LUA_OK) {
-      lua_pop(L, lua_gettop(L));
-    }
-  }
+  if (luaL_dostring(L, core) != LUA_OK) printf("ERROR: core.lua");
 
   lua_run();
 
