@@ -130,6 +130,7 @@ void *sdl_loop(void *x) {
         ev = event_data_new(EVENT_KEY);
         ev->key.scancode = event.key.keysym.sym;
         event_post(ev);
+        break;
 			case SDL_QUIT:
         ev = event_data_new(EVENT_QUIT);
         event_post(ev);

@@ -7,6 +7,8 @@
 #include "sdl.h"
 #include "lua.h"
 
+#include "core.h"
+
 void init();
 void deinit();
 
@@ -16,6 +18,12 @@ int main(int argc, char **argv) {
 
   redraw(pixels);
   metro_start(1,1,5,0);
+
+  if (luaL_loadstring(L, core) == LUA_OK) {
+    if (lua_pcall(L, 0, 1, 0) == LUA_OK) {
+      lua_pop(L, lua_gettop(L));
+    }
+  }
 
   lua_run();
 
@@ -34,6 +42,6 @@ void init() {
 
 void deinit() {
   printf(">>>> CLEANUP\n");
-  deinit_sdl();
   deinit_metro();
+  deinit_sdl();
 }
