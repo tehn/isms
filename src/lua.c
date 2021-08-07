@@ -12,7 +12,6 @@ void init_lua() {
   printf(">> LUA: init\n");
   L = luaL_newstate();
   luaL_openlibs(L);
-
 }
 
 void deinit_lua() {
