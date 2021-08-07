@@ -97,19 +97,15 @@ int init_sdl(void) {
 void deinit_sdl(void) {
   printf(">>> SDL: deinit\n");
   pthread_cancel(p);
-  printf(">>>1SDL: deinit\n");
 	free(pixels);
-  printf(">>>2SDL: deinit\n");
+  printf(">>> SDL: deinit SDL_DestroyTexture(gTexture); \n");
 	SDL_DestroyTexture(gTexture);
-  printf(">>>3SDL: deinit\n");
 	gTexture = NULL;
-  printf(">>>4SDL: deinit\n");
+  printf(">>> SDL: deinit SDL_DestroyRenderer(gRenderer); \n");
 	SDL_DestroyRenderer(gRenderer);
-  printf(">>>5SDL: deinit\n");
 	gRenderer = NULL;
-  printf(">>>6SDL: deinit\n");
+  printf(">>> SDL: deinit SDL_DestroyWindow(gWindow); \n");
 	SDL_DestroyWindow(gWindow);
-  printf(">>>7SDL: deinit\n");
 	gWindow = NULL;
 	SDL_Quit();
 }

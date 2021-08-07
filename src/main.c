@@ -38,6 +38,8 @@ void init() {
 
 void deinit() {
   printf(">>>> CLEANUP\n");
+  deinit_lua();
   deinit_metro();
   deinit_sdl();
+  printf(">>>> DONE\n");
 }

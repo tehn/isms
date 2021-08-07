@@ -15,6 +15,7 @@ void init_lua() {
 }
 
 void deinit_lua() {
+  printf(">> LUA: deinit\n");
   lua_close(L);
 }
 
