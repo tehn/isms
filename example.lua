@@ -13,4 +13,5 @@ screen.redraw()
 key = function(x)
   screen.pixel(math.random(200),math.random(200),0xFFFFFF);
   screen.redraw()
+  osc.send({"localhost",7770},"/key",{x})
 end

@@ -2,10 +2,13 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#include "lo/lo.h"
+
 #include "event.h"
 #include "metro.h"
 #include "sdl.h"
 #include "lua.h"
+#include "osc.h"
 
 #include "core.h"
 
@@ -14,6 +17,12 @@ void deinit();
 
 int main(int argc, char **argv) {
   init();
+
+  lo_address t = lo_address_new(NULL, "7770");
+  if (lo_send(t, "/foo/bar", "ff", 0.12345678f, 23.0f) == -1) {
+    printf("OSC error %d: %s\n", lo_address_errno(t),
+        lo_address_errstr(t));
+  }
 
   redraw(pixels);
   metro_start(1,1,5,0);
@@ -36,6 +45,7 @@ void init() {
   init_event();
   init_lua();
   init_metro();
+  init_osc();
   init_sdl();
 }
 

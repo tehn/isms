@@ -12,7 +12,7 @@ INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 #CPPFLAGS = $(INC_FLAGS) -MMD -MP -ggdb
 CFLAGS=-I/usr/include -I/usr/local/include -std=c11 -Wall\
-			 -L/usr/local/lib -lSDL2 -llua -lm -ldl -pthread -D_GNU_SOURCE
+			 -L/usr/local/lib -lSDL2 -llua -lm -ldl -llo -pthread -D_GNU_SOURCE
 
 # main target (C)
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
