@@ -91,13 +91,10 @@ int init_sdl(void) {
 void deinit_sdl(void) {
   printf(">>> SDL: deinit\n");
 	free(pixels);
-  printf(">>> SDL: deinit SDL_DestroyTexture(gTexture); \n");
 	SDL_DestroyTexture(gTexture);
 	gTexture = NULL;
-  printf(">>> SDL: deinit SDL_DestroyRenderer(gRenderer); \n");
 	SDL_DestroyRenderer(gRenderer);
 	gRenderer = NULL;
-  printf(">>> SDL: deinit SDL_DestroyWindow(gWindow); \n");
 	SDL_DestroyWindow(gWindow);
 	gWindow = NULL;
 	SDL_Quit();

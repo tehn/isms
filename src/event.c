@@ -119,16 +119,6 @@ void event_post(union event_data *ev) {
 void event_loop(void) {
   union event_data *ev;
   while (!quit) {
-    // while() because contention may produce spurious wakeup
-    //while (evq.size == 0) {
-      //// FIXME: if we have an input device thread running,
-      //// then we get segfaults here on SIGINT
-      //// need to set an explicit sigint handler
-      // atomically unlocks the mutex, sleeps on condvar, locks again on
-      // wakeup
-      //pthread_cond_wait(&evq.nonempty, &evq.lock);
-    //}
-    // fprintf(stderr, "evq.size : %d\n", (int) evq.size);
     sdl_check();
     if (evq.size>0) {
       assert(evq.size > 0);
