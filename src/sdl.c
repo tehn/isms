@@ -12,6 +12,8 @@
 #include "event.h"
 #include "sdl.h"
 
+static pthread_t p;
+
 SDL_Window *gWindow;
 SDL_Renderer *gRenderer;
 SDL_Texture *gTexture;
@@ -20,6 +22,8 @@ uint32_t *pixels;
 int WIDTH = 8 * HOR + 8 * PAD * 2;
 int HEIGHT = 8 * (VER + 2) + 8 * PAD * 2;
 int FPS = 30, GUIDES = 1, BIGPIXEL = 0, ZOOM = 2;
+
+void *sdl_loop(void *);
 
 static int _redraw(lua_State *l);
 static int _clear(lua_State *l);
@@ -53,6 +57,8 @@ void redraw(uint32_t *dst) {
 }
 
 int init_sdl(void) {
+  printf(">> SDL: init\n");
+
 	if(SDL_Init(SDL_INIT_VIDEO) < 0)
 		return error("Init", SDL_GetError());
 	gWindow = SDL_CreateWindow("niil",
@@ -78,6 +84,11 @@ int init_sdl(void) {
 		return error("Pixels", "Failed to allocate memory");
 	clear(pixels);
 
+  // start event check timer
+  if (pthread_create(&p, NULL, sdl_loop, 0)) {
+    return error("SDL", "pthread failed");
+  }
+ 
   // lua
   lua_newtable(L);
   lua_reg_func("redraw",_redraw);
@@ -103,7 +114,6 @@ void deinit_sdl(void) {
 
 void sdl_check() {
   union event_data *ev;
-
   SDL_Event event;
   while(SDL_PollEvent(&event) != 0) {
     switch(event.type) {
@@ -123,6 +133,16 @@ void sdl_check() {
         //if(event.window.event == SDL_WINDOWEVENT_EXPOSED)
         //redraw(pixels);
     }
+  }
+}
+
+void *sdl_loop(void *x) {
+  (void)x;
+  union event_data *ev;
+  while(1) {
+    ev = event_data_new(EVENT_SDL_CHECK);
+    event_post(ev);
+    sleep(0.001);
   }
 }
 

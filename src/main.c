@@ -14,17 +14,20 @@ void deinit();
 
 int main(int argc, char **argv) {
   init();
-  atexit(deinit);
 
   redraw(pixels);
   metro_start(1,1,5,0);
 
+  printf(">> running core.lua\n");
   if (luaL_dostring(L, core) != LUA_OK) printf("ERROR: core.lua");
 
+  printf(">> running example.lua\n");
   lua_run("example.lua");
 
+  printf(">> starting event loop\n");
   event_loop();
 
+  deinit();
   return 0;
 }
 
