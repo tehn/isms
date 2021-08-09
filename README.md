@@ -17,10 +17,6 @@ only tested on linux (ubuntu), include/lib paths are hardcoded in makefile
 
 quit by closing sdl window.
 
-quit will possibly hang at various `SDL_Destroy` methods and need manual killing
-
-SDL events are not thread-safe: https://github.com/Rust-SDL2/rust-sdl2/issues/318 and https://forums.libsdl.org/viewtopic.php?t=5720&sid=07b5c57e4932124f7c2c51a55e308e7d
-
 
 ## TODO
 
@@ -31,3 +27,10 @@ SDL events are not thread-safe: https://github.com/Rust-SDL2/rust-sdl2/issues/31
 - midi
 - external command entry (ie websocket)
 - repl
+
+
+## links
+
+- https://www.lua.org/manual/5.4/manual.html#4
+- https://github.com/klassmann/sdl2-lua53-example/blob/master/src/main.c
+- https://lucasklassmann.com/blog/2019-02-02-how-to-embeddeding-lua-in-c/#running-lua-code

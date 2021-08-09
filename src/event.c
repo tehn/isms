@@ -6,11 +6,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 #include <pthread.h>
 
 #include "event.h"
 #include "lua.h"
+#include "sdl.h"
 
 //--- types and vars
 
@@ -117,23 +119,27 @@ void event_post(union event_data *ev) {
 void event_loop(void) {
   union event_data *ev;
   while (!quit) {
-    pthread_mutex_lock(&evq.lock);
     // while() because contention may produce spurious wakeup
-    while (evq.size == 0) {
+    //while (evq.size == 0) {
       //// FIXME: if we have an input device thread running,
       //// then we get segfaults here on SIGINT
       //// need to set an explicit sigint handler
       // atomically unlocks the mutex, sleeps on condvar, locks again on
       // wakeup
-      pthread_cond_wait(&evq.nonempty, &evq.lock);
-    }
+      //pthread_cond_wait(&evq.nonempty, &evq.lock);
+    //}
     // fprintf(stderr, "evq.size : %d\n", (int) evq.size);
-    assert(evq.size > 0);
-    ev = evq_pop();
-    pthread_mutex_unlock(&evq.lock);
-    if (ev != NULL) {
-      handle_event(ev);
+    sdl_check();
+    if (evq.size>0) {
+      assert(evq.size > 0);
+      pthread_mutex_lock(&evq.lock);
+      ev = evq_pop();
+      pthread_mutex_unlock(&evq.lock);
+      if (ev != NULL) {
+        handle_event(ev);
+      }
     }
+    sleep(0.001);
   }
 }
 

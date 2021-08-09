@@ -25,9 +25,7 @@ static int _redraw(lua_State *l);
 static int _clear(lua_State *l);
 static int _pixel(lua_State *l);
 
-void *sdl_loop(void *);
-static pthread_t p;
-static pthread_mutex_t lock;
+void sdl_check();
 
 int error(char *msg, const char *err) {
 	printf("Error %s: %s\n", msg, err);
@@ -80,10 +78,6 @@ int init_sdl(void) {
 		return error("Pixels", "Failed to allocate memory");
 	clear(pixels);
 
-  if (pthread_create(&p, NULL, sdl_loop, 0)) {
-    return error("SDL", "pthread failed");
-  }
-
   // lua
   lua_newtable(L);
   lua_reg_func("redraw",_redraw);
@@ -96,7 +90,6 @@ int init_sdl(void) {
 
 void deinit_sdl(void) {
   printf(">>> SDL: deinit\n");
-  pthread_cancel(p);
 	free(pixels);
   printf(">>> SDL: deinit SDL_DestroyTexture(gTexture); \n");
 	SDL_DestroyTexture(gTexture);
@@ -111,35 +104,28 @@ void deinit_sdl(void) {
 }
 
 
-void *sdl_loop(void *x) {
-  (void)x;
-
+void sdl_check() {
   union event_data *ev;
 
-	SDL_Event event;
-  while(1) {
-    pthread_mutex_lock(&lock);
-		while(SDL_PollEvent(&event) != 0) {
-			switch(event.type) {
-			//case SDL_MOUSEBUTTONUP:
-			//case SDL_MOUSEBUTTONDOWN:
-			//case SDL_MOUSEMOTION: //domouse(&event); break;
-			case SDL_KEYDOWN: 
+  SDL_Event event;
+  while(SDL_PollEvent(&event) != 0) {
+    switch(event.type) {
+      //case SDL_MOUSEBUTTONUP:
+      //case SDL_MOUSEBUTTONDOWN:
+      //case SDL_MOUSEMOTION: //domouse(&event); break;
+      case SDL_KEYDOWN: 
         ev = event_data_new(EVENT_KEY);
         ev->key.scancode = event.key.keysym.sym;
         event_post(ev);
         break;
-			case SDL_QUIT:
+      case SDL_QUIT:
         ev = event_data_new(EVENT_QUIT);
         event_post(ev);
         break;
-			//case SDL_WINDOWEVENT:
-				//if(event.window.event == SDL_WINDOWEVENT_EXPOSED)
-					//redraw(pixels);
-			}
-		}
-    pthread_mutex_unlock(&lock);
-    sleep(0.001);
+        //case SDL_WINDOWEVENT:
+        //if(event.window.event == SDL_WINDOWEVENT_EXPOSED)
+        //redraw(pixels);
+    }
   }
 }
 

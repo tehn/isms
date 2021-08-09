@@ -12,3 +12,5 @@ void redraw(uint32_t *dst);
 
 int init_sdl(void);
 void deinit_sdl(void);
+
+void sdl_check(void);
