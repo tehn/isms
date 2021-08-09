@@ -1,7 +1,7 @@
-const char* core = "\n\
-print('core.lua')\n\
-\n\
-function key(x)\n\
-  print('key: '..x)\n\
-end\n\
+const char* core = " \
+print('this is core.lua') \
+ \
+function key(x) \
+  print('key: '..x) \
+end \
 ";

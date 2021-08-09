@@ -24,8 +24,8 @@ $(BUILD_DIR)/%.c.o: %.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 core:
-	echo 'const char* core = "\\n\' > src/core.h
-	sed -e 's/\r$$/\\n\\/' src/core.lua >> src/core.h
+	echo 'const char* core = " \' > src/core.h
+	sed -e 's/\r$$/\ \\/' src/core.lua >> src/core.h
 	echo '";' >> src/core.h
 
 
