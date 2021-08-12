@@ -1,4 +1,4 @@
-# niil (untitled/wip)
+# isms (untitled/wip)
 
 lua + osc + midi + grid + sdl
 

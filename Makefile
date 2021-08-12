@@ -1,4 +1,4 @@
-TARGET_EXEC ?= niil
+TARGET_EXEC ?= isms
 BUILD_DIR ?= ./build
 SRC_DIRS ?= ./src
 
@@ -40,6 +40,6 @@ MKDIR_P ?= mkdir -p
 
 .PHONY: run
 run: $(BIN)
-	./build/niil
+	./build/isms
 
 
