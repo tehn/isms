@@ -2,6 +2,8 @@
 
 #include <stdbool.h>
 
+#include <lo/lo.h>
+
 extern bool quit;
 
 typedef enum {
@@ -11,6 +13,7 @@ typedef enum {
   EVENT_EXEC_CODE_LINE,         // code to be executed by luavm
   EVENT_METRO,                  // metro
   EVENT_KEY,                    // SDL keyboard input
+  EVENT_OSC,                    // OSC received
 } event_t;
 
 extern void init_event(void);
@@ -22,27 +25,38 @@ extern void event_post(union event_data *ev);
 
 struct event_common {
   uint32_t type;
-}; // +4
+};
 
 struct event_exec_code_line {
   struct event_common common;
   char *line;
-}; // +4
+};
 
 struct event_metro {
   struct event_common common;
-    uint32_t id;
-    uint32_t stage;
-}; // +8
+  uint32_t id;
+  uint32_t stage;
+};
 
 struct event_key {
   struct event_common common;
-    uint16_t scancode;
-}; // +4
+  uint16_t scancode;
+};
+
+struct event_osc {
+  struct event_common common;
+  char *path;
+  char *from_host;
+  char *from_port;
+  lo_message msg;
+};
+
 
 union event_data {
   uint32_t type;
   struct event_exec_code_line exec_code_line;
   struct event_metro metro;
   struct event_key key;
+  struct event_osc osc;
 };
+

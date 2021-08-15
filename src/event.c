@@ -9,10 +9,12 @@
 #include <unistd.h>
 
 #include <pthread.h>
+#include <lo/lo.h>
 
 #include "event.h"
 #include "lua.h"
 #include "sdl.h"
+#include "osc.h"
 
 //--- types and vars
 
@@ -98,6 +100,12 @@ void event_data_free(union event_data *ev) {
     case EVENT_EXEC_CODE_LINE:
       free(ev->exec_code_line.line);
       break;
+    case EVENT_OSC:
+      free(ev->osc.path);
+      free(ev->osc.from_host);
+      free(ev->osc.from_port);
+      lo_message_free(ev->osc.msg);
+      break;
   }
   free(ev);
 }
@@ -163,6 +171,9 @@ static void handle_event(union event_data *ev) {
       if (!(lua_pcall(L, 1, 0, 0) == LUA_OK)) {
         printf("Error on run method\n");
       }
+      break;
+    case EVENT_OSC:
+      osc_event(ev->osc.from_host, ev->osc.from_port, ev->osc.path, ev->osc.msg);
       break;
   }
 
