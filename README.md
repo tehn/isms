@@ -1,9 +1,9 @@
-# isms (untitled/wip)
+# isms
 
 lua + osc + midi + grid + sdl
 
 - build: `make`
-- run: `build/niil`
+- run: `build/isms`
 
 requires lua 5.4, sdl2
 
@@ -20,10 +20,9 @@ quit by closing sdl window.
 
 ## TODO
 
-- lots of glue
+- lua glue
 - libmonome
-- metro/clocks
-- osc
+- clocks
 - midi
 - external command entry (ie websocket)
 - repl
