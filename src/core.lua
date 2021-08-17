@@ -8,6 +8,6 @@ function osc.receive(path, args, from)
   print('osc: '..path)
 end
 
-function metro(i,stage)
+function metro.tick(i,stage)
   print('metro: '..i..' '..stage)
 end

@@ -59,15 +59,33 @@ static void metro_sleep(struct metro *t);
 static void metro_reset(struct metro *t, int stage);
 static void metro_cancel(struct metro *t);
 
+// lua functions
+
+static int _start(lua_State *l);
+static int _stop(lua_State *l);
+
 //------------------------
 //---- extern definitions
 
 void init_metro(void) {
-    for (int i = 0; i < MAX_NUM_METROS_OK; i++) {
-        metros[i].status = METRO_STATUS_STOPPED;
-        metros[i].seconds = 1.0;
-    }
+  for (int i = 0; i < MAX_NUM_METROS_OK; i++) {
+    metros[i].status = METRO_STATUS_STOPPED;
+    metros[i].seconds = 1.0;
+  }
+
+  // lua
+  lua_newtable(L);
+  lua_reg_func("start",_start);
+  lua_reg_func("stop",_stop);
+  lua_setglobal(L,"metro");
 }
+
+void deinit_metro() {
+  printf(">>> METRO: deinit\n");
+  for(int i=0;i<MAX_NUM_METROS_OK;i++)
+    metro_stop(i);
+}
+
 
 void metro_start(int idx, double seconds, int count, int stage) {
     uint64_t nsec;
@@ -265,21 +283,44 @@ void metro_cancel(struct metro *t) {
     }
 }
 
-void deinit_metro() {
-  printf(">>> METRO: deinit\n");
-  for(int i=0;i<MAX_NUM_METROS_OK;i++)
-    metro_stop(i);
+// lua functions
+
+static int _start(lua_State *l) {
+  printf("metro start\n");
+  lua_check_num_args(4);
+  double idx = luaL_checknumber(l, 1);
+  double seconds = luaL_checknumber(l, 2);
+  double count = luaL_checknumber(l, 3);
+  double stage = luaL_checknumber(l, 4);
+  metro_start(idx, seconds, count, stage);
+  lua_settop(l, 0);
+  return 0;
+}
+
+static int _stop(lua_State *l) {
+  printf("metro stop\n");
+  lua_check_num_args(1);
+  double idx = luaL_checknumber(l, 1);
+  metro_stop(idx);
+  lua_settop(l, 0);
+  return 0;
 }
 
 
+
+// lua event
+
 void event_metro(int idx, int stage) {
-  //printf("e: metro: %i %i\n",ev->metro.id, ev->metro.stage);
+  //printf("e: metro: %i %i\n",idx, stage);
   lua_getglobal(L, "metro");
-  lua_pushinteger(L, idx);
-  lua_pushinteger(L, stage);
-  if (!(lua_pcall(L, 2, 0, 0) == LUA_OK)) {
-    printf("Error on run method\n");
-  }
+  lua_getfield(L, -1, "tick");
+  lua_remove(L, -2);
+  lua_pushinteger(L, idx + 1);   // convert to 1-based
+  lua_pushinteger(L, stage + 1); // convert to 1-based
+  l_report(L, l_docall(L, 2, 0));
+  //if (!(lua_pcall(L, 2, 0, 0) == LUA_OK)) {
+  //printf("Error on run method\n");
+  //}
 }
 
 #undef MAX_NUM_METROS_OK

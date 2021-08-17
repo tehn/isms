@@ -18,4 +18,5 @@ extern void metro_stop(int idx);
 // on current period or next period
 extern void metro_set_time(int idx, float sec);
 
+// lua event
 extern void event_metro(int idx, int stage);

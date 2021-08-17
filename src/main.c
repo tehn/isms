@@ -25,7 +25,6 @@ int main(int argc, char **argv) {
   }
 
   redraw(pixels);
-  metro_start(1,1,5,0);
 
   printf(">> running core.lua\n");
   if (luaL_dostring(L, core) != LUA_OK) printf("ERROR: core.lua");

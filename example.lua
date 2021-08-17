@@ -15,3 +15,9 @@ key = function(x)
   screen.redraw()
   osc.send({"localhost",7770},"/key",{x})
 end
+
+metro.tick = function(i,s)
+  print("metro",i,s);
+end
+
+metro.start(1,1,3,0);
