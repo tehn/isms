@@ -8,4 +8,8 @@ end \
 function osc.receive(path, args, from) \
   print('osc: '..path) \
 end \
+ \
+function metro(i,stage) \
+  print('metro: '..i..' '..stage) \
+end \
 ";

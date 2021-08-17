@@ -15,6 +15,7 @@
 #include "lua.h"
 #include "sdl.h"
 #include "osc.h"
+#include "metro.h"
 
 //--- types and vars
 
@@ -162,7 +163,8 @@ static void handle_event(union event_data *ev) {
       printf("e: codeline: %s\n", ev->exec_code_line.line);
       break;
     case EVENT_METRO:
-      printf("e: metro: %i %i\n",ev->metro.id, ev->metro.stage);
+      //printf("e: metro: %i %i\n",ev->metro.id, ev->metro.stage);
+      event_metro(ev->metro.id, ev->metro.stage);
       break;
     case EVENT_KEY:
       //printf("e: key: %i\n",ev->key.scancode);

@@ -22,6 +22,7 @@
 // norns
 #include "event.h"
 #include "metro.h"
+#include "lua.h"
 
 #define MAX_NUM_METROS_OK 36
 
@@ -268,6 +269,17 @@ void deinit_metro() {
   printf(">>> METRO: deinit\n");
   for(int i=0;i<MAX_NUM_METROS_OK;i++)
     metro_stop(i);
+}
+
+
+void event_metro(int idx, int stage) {
+  //printf("e: metro: %i %i\n",ev->metro.id, ev->metro.stage);
+  lua_getglobal(L, "metro");
+  lua_pushinteger(L, idx);
+  lua_pushinteger(L, stage);
+  if (!(lua_pcall(L, 2, 0, 0) == LUA_OK)) {
+    printf("Error on run method\n");
+  }
 }
 
 #undef MAX_NUM_METROS_OK
