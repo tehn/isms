@@ -21,11 +21,14 @@ quit by closing sdl window.
 ## TODO
 
 - lua glue
+  - naming conventions: event/callbacks
 - libmonome
 - clocks
 - midi
 - external command entry (ie websocket)
 - repl
+- lua error checking
+  - clean up lua.c
 
 
 ## links
