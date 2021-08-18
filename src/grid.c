@@ -6,6 +6,7 @@
 #include <monome.h>
 
 #include "event.h"
+#include "lua.h"
 
 static int dirty = 0;
 static int connected = 0;
@@ -18,8 +19,11 @@ static monome_t *monome;
 static pthread_t p;
 void *monome_loop(void *);
 
-void handle_down(const monome_event_t *e, void *data);
-void handle_up(const monome_event_t *e, void *data);
+static void handle_down(const monome_event_t *e, void *data);
+static void handle_up(const monome_event_t *e, void *data);
+
+static int _redraw(lua_State *l);
+
 
 void init_grid(void) {
   //printf(">> GRID: init\n");
@@ -42,11 +46,11 @@ void init_grid(void) {
     printf(">>>> GRID: not found\n");
 
   // lua
-  //lua_newtable(L);
-  //lua_reg_func("redraw",_redraw);
+  lua_newtable(L);
+  lua_reg_func("redraw",_redraw);
   //lua_reg_func("clear",_clear);
   //lua_reg_func("pixel",_pixel);
-  //lua_setglobal(L,"screen");
+  lua_setglobal(L,"grid");
 
 }
 
@@ -57,6 +61,14 @@ void deinit_grid(void) {
     monome_close(monome);
 }
 
+
+void *monome_loop(void *x) {
+  (void)x;
+  while(1) {
+    monome_event_handle_next(monome);
+    sleep(0.001);
+  }
+}
 
 void handle_down(const monome_event_t *e, void *data) {
   union event_data *ev;
@@ -77,22 +89,27 @@ void handle_up(const monome_event_t *e, void *data) {
 }
 
 
-static void redraw(monome_t *m, uint16_t *g)
-{
+
+// lua event
+void event_grid_key(uint8_t x, uint8_t y, uint8_t z) {
+  lua_getglobal(L, "grid");
+  lua_getfield(L, -1, "key");
+  lua_remove(L, -2);
+  lua_pushinteger(L, x);
+  lua_pushinteger(L, y);
+  lua_pushinteger(L, z);
+  l_report(L, l_docall(L, 3, 0));
+}
+
+
+// lua functions
+static int _redraw(lua_State *l) {
   if (dirty) {
     dirty = 0;
-    monome_led_map(m, 0, 0, quadL);
-    monome_led_map(m, 255, 0, quadR);
+    monome_led_map(monome, 0, 0, quadL);
+    monome_led_map(monome, 255, 0, quadR);
   }
+  return 0;
 }
 
-
-void *monome_loop(void *x) {
-  (void)x;
-  union event_data *ev;
-  while(1) {
-    monome_event_handle_next(monome);
-    sleep(0.001);
-  }
-}
 
