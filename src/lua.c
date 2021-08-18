@@ -10,13 +10,13 @@
 lua_State *L;
 
 void init_lua() {
-  printf(">> LUA: init\n");
+  //printf(">> LUA: init\n");
   L = luaL_newstate();
   luaL_openlibs(L);
 }
 
 void deinit_lua() {
-  printf(">> LUA: deinit\n");
+  //printf(">> LUA: deinit\n");
   lua_close(L);
 }
 

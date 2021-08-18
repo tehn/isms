@@ -29,6 +29,9 @@ quit by closing sdl window.
 - repl
 - lua error checking
   - clean up lua.c
+- drawing lib
+- optimization
+  - sdl should probably go in its own thread
 
 
 ## links

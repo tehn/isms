@@ -81,7 +81,6 @@ void init_metro(void) {
 }
 
 void deinit_metro() {
-  printf(">>> METRO: deinit\n");
   for(int i=0;i<MAX_NUM_METROS_OK;i++)
     metro_stop(i);
 }
@@ -286,7 +285,7 @@ void metro_cancel(struct metro *t) {
 // lua functions
 
 static int _start(lua_State *l) {
-  printf("metro start\n");
+  //printf("metro start\n");
   lua_check_num_args(4);
   double idx = luaL_checknumber(l, 1);
   double seconds = luaL_checknumber(l, 2);
@@ -298,7 +297,7 @@ static int _start(lua_State *l) {
 }
 
 static int _stop(lua_State *l) {
-  printf("metro stop\n");
+  //printf("metro stop\n");
   lua_check_num_args(1);
   double idx = luaL_checknumber(l, 1);
   metro_stop(idx);

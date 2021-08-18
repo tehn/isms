@@ -14,6 +14,7 @@ typedef enum {
   EVENT_METRO,                  // metro
   EVENT_KEY,                    // SDL keyboard input
   EVENT_OSC,                    // OSC received
+  EVENT_GRID,                   // GRID key event
 } event_t;
 
 extern void init_event(void);
@@ -51,6 +52,13 @@ struct event_osc {
   lo_message msg;
 };
 
+struct event_grid {
+  struct event_common common;
+  uint8_t x;
+  uint8_t y;
+  uint8_t z;
+};
+
 
 union event_data {
   uint32_t type;
@@ -58,5 +66,6 @@ union event_data {
   struct event_metro metro;
   struct event_key key;
   struct event_osc osc;
+  struct event_grid grid;
 };
 

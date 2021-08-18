@@ -9,6 +9,7 @@
 #include "sdl.h"
 #include "lua.h"
 #include "osc.h"
+#include "grid.h"
 
 #include "core.h"
 
@@ -16,6 +17,8 @@ void init();
 void deinit();
 
 int main(int argc, char **argv) {
+  printf("isms\n////////\n");
+
   init();
 
   lo_address t = lo_address_new(NULL, "7770");
@@ -40,18 +43,20 @@ int main(int argc, char **argv) {
 }
 
 void init() {
-  printf(">>>> INIT\n");
+  //printf(">>>> INIT\n");
   init_event();
   init_lua();
   init_metro();
   init_osc();
   init_sdl();
+  init_grid();
 }
 
 void deinit() {
-  printf(">>>> CLEANUP\n");
+  //printf(">>>> CLEANUP\n");
   deinit_lua();
+  deinit_grid();
   deinit_metro();
   deinit_sdl();
-  printf(">>>> DONE\n");
+  //printf(">>>> DONE\n");
 }

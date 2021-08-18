@@ -19,9 +19,9 @@ SDL_Renderer *gRenderer;
 SDL_Texture *gTexture;
 uint32_t *pixels;
 
-int WIDTH = 8 * HOR + 8 * PAD * 2;
-int HEIGHT = 8 * (VER + 2) + 8 * PAD * 2;
-int FPS = 30, GUIDES = 1, BIGPIXEL = 0, ZOOM = 2;
+int WIDTH = 256;
+int HEIGHT = 128;
+int ZOOM = 4;
 
 void *sdl_loop(void *);
 
@@ -45,8 +45,8 @@ void clear(uint32_t *dst) {
 }
 
 void putpixel(uint32_t *dst, int x, int y, int color) {
-	if(x >= 0 && x < WIDTH - 8 && y >= 0 && y < HEIGHT - 8)
-		dst[(y + PAD * 8) * WIDTH + (x + PAD * 8)] = color;
+	if(x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
+		dst[y * WIDTH + x] = color;
 }
 
 void redraw(uint32_t *dst) {
@@ -57,7 +57,7 @@ void redraw(uint32_t *dst) {
 }
 
 int init_sdl(void) {
-  printf(">> SDL: init\n");
+  //printf(">> SDL: init\n");
 
 	if(SDL_Init(SDL_INIT_VIDEO) < 0)
 		return error("Init", SDL_GetError());
@@ -100,7 +100,8 @@ int init_sdl(void) {
 }
 
 void deinit_sdl(void) {
-  printf(">>> SDL: deinit\n");
+  //printf(">> SDL: deinit\n");
+  pthread_cancel(p);
 	free(pixels);
 	SDL_DestroyTexture(gTexture);
 	gTexture = NULL;

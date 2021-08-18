@@ -177,6 +177,9 @@ static void handle_event(union event_data *ev) {
     case EVENT_OSC:
       osc_event(ev->osc.from_host, ev->osc.from_port, ev->osc.path, ev->osc.msg);
       break;
+    case EVENT_GRID:
+      printf("grid: %d %d %d\n", ev->grid.x, ev->grid.y, ev->grid.z);
+      break;
   }
 
   event_data_free(ev);
