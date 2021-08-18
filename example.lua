@@ -19,4 +19,8 @@ metro.tick = function(i,s) print("metro",i,s); end
 
 metro.start(1,1,3,0);
 
-grid.key = function(x,y,z) print("grid",x,y,z) end
+grid.key = function(x,y,z)
+  print("grid",x,y,z)
+  grid.led(x,y,15);
+  grid.redraw();
+end

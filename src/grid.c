@@ -8,11 +8,10 @@
 #include "event.h"
 #include "lua.h"
 
-static int dirty = 0;
+static int dirty[2] = {0,0};
 static int connected = 0;
 
-static uint8_t quadL[8];
-static uint8_t quadR[8];
+static uint8_t quad[2][64];
 
 static monome_t *monome;
 
@@ -23,13 +22,14 @@ static void handle_down(const monome_event_t *e, void *data);
 static void handle_up(const monome_event_t *e, void *data);
 
 static int _redraw(lua_State *l);
+static int _led(lua_State *l);
 
 
 void init_grid(void) {
   //printf(">> GRID: init\n");
-  for(int y = 0; y < 8; y++) {
-    quadL[y] = 0;
-    quadR[y] = 0;
+  for(int y = 0; y < 64; y++) {
+    quad[0][y] = 0;
+    quad[1][y] = 0;
   }
 
   if( (monome = monome_open("/dev/ttyACM0", "8000")) ) {
@@ -48,8 +48,7 @@ void init_grid(void) {
   // lua
   lua_newtable(L);
   lua_reg_func("redraw",_redraw);
-  //lua_reg_func("clear",_clear);
-  //lua_reg_func("pixel",_pixel);
+  lua_reg_func("led",_led);
   lua_setglobal(L,"grid");
 
 }
@@ -104,11 +103,31 @@ void event_grid_key(uint8_t x, uint8_t y, uint8_t z) {
 
 // lua functions
 static int _redraw(lua_State *l) {
-  if (dirty) {
-    dirty = 0;
-    monome_led_map(monome, 0, 0, quadL);
-    monome_led_map(monome, 255, 0, quadR);
+  if (dirty[0]) {
+    monome_led_level_map(monome, 0, 0, quad[0]);
+    dirty[0] = 0;
   }
+  if(dirty[1]) {
+    monome_led_level_map(monome, 8, 0, quad[1]);
+    dirty[1] = 0;
+  }
+  return 0;
+}
+
+static int _led(lua_State *l) {
+  lua_check_num_args(3);
+  int x = luaL_checknumber(l, 1);
+  int y = luaL_checknumber(l, 2);
+  int z = luaL_checknumber(l, 3);
+
+  if(x<16 && x>=0 && y<8 && y>=0 && z<16 && z>=0) { // bounds check
+    int q = x > 7; // quad
+    if(q) x = x-8;
+    quad[q][y*8 + x] = z;
+    dirty[q] = 1;
+  }
+  
+  lua_settop(l, 0);
   return 0;
 }
 
