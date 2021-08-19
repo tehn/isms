@@ -14,7 +14,7 @@ only tested on linux (ubuntu), include/lib paths are hardcoded in makefile
 ## currently
 
 - `example.lua` is run at startup, which accepts sdl key input to place a random white pixel.
-- if found, connects to grid at `/dev/ttyACM0'
+- if found, connects to grid at `/dev/ttyACM0`
 - quit by closing sdl window.
 - `example.scd` will provide a rudimentary osc-listening synth for testing.
 
@@ -38,6 +38,8 @@ only tested on linux (ubuntu), include/lib paths are hardcoded in makefile
 - clocks
 - midi
 - metro allocator (?)
+
+(and)
 
 - sane makefile
 - device management
