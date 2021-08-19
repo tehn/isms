@@ -22,6 +22,7 @@ metro.start(1,1,3,0);
 
 grid.key = function(x,y,z)
   print("grid",x,y,z)
+  osc.send({"localhost",57120},"/n",{(7-y)*5+x+30})
   grid.led(x,y,15);
   grid.redraw();
 end
