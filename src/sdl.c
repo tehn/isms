@@ -61,7 +61,7 @@ int init_sdl(void) {
 
 	if(SDL_Init(SDL_INIT_VIDEO) < 0)
 		return error("Init", SDL_GetError());
-	gWindow = SDL_CreateWindow("niil",
+	gWindow = SDL_CreateWindow("isms",
 		SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED,
 		WIDTH * ZOOM,

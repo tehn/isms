@@ -12,7 +12,8 @@ screen.redraw()
 key = function(x)
   screen.pixel(math.random(256),math.random(16)+50,0xFFFFFF);
   screen.redraw()
-  osc.send({"localhost",7770},"/key",{x})
+  osc.send({"localhost",57120},"/n",{x%127})
+  print("key: "..x)
 end
 
 metro.tick = function(i,s) print("metro",i,s); end
