@@ -13,21 +13,32 @@ only tested on linux (ubuntu), include/lib paths are hardcoded in makefile
 
 ## currently
 
-- `example.lua` is run at startup, which accepts sdl key input to place a random white pixel.
-- if found, connects to grid at `/dev/ttyACM0`
-- quit by closing sdl window.
+- `example.lua` is run at startup, which accepts sdl key input to place a random white pixel and send an OSC message to supercollider
 - `example.scd` will provide a rudimentary osc-listening synth for testing.
+- if found, connects to grid at `/dev/ttyACM0` and sends OSC on key input.
+- quit by closing sdl window.
+
+## design
+
+attempting to stay as minimal as possible
+
+- no menus (script selector, device management, params, etc)
+- permit multiple instances
 
 
 ## TODO
 
+- osc host address (try incrementing port number if not available)
+- arg filename (or, figure out file use pattern)
+  - make path var available in lua
+- repl (ncurses?)
 - lua
   - error checking (clean up lua.c)
   - include/etc
   - script reload
   - naming conventions: event/callbacks
+  - utils: sys.time
 - external command entry (websocket? osc?)
-- repl (ncurses?)
 - window management
   - quit key (?)
   - resize enable and management
@@ -57,6 +68,7 @@ screen.redraw()
 metro.start(index, time_sec, count, stage)
 metro.stop(index)
 
+grid.all(z)
 grid.led(x,y,z)
 grid.redraw()
 

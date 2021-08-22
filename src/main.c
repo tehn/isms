@@ -17,17 +17,9 @@ void init();
 void deinit();
 
 int main(int argc, char **argv) {
-  printf("isms\n////////\n");
+  printf("isms ////////\n");
 
   init();
-
-  lo_address t = lo_address_new(NULL, "7770");
-  if (lo_send(t, "/foo/bar", "ff", 0.12345678f, 23.0f) == -1) {
-    printf("OSC error %d: %s\n", lo_address_errno(t),
-        lo_address_errstr(t));
-  }
-
-  redraw(pixels);
 
   printf(">> running core.lua\n");
   if (luaL_dostring(L, core) != LUA_OK) printf("ERROR: core.lua");
@@ -39,6 +31,7 @@ int main(int argc, char **argv) {
   event_loop();
 
   deinit();
+  printf("farewell.\n");
   return 0;
 }
 

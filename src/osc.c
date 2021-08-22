@@ -9,6 +9,7 @@
 #include "lua.h"
 #include "event.h"
 
+char *osc_port = "10011";
 static lo_server_thread st;
 
 static int osc_receive(const char *path, const char *types, lo_arg **argv, int argc, lo_message msg, void *user_data);
@@ -23,9 +24,14 @@ void init_osc() {
   lua_setglobal(L,"osc");
 
   // receive
-  st = lo_server_thread_new("10011", lo_error_handler);
-  lo_server_thread_add_method(st, NULL, NULL, osc_receive, NULL);
-  lo_server_thread_start(st);
+  st = lo_server_thread_new(osc_port, lo_error_handler);
+  if(st) {
+    printf(">> OSC port %s\n",osc_port);
+
+    lo_server_thread_add_method(st, NULL, NULL, osc_receive, NULL);
+    lo_server_thread_start(st);
+  }
+  else exit(1);
 }
 
 void deinit_osc() {
@@ -56,7 +62,7 @@ int osc_receive(const char *path, const char *types, lo_arg **argv, int argc, lo
 }
 
 void lo_error_handler(int num, const char *m, const char *path) {
-  printf("liblo error %d in path %s: %s\n", num, path, m);
+  printf("#### liblo error %d in path %s: %s\n", num, path, m);
 }
 
 void osc_event(char *from_host, char *from_port, char *path, lo_message msg) {
@@ -214,7 +220,7 @@ static int _send(lua_State *l) {
   }
   lo_address address = lo_address_new(host, port);
   if (!address) {
-    printf("failed to create lo_address\n");
+    printf(">> OSC: failed to create lo_address\n");
     return 1;
   }
   lo_send_message(address, path, msg);

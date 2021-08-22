@@ -287,7 +287,7 @@ void metro_cancel(struct metro *t) {
 static int _start(lua_State *l) {
   //printf("metro start\n");
   lua_check_num_args(4);
-  double idx = luaL_checknumber(l, 1);
+  double idx = luaL_checknumber(l, 1) - 1; // convert to 1-based
   double seconds = luaL_checknumber(l, 2);
   double count = luaL_checknumber(l, 3);
   double stage = luaL_checknumber(l, 4);

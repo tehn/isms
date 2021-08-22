@@ -2,6 +2,8 @@
 
 #include <lo/lo.h>
 
+extern char *osc_port;
+
 void init_osc(void);
 void deinit_osc(void);
 

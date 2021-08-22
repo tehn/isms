@@ -16,9 +16,13 @@ key = function(x)
   print("key: "..x)
 end
 
-metro.tick = function(i,s) print("metro",i,s); end
+metro.tick = function(i,s)
+  print("metro",i,s)
+  grid.all(s)
+  grid.redraw()
+end
 
-metro.start(1,1,3,0);
+metro.start(1,0.1,5,0);
 
 grid.key = function(x,y,z)
   print("grid",x,y,z)

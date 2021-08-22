@@ -23,7 +23,7 @@ static void handle_up(const monome_event_t *e, void *data);
 
 static int _redraw(lua_State *l);
 static int _led(lua_State *l);
-
+static int _all(lua_State *l);
 
 void init_grid(void) {
   //printf(">> GRID: init\n");
@@ -49,8 +49,8 @@ void init_grid(void) {
   lua_newtable(L);
   lua_reg_func("redraw",_redraw);
   lua_reg_func("led",_led);
+  lua_reg_func("all",_all);
   lua_setglobal(L,"grid");
-
 }
 
 void deinit_grid(void) {
@@ -126,6 +126,24 @@ static int _led(lua_State *l) {
     quad[q][y*8 + x] = z;
     dirty[q] = 1;
   }
+  
+  lua_settop(l, 0);
+  return 0;
+}
+
+static int _all(lua_State *l) {
+  lua_check_num_args(1);
+  int z = luaL_checknumber(l, 1);
+
+  z %= 16; // clamp
+
+  for(int y = 0; y < 64; y++) {
+    quad[0][y] = z;
+    quad[1][y] = z;
+  }
+  
+  dirty[0] = 1;
+  dirty[1] = 1;
   
   lua_settop(l, 0);
   return 0;
