@@ -103,13 +103,15 @@ void event_grid_key(uint8_t x, uint8_t y, uint8_t z) {
 
 // lua functions
 static int _redraw(lua_State *l) {
-  if (dirty[0]) {
-    monome_led_level_map(monome, 0, 0, quad[0]);
-    dirty[0] = 0;
-  }
-  if(dirty[1]) {
-    monome_led_level_map(monome, 8, 0, quad[1]);
-    dirty[1] = 0;
+  if(connected) {
+    if (dirty[0]) {
+      monome_led_level_map(monome, 0, 0, quad[0]);
+      dirty[0] = 0;
+    }
+    if(dirty[1]) {
+      monome_led_level_map(monome, 8, 0, quad[1]);
+      dirty[1] = 0;
+    }
   }
   return 0;
 }

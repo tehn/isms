@@ -22,22 +22,16 @@ only tested on linux (ubuntu), include/lib paths are hardcoded in makefile
 
 attempting to stay as minimal as possible
 
-- no menus (script selector, device management, params, etc)
-- permit multiple instances
-
 
 ## TODO
 
-- osc host address (try incrementing port number if not available)
+- lua
+  - naming conventions: event/callbacks
+  - script reload
+  - utils: sys.time, sys.cmd
 - arg filename (or, figure out file use pattern)
   - make path var available in lua
 - repl (ncurses?)
-- lua
-  - error checking (clean up lua.c)
-  - include/etc
-  - script reload
-  - naming conventions: event/callbacks
-  - utils: sys.time
 - external command entry (websocket? osc?)
 - window management
   - quit key (?)
@@ -85,3 +79,13 @@ osc.receive(path, args, from)
 - https://www.lua.org/manual/5.4/manual.html#4
 - https://github.com/klassmann/sdl2-lua53-example/blob/master/src/main.c
 - https://lucasklassmann.com/blog/2019-02-02-how-to-embeddeding-lua-in-c/#running-lua-code
+
+
+## sketch
+
+1. core
+2. ~/isms/settings.lua
+3. (script)
+4. pre_init(); init(); post_init();
+5. ...
+6. deinit(); post_deinit();

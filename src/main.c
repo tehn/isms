@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
   if (luaL_dostring(L, core) != LUA_OK) printf("ERROR: core.lua");
 
   printf(">> running example.lua\n");
-  lua_run("example.lua");
+  l_dofile(L, "example.lua");
 
   printf(">> starting event loop\n");
   event_loop();
@@ -50,6 +50,7 @@ void deinit() {
   deinit_lua();
   deinit_grid();
   deinit_metro();
+  deinit_osc();
   deinit_sdl();
   //printf(">>>> DONE\n");
 }

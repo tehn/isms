@@ -30,3 +30,6 @@ grid.key = function(x,y,z)
   grid.led(x,y,15);
   grid.redraw();
 end
+
+dofile("test.lua")
+

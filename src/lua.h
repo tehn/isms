@@ -17,7 +17,7 @@ extern lua_State *L;
 void init_lua();
 void deinit_lua();
 
-void lua_run(const char *);
 int l_report(lua_State *L, int status);
 int l_docall(lua_State *L, int narg, int nres);
-
+int l_dostring(lua_State *L, const char *s, const char *name);
+int l_dofile(lua_State *L, const char *name);
