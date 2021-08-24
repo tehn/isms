@@ -18,11 +18,6 @@ static void lo_error_handler(int num, const char *m, const char *path);
 static int _send(lua_State *l);
 
 void init_osc() {
-  // lua
-  lua_newtable(L);
-  lua_reg_func("send",_send);
-  lua_setglobal(L,"osc");
-
   // receive
   st = lo_server_thread_new(osc_port, lo_error_handler);
   if(st) {
@@ -32,6 +27,13 @@ void init_osc() {
     lo_server_thread_start(st);
   }
   else exit(1);
+}
+
+void register_osc() {
+  // lua
+  lua_newtable(L);
+  lua_reg_func("send",_send);
+  lua_setglobal(L,"osc");
 }
 
 void deinit_osc() {

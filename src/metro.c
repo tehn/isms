@@ -72,8 +72,9 @@ void init_metro(void) {
     metros[i].status = METRO_STATUS_STOPPED;
     metros[i].seconds = 1.0;
   }
+}
 
-  // lua
+void register_metro() {
   lua_newtable(L);
   lua_reg_func("start",_start);
   lua_reg_func("stop",_stop);

@@ -1,6 +1,7 @@
 #pragma once
 
 void init_grid(void);
+void register_grid(void);
 void deinit_grid(void);
 
 // lua event

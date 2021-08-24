@@ -44,8 +44,9 @@ void init_grid(void) {
   } 
   else
     printf(">>>> GRID: not found\n");
+}
 
-  // lua
+void register_grid(void) {
   lua_newtable(L);
   lua_reg_func("redraw",_redraw);
   lua_reg_func("led",_led);

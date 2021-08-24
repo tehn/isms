@@ -7,6 +7,10 @@
 #include <lauxlib.h>
 
 #include "lua.h"
+#include "grid.h"
+#include "osc.h"
+#include "metro.h"
+#include "sdl.h"
 
 lua_State *L;
 
@@ -14,6 +18,11 @@ void init_lua() {
   //printf(">> LUA: init\n");
   L = luaL_newstate();
   luaL_openlibs(L);
+
+  register_metro();
+  register_osc();
+  register_grid();
+  register_sdl();
 }
 
 void deinit_lua() {

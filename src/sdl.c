@@ -89,14 +89,15 @@ int init_sdl(void) {
     return error("SDL", "pthread failed");
   }
  
-  // lua
+	return 1;
+}
+
+void register_sdl(void) {
   lua_newtable(L);
   lua_reg_func("redraw",_redraw);
   lua_reg_func("clear",_clear);
   lua_reg_func("pixel",_pixel);
   lua_setglobal(L,"screen");
-
-	return 1;
 }
 
 void deinit_sdl(void) {
@@ -116,12 +117,24 @@ void deinit_sdl(void) {
 void sdl_check() {
   union event_data *ev;
   SDL_Event event;
+  int ctrl;
   while(SDL_PollEvent(&event) != 0) {
     switch(event.type) {
       //case SDL_MOUSEBUTTONUP:
       //case SDL_MOUSEBUTTONDOWN:
       //case SDL_MOUSEMOTION: //domouse(&event); break;
       case SDL_KEYDOWN: 
+        //shift = SDL_GetModState() & KMOD_LSHIFT || SDL_GetModState() & KMOD_RSHIFT;
+        ctrl = SDL_GetModState() & KMOD_LCTRL || SDL_GetModState() & KMOD_RCTRL;
+        if(ctrl) {
+          switch(event.key.keysym.sym) {
+            case SDLK_q: ev = event_data_new(EVENT_QUIT);
+                         event_post(ev);
+                         break;
+            case SDLK_r: printf("reload script! (dummy)\n");
+                         break;
+          }
+        } 
         ev = event_data_new(EVENT_KEY);
         ev->key.scancode = event.key.keysym.sym;
         event_post(ev);

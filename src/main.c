@@ -38,19 +38,19 @@ int main(int argc, char **argv) {
 void init() {
   //printf(">>>> INIT\n");
   init_event();
-  init_lua();
-  init_metro();
   init_osc();
+  init_metro();
   init_sdl();
   init_grid();
+  init_lua();
 }
 
 void deinit() {
   //printf(">>>> CLEANUP\n");
   deinit_lua();
   deinit_grid();
+  deinit_sdl();
   deinit_metro();
   deinit_osc();
-  deinit_sdl();
   //printf(">>>> DONE\n");
 }

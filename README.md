@@ -34,7 +34,6 @@ attempting to stay as minimal as possible
 - repl (ncurses?)
 - external command entry (websocket? osc?)
 - window management
-  - quit key (?)
   - resize enable and management
   - default screen size and pixel scaling
 - drawing lib

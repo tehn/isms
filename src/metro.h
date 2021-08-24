@@ -4,6 +4,7 @@ extern const int MAX_NUM_METROS;
 
 // intialize the metros system
 extern void init_metro(void);
+extern void register_metro(void);
 extern void deinit_metro(void);
 
 // create a metro at the specified index
