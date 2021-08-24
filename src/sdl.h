@@ -6,6 +6,7 @@
 
 extern uint32_t *pixels;
 
+// only needed if we're going to change the screen not via lua
 void clear(uint32_t *dst);
 void putpixel(uint32_t *dst, int x, int y, int color);
 void redraw(uint32_t *dst);

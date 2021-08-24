@@ -29,8 +29,7 @@ attempting to stay as minimal as possible
   - naming conventions: event/callbacks
   - script reload
   - utils: sys.time, sys.cmd
-- arg filename (or, figure out file use pattern)
-  - make path var available in lua
+  - make script/path var available in lua
 - repl (ncurses?)
 - external command entry (websocket? osc?)
 - window management
