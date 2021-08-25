@@ -113,6 +113,10 @@ void deinit_sdl(void) {
 	SDL_Quit();
 }
 
+void reset_sdl(void) {
+  clear(pixels);
+}
+
 
 void sdl_check() {
   union event_data *ev;
@@ -131,7 +135,8 @@ void sdl_check() {
             case SDLK_q: ev = event_data_new(EVENT_QUIT);
                          event_post(ev);
                          break;
-            case SDLK_r: printf("reload script! (dummy)\n");
+            case SDLK_r: ev = event_data_new(EVENT_RELOAD);
+                         event_post(ev);
                          break;
           }
         } 

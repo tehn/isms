@@ -157,6 +157,13 @@ static void handle_event(union event_data *ev) {
     case EVENT_QUIT:
       quit = true;
       break;
+    case EVENT_RELOAD:
+      deinit_metro();
+      deinit_lua();
+      reset_sdl();
+      init_lua();
+      lua_run();
+      break;
     case EVENT_SDL_CHECK:
       sdl_check();
       break;

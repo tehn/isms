@@ -12,7 +12,11 @@
 #include "metro.h"
 #include "sdl.h"
 
+#include "core.h"
+
 lua_State *L;
+
+char script[64];
 
 void init_lua() {
   //printf(">> LUA: init\n");
@@ -23,11 +27,18 @@ void init_lua() {
   register_osc();
   register_grid();
   register_sdl();
+
+  //printf(">> running core.lua\n");
+  if (luaL_dostring(L, core) != LUA_OK) printf("ERROR: core.lua");
 }
 
 void deinit_lua() {
   //printf(">> LUA: deinit\n");
   lua_close(L);
+}
+
+void lua_run() {
+  l_dofile(L, script); 
 }
 
 //////////////////////////////////////////////////////////////////////////////

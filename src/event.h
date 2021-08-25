@@ -9,6 +9,7 @@ extern bool quit;
 typedef enum {
   EVENT_FIRST_EVENT = 0,        // unused (do not remove)
   EVENT_QUIT,                   // quit
+  EVENT_RELOAD,                 // reload script (deinit/init lua)
   EVENT_SDL_CHECK,              // check for sdl events
   EVENT_EXEC_CODE_LINE,         // code to be executed by luavm
   EVENT_METRO,                  // metro

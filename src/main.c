@@ -12,10 +12,6 @@
 #include "osc.h"
 #include "grid.h"
 
-#include "core.h"
-
-char script[64];
-
 int main(int argc, char **argv) {
   printf("isms //////// %d\n", argc);
 
@@ -29,11 +25,8 @@ int main(int argc, char **argv) {
   init_grid();
   init_lua();
 
-  printf(">> running core.lua\n");
-  if (luaL_dostring(L, core) != LUA_OK) printf("ERROR: core.lua");
-
   printf(">> running %s\n", script);
-  l_dofile(L, script); 
+  lua_run();
 
   printf(">> starting event loop\n");
   event_loop();

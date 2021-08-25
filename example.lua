@@ -1,5 +1,5 @@
 --- script
-print("example.lua -------------> helllo there")
+print("example.lua -------------> hello there")
 
 for i=0,255 do
   screen.pixel(i,10,0xFFFFFF-i);

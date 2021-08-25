@@ -16,7 +16,8 @@ only tested on linux (ubuntu), include/lib paths are hardcoded in makefile
 - `example.lua` is run at startup, which accepts sdl key input to place a random white pixel and send an OSC message to supercollider
 - `example.scd` will provide a rudimentary osc-listening synth for testing.
 - if found, connects to grid at `/dev/ttyACM0` and sends OSC on key input.
-- quit by closing sdl window.
+- quit by closing sdl window or ctrl-q
+- ctrl-r reloads lua script
 
 ## design
 
@@ -27,26 +28,28 @@ attempting to stay as minimal as possible
 
 - lua
   - naming conventions: event/callbacks
-  - script reload
-  - utils: sys.time, sys.cmd
+  - utils: sys.time, sys.cmd, reload
   - make script/path var available in lua
 - repl (ncurses?)
 - external command entry (websocket? osc?)
-- window management
-  - resize enable and management
-  - default screen size and pixel scaling
-- drawing lib
-  - lines
-  - text
+- sdl
+  - window management
+    - resize enable and management
+    - default screen size and pixel scaling
+  - drawing lib
+    - lines
+    - text (libSDL2_ttf)
+  - mouse events
 - clocks
 - midi
 - metro allocator (?)
 
 (and)
 
+- lib management and extensibility
 - sane makefile
 - device management
-  - proper detection of grids/etc (udev)
+  - proper detection of grids/midi/etc (udev)
 - optimization
   - sdl should probably have its own thread
 
