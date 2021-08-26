@@ -27,17 +27,21 @@ attempting to stay as minimal as possible
 ## TODO
 
 - lua
-  - naming conventions: event/callbacks
+  - naming conventions
+    - consider putting all callbacks under "event" table
   - utils: sys.time, sys.cmd, reload
   - make script/path var available in lua
+  - init system with pre/post init, deinit/cleanup pre/post
+    - anticipate mods (?)
 - repl (ncurses?)
 - external command entry (websocket? osc?)
 - sdl
   - window management
     - resize enable and management
     - default screen size and pixel scaling
+      - should this be global (config file?) or script-defined?
   - drawing lib
-    - lines
+    - lines/curves/etc
     - text (libSDL2_ttf)
   - mouse events
 - clocks
@@ -46,10 +50,10 @@ attempting to stay as minimal as possible
 
 (and)
 
-- lib management and extensibility
+- lib management and extensibility: suggested best practices, folder structure/etc
 - sane makefile
 - device management
-  - proper detection of grids/midi/etc (udev)
+  - proper detection of grids/midi/etc (udev) --- see norns device
 - optimization
   - sdl should probably have its own thread
 
@@ -75,18 +79,8 @@ osc.receive(path, args, from)
 ```
 
 
-## links
+## reference
 
 - https://www.lua.org/manual/5.4/manual.html#4
 - https://github.com/klassmann/sdl2-lua53-example/blob/master/src/main.c
 - https://lucasklassmann.com/blog/2019-02-02-how-to-embeddeding-lua-in-c/#running-lua-code
-
-
-## sketch
-
-1. core
-2. ~/isms/settings.lua
-3. (script)
-4. pre_init(); init(); post_init();
-5. ...
-6. deinit(); post_deinit();
