@@ -4,8 +4,6 @@
 #define VER 16
 #define PAD 2
 
-extern uint32_t *pixels;
-
 int init_sdl(void);
 void register_sdl(void);
 void deinit_sdl(void);

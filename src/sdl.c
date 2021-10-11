@@ -14,11 +14,8 @@
 
 static pthread_t p;
 
-SDL_Window *gWindow;
-SDL_Renderer *gRenderer;
-SDL_Texture *gTexture;
-SDL_Surface *gSurface;
 SDL_Window *window;
+SDL_Surface *surface;
 SDL_Surface *screen;
 SDL_Rect rect;
 
@@ -63,13 +60,8 @@ void putpixel(uint32_t *dst, int x, int y, int color) {
 }
 
 void redraw(uint32_t *dst) {
-  //SDL_UpdateTexture(gTexture, NULL, dst, WIDTH * sizeof(uint32_t));
-  //SDL_RenderClear(gRenderer);
-  //SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
-  //SDL_RenderPresent(gRenderer);
-  //SDL_BlitSurface(gSurface, NULL, screen, NULL); // blit it to the screen
-  SDL_BlitScaled(gSurface, NULL, screen, &rect);
-  SDL_UpdateWindowSurface(gWindow);
+  SDL_BlitScaled(surface, NULL, screen, &rect);
+  SDL_UpdateWindowSurface(window);
 }
 
 int init_sdl(void) {
@@ -77,33 +69,21 @@ int init_sdl(void) {
 
   if(SDL_Init(SDL_INIT_VIDEO) < 0)
     return error("Init", SDL_GetError());
-  gWindow = SDL_CreateWindow("isms",
+  window = SDL_CreateWindow("isms",
       SDL_WINDOWPOS_UNDEFINED,
       SDL_WINDOWPOS_UNDEFINED,
       WIDTH * ZOOM,
       HEIGHT * ZOOM,
       SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-  if(gWindow == NULL)
+  if(window == NULL)
     return error("Window", SDL_GetError());
-  gRenderer = SDL_CreateRenderer(gWindow, -1, 0);
-  if(gRenderer == NULL)
-    return error("Renderer", SDL_GetError());
+  SDL_SetWindowMinimumSize(window, WIDTH, HEIGHT);
 
-  gSurface = SDL_CreateRGBSurface(0, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
-  screen = SDL_GetWindowSurface(gWindow);
+  surface = SDL_CreateRGBSurface(0, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
+  screen = SDL_GetWindowSurface(window);
   rerect();
 
-  gTexture = SDL_CreateTexture(gRenderer,
-      SDL_PIXELFORMAT_ARGB8888,
-      SDL_TEXTUREACCESS_STATIC,
-      WIDTH,
-      HEIGHT);
-  if(gTexture == NULL)
-    return error("Texture", SDL_GetError());
-  pixels = (uint32_t *)malloc(WIDTH * HEIGHT * sizeof(uint32_t));
-  if(pixels == NULL)
-    return error("Pixels", "Failed to allocate memory");
-  clear(gSurface->pixels);
+  clear(surface->pixels);
 
   // start event check timer
   if (pthread_create(&p, NULL, sdl_loop, 0)) {
@@ -124,18 +104,14 @@ void register_sdl(void) {
 void deinit_sdl(void) {
   //printf(">> SDL: deinit\n");
   pthread_cancel(p);
-  free(pixels);
-  SDL_DestroyTexture(gTexture);
-  gTexture = NULL;
-  SDL_DestroyRenderer(gRenderer);
-  gRenderer = NULL;
-  SDL_DestroyWindow(gWindow);
-  gWindow = NULL;
+  SDL_DestroyWindow(window);
+  window = NULL;
+  SDL_FreeSurface(surface);
   SDL_Quit();
 }
 
 void reset_sdl(void) {
-  clear(pixels);
+  clear(surface->pixels);
 }
 
 
@@ -185,7 +161,7 @@ void sdl_check() {
         //if(event.window.event == SDL_WINDOWEVENT_EXPOSED)
         //redraw(pixels);
         if(event.window.event == SDL_WINDOWEVENT_RESIZED) {
-          screen = SDL_GetWindowSurface(gWindow);
+          screen = SDL_GetWindowSurface(window);
           rerect();
           redraw(pixels);
         }
@@ -215,7 +191,7 @@ int _redraw(lua_State *l) {
 
 int _clear(lua_State *l) {
   lua_check_num_args(0);
-  clear(pixels);
+  clear(surface->pixels);
   lua_settop(l, 0);
   return 0;
 }
@@ -225,7 +201,7 @@ int _pixel(lua_State *l) {
   double x = luaL_checknumber(l, 1);
   double y = luaL_checknumber(l, 2);
   double c = luaL_checknumber(l, 3);
-  putpixel(gSurface->pixels,x,y,c);
+  putpixel(surface->pixels,x,y,c);
   lua_settop(l, 0);
   return 0;
 }
