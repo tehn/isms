@@ -15,7 +15,7 @@
 int main(int argc, char **argv) {
   printf("isms //////// %d\n", argc);
 
-  if(argc==1) strcpy(script, "example.lua");
+  if(argc<2) strcpy(script, "example.lua");
   else strncpy(script, argv[1], 63);
 
   init_event();
