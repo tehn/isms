@@ -11,6 +11,7 @@
 #include "lua.h"
 #include "osc.h"
 #include "grid.h"
+#include "input.h"
 
 int main(int argc, char **argv) {
   printf("isms //////// %d\n", argc);
@@ -19,6 +20,7 @@ int main(int argc, char **argv) {
   else strncpy(script, argv[1], 63);
 
   init_event();
+  init_input();
   init_osc();
   init_metro();
   init_sdl();

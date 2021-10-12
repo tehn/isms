@@ -168,7 +168,9 @@ static void handle_event(union event_data *ev) {
       sdl_check();
       break;
     case EVENT_EXEC_CODE_LINE:
-      printf("e: codeline: %s\n", ev->exec_code_line.line);
+      //printf("e: codeline: %s\n", ev->exec_code_line.line);
+      if (luaL_dostring(L, ev->exec_code_line.line) != LUA_OK)
+	      printf("<fail>");
       break;
     case EVENT_METRO:
       //printf("e: metro: %i %i\n",ev->metro.id, ev->metro.stage);
