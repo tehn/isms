@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "lo/lo.h"
 
@@ -14,10 +15,15 @@
 #include "input.h"
 
 int main(int argc, char **argv) {
-  printf("isms //////// %d\n", argc);
+  printf("isms ////////\n");
 
   if(argc<2) strcpy(script, "example.lua");
   else strncpy(script, argv[1], 63);
+
+  if(access(script, F_OK) == -1) {
+    printf("not found: %s\n",script);
+    exit(0);
+  }
 
   init_event();
   init_input();
