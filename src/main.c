@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-#include <unistd.h>
 
 #include "lo/lo.h"
 
@@ -14,16 +13,13 @@
 #include "grid.h"
 #include "input.h"
 
+char script[64];
+
 int main(int argc, char **argv) {
   printf("isms ////////\n");
 
-  if(argc<2) strcpy(script, "example.lua");
+  if(argc<2) strcpy(script, "example.lua"); // for testing (remove this later)
   else strncpy(script, argv[1], 63);
-
-  if(access(script, F_OK) == -1) {
-    printf("not found: %s\n",script);
-    exit(0);
-  }
 
   init_event();
   init_input();
@@ -33,8 +29,7 @@ int main(int argc, char **argv) {
   init_grid();
   init_lua();
 
-  printf(">> running %s\n", script);
-  lua_run();
+  lua_run(script);
 
   printf(">> starting event loop\n");
   event_loop();
@@ -45,7 +40,7 @@ int main(int argc, char **argv) {
   deinit_metro();
   deinit_osc();
 
-  printf("farewell.\n");
+  printf(">> farewell.\n");
   return 0;
 }
 

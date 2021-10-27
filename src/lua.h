@@ -13,7 +13,6 @@
     }
 
 extern lua_State *L;
-extern char script[64];
 
 void init_lua();
 void deinit_lua();
