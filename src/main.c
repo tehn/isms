@@ -6,12 +6,13 @@
 #include "lo/lo.h"
 
 #include "event.h"
-#include "metro.h"
-#include "sdl.h"
-#include "lua.h"
-#include "osc.h"
 #include "grid.h"
 #include "input.h"
+#include "metro.h"
+#include "midi.h"
+#include "lua.h"
+#include "osc.h"
+#include "sdl.h"
 
 char script[64];
 
@@ -24,6 +25,7 @@ int main(int argc, char **argv) {
   init_event();
   init_input();
   init_osc();
+  init_midi();
   init_metro();
   init_sdl();
   init_grid();

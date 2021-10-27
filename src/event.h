@@ -16,6 +16,7 @@ typedef enum {
   EVENT_KEY,                    // SDL keyboard input
   EVENT_OSC,                    // OSC received
   EVENT_GRID,                   // GRID key event
+  EVENT_MIDI,                   // MIDI event
 } event_t;
 
 extern void init_event(void);
@@ -60,6 +61,11 @@ struct event_grid {
   uint8_t z;
 };
 
+struct event_midi {
+  struct event_common common;
+  uint8_t data[3];
+};
+
 
 union event_data {
   uint32_t type;
@@ -68,5 +74,6 @@ union event_data {
   struct event_key key;
   struct event_osc osc;
   struct event_grid grid;
+  struct event_midi midi;
 };
 

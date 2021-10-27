@@ -43,7 +43,7 @@ void init_grid(void) {
     }
   } 
   else
-    printf(">>>> GRID: not found\n");
+    printf(">> GRID: not found\n");
 }
 
 void register_grid(void) {

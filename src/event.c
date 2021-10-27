@@ -191,6 +191,9 @@ static void handle_event(union event_data *ev) {
       //printf("grid: %d %d %d\n", ev->grid.x, ev->grid.y, ev->grid.z);
       event_grid_key(ev->grid.x, ev->grid.y, ev->grid.z);
       break;
+    case EVENT_MIDI:
+      printf(">> MIDI: %d %d %d\n", ev->midi.data[0], ev->midi.data[1], ev->midi.data[2]);
+      break;
   }
 
   event_data_free(ev);

@@ -13,23 +13,27 @@ only tested on linux (ubuntu), include/lib paths are hardcoded in makefile
 
 ## currently
 
-- `example.lua` is run at startup, which accepts sdl key input to place a random white pixel and send an OSC message to supercollider
+- `example.lua` is run at startup, creating a new:q window which accepts sdl key input to place a random white pixel and send an OSC message to supercollider
 - `example.scd` will provide a rudimentary osc-listening synth for testing.
 - if found, connects to grid at `/dev/ttyACM0` and sends OSC on key input.
+- a rudimentary REPL is implemented, try `print('hello')`
 - quit by closing sdl window or ctrl-q
 - ctrl-r reloads lua script
+
+specifying a filename as an argument will run that instead of `example.lua` (ie, if your working directory is elsewhere).
 
 ## design
 
 attempting to stay as minimal as possible
 
+`core.lua` is included in the compiled binary so we don't need to have a library path for essential lua functionality. though in the future it makes sense to have some default locations to look for user libs.
 
 ## TODO
 
 - repl (ncurses?)
 - device management
-  - proper detection of grids/midi/etc (udev) --- see norns device
-- midi
+  - hotswap detection of grids/midi/etc (udev) --- see norns device
+- midi --- consider alsaseq
 - lua
   - naming conventions
     - consider putting all callbacks under "event" table
