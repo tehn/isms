@@ -56,9 +56,10 @@ void register_grid(void) {
 
 void deinit_grid(void) {
   //printf(">> GRID: deinit\n");
-  pthread_cancel(p);
-  if(connected)
+  if(connected) {
+    pthread_cancel(p);
     monome_close(monome);
+  }
 }
 
 

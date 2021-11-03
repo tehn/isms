@@ -16,6 +16,8 @@
 
 lua_State *L;
 
+char last_script[64];
+
 void init_lua() {
   //printf(">> LUA: init\n");
   L = luaL_newstate();
@@ -38,6 +40,7 @@ void deinit_lua() {
 void lua_run(char *script) {
   //printf(">> running %s\n", script);
   l_dofile(L, script); 
+  strcpy(last_script,script);
 }
 
 //////////////////////////////////////////////////////////////////////////////

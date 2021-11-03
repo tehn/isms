@@ -13,11 +13,12 @@
     }
 
 extern lua_State *L;
+extern char last_script[64];
 
 void init_lua();
 void deinit_lua();
 
-void lua_run();
+void lua_run(char *);
 
 int l_report(lua_State *L, int status);
 int l_docall(lua_State *L, int narg, int nres);

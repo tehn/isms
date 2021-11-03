@@ -162,7 +162,7 @@ static void handle_event(union event_data *ev) {
       deinit_lua();
       reset_sdl();
       init_lua();
-      lua_run();
+      lua_run(last_script);
       break;
     case EVENT_SDL_CHECK:
       sdl_check();

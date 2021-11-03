@@ -13,7 +13,7 @@ only tested on linux (ubuntu), include/lib paths are hardcoded in makefile
 
 ## currently
 
-- `example.lua` is run at startup, creating a new:q window which accepts sdl key input to place a random white pixel and send an OSC message to supercollider
+- `example.lua` is run at startup, creating a new window which accepts sdl key input to place a random white pixel and send an OSC message to supercollider
 - `example.scd` will provide a rudimentary osc-listening synth for testing.
 - if found, connects to grid at `/dev/ttyACM0` and sends OSC on key input.
 - a rudimentary REPL is implemented, try `print('hello')`
@@ -30,10 +30,10 @@ attempting to stay as minimal as possible
 
 ## TODO
 
-- repl (ncurses?)
+- repl improvements (readline/ncurses?)
 - device management
   - hotswap detection of grids/midi/etc (udev) --- see norns device
-- midi --- consider alsaseq
+- midi
 - lua
   - naming conventions
     - consider putting all callbacks under "event" table

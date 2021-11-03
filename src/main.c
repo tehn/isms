@@ -9,7 +9,6 @@
 #include "grid.h"
 #include "input.h"
 #include "metro.h"
-#include "midi.h"
 #include "lua.h"
 #include "osc.h"
 #include "sdl.h"
@@ -25,7 +24,6 @@ int main(int argc, char **argv) {
   init_event();
   init_input();
   init_osc();
-  init_midi();
   init_metro();
   init_sdl();
   init_grid();
