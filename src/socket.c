@@ -39,6 +39,7 @@ void *socket_loop(void *x) {
       printf("\033[0m");
       char *line = malloc((n + 1) * sizeof(char));
       strncpy(line, buffer, n);
+      line[n] = '\0';
       union event_data *ev = event_data_new(EVENT_EXEC_CODE_LINE);
       ev->exec_code_line.line = line;
       event_post(ev);
