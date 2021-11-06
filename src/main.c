@@ -12,6 +12,7 @@
 #include "lua.h"
 #include "osc.h"
 #include "sdl.h"
+#include "socket.h"
 
 char script[64];
 
@@ -27,6 +28,7 @@ int main(int argc, char **argv) {
   init_metro();
   init_sdl();
   init_grid();
+  init_socket();
   init_lua();
 
   lua_run(script);

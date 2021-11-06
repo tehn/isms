@@ -92,7 +92,7 @@ void handle_up(const monome_event_t *e, void *data) {
 
 
 // lua event
-void event_grid_key(uint8_t x, uint8_t y, uint8_t z) {
+void handle_grid(uint8_t x, uint8_t y, uint8_t z) {
   lua_getglobal(L, "grid");
   lua_getfield(L, -1, "key");
   lua_remove(L, -2);

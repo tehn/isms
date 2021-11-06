@@ -67,7 +67,7 @@ void lo_error_handler(int num, const char *m, const char *path) {
   printf("#### liblo error %d in path %s: %s\n", num, path, m);
 }
 
-void osc_event(char *from_host, char *from_port, char *path, lo_message msg) {
+void handle_osc(char *from_host, char *from_port, char *path, lo_message msg) {
   const char *types = NULL;
   int argc;
   lo_arg **argv = NULL;

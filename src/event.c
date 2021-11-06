@@ -174,7 +174,7 @@ static void handle_event(union event_data *ev) {
       break;
     case EVENT_METRO:
       //printf("e: metro: %i %i\n",ev->metro.id, ev->metro.stage);
-      event_metro(ev->metro.id, ev->metro.stage);
+      handle_metro(ev->metro.id, ev->metro.stage);
       break;
     case EVENT_KEY:
       //printf("e: key: %i\n",ev->key.scancode);
@@ -185,11 +185,11 @@ static void handle_event(union event_data *ev) {
       }
       break;
     case EVENT_OSC:
-      osc_event(ev->osc.from_host, ev->osc.from_port, ev->osc.path, ev->osc.msg);
+      handle_osc(ev->osc.from_host, ev->osc.from_port, ev->osc.path, ev->osc.msg);
       break;
     case EVENT_GRID:
       //printf("grid: %d %d %d\n", ev->grid.x, ev->grid.y, ev->grid.z);
-      event_grid_key(ev->grid.x, ev->grid.y, ev->grid.z);
+      handle_grid(ev->grid.x, ev->grid.y, ev->grid.z);
       break;
     case EVENT_MIDI:
       printf(">> MIDI: %d %d %d\n", ev->midi.data[0], ev->midi.data[1], ev->midi.data[2]);

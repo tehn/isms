@@ -20,4 +20,4 @@ extern void metro_stop(int idx);
 extern void metro_set_time(int idx, float sec);
 
 // lua event
-extern void event_metro(int idx, int stage);
+extern void handle_metro(int idx, int stage);

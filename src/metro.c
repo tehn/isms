@@ -310,7 +310,7 @@ static int _stop(lua_State *l) {
 
 // lua event
 
-void event_metro(int idx, int stage) {
+void handle_metro(int idx, int stage) {
   //printf("e: metro: %i %i\n",idx, stage);
   lua_getglobal(L, "metro");
   lua_getfield(L, -1, "tick");

@@ -19,6 +19,7 @@ only tested on linux (ubuntu), include/lib paths are hardcoded in makefile
 - a rudimentary REPL is implemented, try `print('hello')`
 - quit by closing sdl window or ctrl-q
 - ctrl-r reloads lua script
+- remote lua input via UDP on port 11001 ie `echo -n "print('hello')" > /dev/udp/localhost/11001` (set up your editor to send to this port)
 
 specifying a filename as an argument will run that instead of `example.lua` (ie, if your working directory is elsewhere).
 
@@ -52,7 +53,6 @@ attempting to stay as minimal as possible
     - text (libSDL2_ttf)
   - mouse events
 
-- external command entry (websocket? osc?)
 - clocks
 - metro allocator (?)
 
@@ -63,6 +63,7 @@ attempting to stay as minimal as possible
 - optimization
   - sdl should probably have its own thread
 - drop sdl for libx11?
+- should udp socket input check incoming ip (restrict to localhost?)
 
 
 ## lua
