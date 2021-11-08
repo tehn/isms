@@ -2,15 +2,22 @@
 print("example.lua -------------> hello there")
 
 for i=0,255 do
-  screen.pixel(i,10,0xFFFFFF-i);
-  screen.pixel(i,20,0x00FFFF-i);
-  screen.pixel(i,30,0xFF00FF-i);
+  screen.pixel(i,4,0xFFFF00-i);
+  screen.pixel(i,8,0x00FFFF-i);
+  screen.pixel(i,12,0xFF00FF-i);
 end
 
 screen.redraw()
 
+x1,y1,x2,y2,c = 128,80,0,0,0xffffff
+
 key = function(x)
-  screen.pixel(math.random(256),math.random(16)+50,0xFFFFFF);
+  x2 = x1
+  y2 = y1
+  x1 = math.random(192)+32
+  y1 = math.random(64)+32
+  c = c - 0x111111
+  screen.line(x1,y1,x2,y2,c)
   screen.redraw()
   osc.send({"localhost",57120},"/n",{x%127})
   print("key: "..x)
@@ -32,4 +39,3 @@ grid.key = function(x,y,z)
 end
 
 dofile("test.lua")
-

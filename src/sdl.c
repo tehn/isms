@@ -30,6 +30,7 @@ void *sdl_loop(void *);
 static int _redraw(lua_State *l);
 static int _clear(lua_State *l);
 static int _pixel(lua_State *l);
+static int _line(lua_State *l);
 
 void sdl_check();
 
@@ -54,9 +55,29 @@ void clear(uint32_t *dst) {
       dst[v * WIDTH + h] = 0;
 }
 
-void putpixel(uint32_t *dst, int x, int y, int color) {
+void pixel(uint32_t *dst, int x, int y, int color) {
   if(x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
     dst[y * WIDTH + x] = color;
+}
+
+void line(uint32_t *dst, int ax, int ay, int bx, int by, int color) {
+  int dx = abs(bx - ax), sx = ax < bx ? 1 : -1;
+  int dy = -abs(by - ay), sy = ay < by ? 1 : -1;
+  int err = dx + dy, e2;
+  for(;;) {
+    pixel(dst, ax, ay, color);
+    if(ax == bx && ay == by)
+      break;
+    e2 = 2 * err;
+    if(e2 >= dy) {
+      err += dy;
+      ax += sx;
+    }
+    if(e2 <= dx) {
+      err += dx;
+      ay += sy;
+    }
+  }
 }
 
 void redraw(uint32_t *dst) {
@@ -98,6 +119,7 @@ void register_sdl(void) {
   lua_reg_func("redraw",_redraw);
   lua_reg_func("clear",_clear);
   lua_reg_func("pixel",_pixel);
+  lua_reg_func("line",_line);
   lua_setglobal(L,"screen");
 }
 
@@ -201,7 +223,19 @@ int _pixel(lua_State *l) {
   double x = luaL_checknumber(l, 1);
   double y = luaL_checknumber(l, 2);
   double c = luaL_checknumber(l, 3);
-  putpixel(surface->pixels,x,y,c);
+  pixel(surface->pixels,x,y,c);
+  lua_settop(l, 0);
+  return 0;
+}
+
+int _line(lua_State *l) {
+  lua_check_num_args(5);
+  double x1 = luaL_checknumber(l, 1);
+  double y1 = luaL_checknumber(l, 2);
+  double x2 = luaL_checknumber(l, 3);
+  double y2 = luaL_checknumber(l, 4);
+  double c = luaL_checknumber(l, 5);
+  line(surface->pixels,x1,y1,x2,y2,c);
   lua_settop(l, 0);
   return 0;
 }
