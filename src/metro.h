@@ -13,6 +13,3 @@ extern void metro_stop(int idx);
 // NB: if the metro is running, its hard to say if new value will take effect
 // on current period or next period
 extern void metro_set_time(int idx, float sec);
-
-// lua event
-extern void handle_metro(int idx, int stage);

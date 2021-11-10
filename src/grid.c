@@ -21,10 +21,6 @@ void *monome_loop(void *);
 static void handle_down(const monome_event_t *e, void *data);
 static void handle_up(const monome_event_t *e, void *data);
 
-static int _redraw(lua_State *l);
-static int _led(lua_State *l);
-static int _all(lua_State *l);
-
 void init_grid(void) {
   //printf(">> GRID: init\n");
   for(int y = 0; y < 64; y++) {
@@ -44,14 +40,6 @@ void init_grid(void) {
   } 
   else
     printf(">> GRID: not found\n");
-}
-
-void register_grid(void) {
-  lua_newtable(L);
-  lua_reg_func("redraw",_redraw);
-  lua_reg_func("led",_led);
-  lua_reg_func("all",_all);
-  lua_setglobal(L,"grid");
 }
 
 void deinit_grid(void) {
@@ -90,21 +78,7 @@ void handle_up(const monome_event_t *e, void *data) {
 }
 
 
-
-// lua event
-void handle_grid(uint8_t x, uint8_t y, uint8_t z) {
-  lua_getglobal(L, "grid");
-  lua_getfield(L, -1, "key");
-  lua_remove(L, -2);
-  lua_pushinteger(L, x);
-  lua_pushinteger(L, y);
-  lua_pushinteger(L, z);
-  l_report(L, l_docall(L, 3, 0));
-}
-
-
-// lua functions
-static int _redraw(lua_State *l) {
+void grid_redraw() {
   if(connected) {
     if (dirty[0]) {
       monome_led_level_map(monome, 0, 0, quad[0]);
@@ -115,30 +89,18 @@ static int _redraw(lua_State *l) {
       dirty[1] = 0;
     }
   }
-  return 0;
 }
 
-static int _led(lua_State *l) {
-  lua_check_num_args(3);
-  int x = luaL_checknumber(l, 1);
-  int y = luaL_checknumber(l, 2);
-  int z = luaL_checknumber(l, 3);
-
+void grid_led(int x, int y, int z) {
   if(x<16 && x>=0 && y<8 && y>=0 && z<16 && z>=0) { // bounds check
     int q = x > 7; // quad
     if(q) x = x-8;
     quad[q][y*8 + x] = z;
     dirty[q] = 1;
   }
-  
-  lua_settop(l, 0);
-  return 0;
 }
 
-static int _all(lua_State *l) {
-  lua_check_num_args(1);
-  int z = luaL_checknumber(l, 1);
-
+void grid_all(int z) {
   z %= 16; // clamp
 
   for(int y = 0; y < 64; y++) {
@@ -148,9 +110,6 @@ static int _all(lua_State *l) {
   
   dirty[0] = 1;
   dirty[1] = 1;
-  
-  lua_settop(l, 0);
-  return 0;
 }
 
 

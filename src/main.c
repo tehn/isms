@@ -26,10 +26,10 @@ int main(int argc, char **argv) {
   init_event();
   init_input();
   init_osc();
-  init_metro();
-  init_sdl();
-  init_grid();
   init_socket();
+  init_metro();
+  init_grid();
+  init_sdl();
   init_lua();
 
   lua_run(script);

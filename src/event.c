@@ -15,7 +15,7 @@
 #include "lua.h"
 #include "sdl.h"
 #include "osc.h"
-#include "metro.h"
+#include "interface.h"
 #include "grid.h"
 
 //--- types and vars
@@ -158,11 +158,7 @@ static void handle_event(union event_data *ev) {
       quit = true;
       break;
     case EVENT_RESET:
-      deinit_metro();
-      deinit_lua();
-      reset_sdl();
-      init_lua();
-      lua_run(last_script);
+      handle_reset();
       break;
     case EVENT_SDL_CHECK:
       sdl_check();
@@ -170,7 +166,7 @@ static void handle_event(union event_data *ev) {
     case EVENT_EXEC_CODE_LINE:
       //printf("e: codeline: %s\n", ev->exec_code_line.line);
       if (luaL_dostring(L, ev->exec_code_line.line) != LUA_OK)
-	printf("<fail>\n");
+	      printf("<fail>\n");
       break;
     case EVENT_METRO:
       //printf("e: metro: %i %i\n",ev->metro.id, ev->metro.stage);
@@ -178,11 +174,7 @@ static void handle_event(union event_data *ev) {
       break;
     case EVENT_KEY:
       //printf("e: key: %i\n",ev->key.scancode);
-      lua_getglobal(L, "key");
-      lua_pushinteger(L, ev->key.scancode);
-      if (!(lua_pcall(L, 1, 0, 0) == LUA_OK)) {
-        printf("Error on run method\n");
-      }
+      handle_sdl_key(ev->key.scancode);
       break;
     case EVENT_OSC:
       handle_osc(ev->osc.from_host, ev->osc.from_port, ev->osc.path, ev->osc.msg);

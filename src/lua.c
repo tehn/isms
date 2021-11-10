@@ -23,12 +23,7 @@ void init_lua() {
   //printf(">> LUA: init\n");
   L = luaL_newstate();
   luaL_openlibs(L);
-
-  register_osc();
-  register_grid();
-
   init_interface();
-
   //printf(">> running core.lua\n");
   if (luaL_dostring(L, core) != LUA_OK) printf("ERROR: core.lua");
 }

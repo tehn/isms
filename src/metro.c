@@ -272,21 +272,5 @@ void metro_cancel(struct metro *t) {
 }
 
 
-
-// lua event
-
-void handle_metro(int idx, int stage) {
-  //printf("e: metro: %i %i\n",idx, stage);
-  lua_getglobal(L, "metro");
-  lua_getfield(L, -1, "tick");
-  lua_remove(L, -2);
-  lua_pushinteger(L, idx + 1);   // convert to 1-based
-  lua_pushinteger(L, stage + 1); // convert to 1-based
-  l_report(L, l_docall(L, 2, 0));
-  //if (!(lua_pcall(L, 2, 0, 0) == LUA_OK)) {
-  //printf("Error on run method\n");
-  //}
-}
-
 #undef MAX_NUM_METROS_OK
 
