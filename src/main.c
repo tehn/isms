@@ -8,6 +8,7 @@
 #include "event.h"
 #include "grid.h"
 #include "input.h"
+#include "interface.h"
 #include "metro.h"
 #include "lua.h"
 #include "osc.h"

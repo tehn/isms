@@ -27,11 +27,6 @@ int ZOOM = 4;
 
 void *sdl_loop(void *);
 
-static int _redraw(lua_State *l);
-static int _clear(lua_State *l);
-static int _pixel(lua_State *l);
-static int _line(lua_State *l);
-
 void sdl_check();
 
 int error(char *msg, const char *err) {
@@ -48,24 +43,24 @@ void rerect() {
 }
 
 
-void clear(uint32_t *dst) {
+void sdl_clear(uint32_t *dst) {
   int v, h;
   for(v = 0; v < HEIGHT; v++)
     for(h = 0; h < WIDTH; h++)
       dst[v * WIDTH + h] = 0;
 }
 
-void pixel(uint32_t *dst, int x, int y, int color) {
+void sdl_pixel(uint32_t *dst, int x, int y, int color) {
   if(x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
     dst[y * WIDTH + x] = color;
 }
 
-void line(uint32_t *dst, int ax, int ay, int bx, int by, int color) {
+void sdl_line(uint32_t *dst, int ax, int ay, int bx, int by, int color) {
   int dx = abs(bx - ax), sx = ax < bx ? 1 : -1;
   int dy = -abs(by - ay), sy = ay < by ? 1 : -1;
   int err = dx + dy, e2;
   for(;;) {
-    pixel(dst, ax, ay, color);
+    sdl_pixel(dst, ax, ay, color);
     if(ax == bx && ay == by)
       break;
     e2 = 2 * err;
@@ -80,7 +75,7 @@ void line(uint32_t *dst, int ax, int ay, int bx, int by, int color) {
   }
 }
 
-void redraw(uint32_t *dst) {
+void sdl_redraw(uint32_t *dst) {
   SDL_BlitScaled(surface, NULL, screen, &rect);
   SDL_UpdateWindowSurface(window);
 }
@@ -104,7 +99,7 @@ int init_sdl(void) {
   screen = SDL_GetWindowSurface(window);
   rerect();
 
-  clear(surface->pixels);
+  sdl_clear(surface->pixels);
 
   // start event check timer
   if (pthread_create(&p, NULL, sdl_loop, 0)) {
@@ -112,15 +107,6 @@ int init_sdl(void) {
   }
 
   return 1;
-}
-
-void register_sdl(void) {
-  lua_newtable(L);
-  lua_reg_func("redraw",_redraw);
-  lua_reg_func("clear",_clear);
-  lua_reg_func("pixel",_pixel);
-  lua_reg_func("line",_line);
-  lua_setglobal(L,"screen");
 }
 
 void deinit_sdl(void) {
@@ -133,7 +119,7 @@ void deinit_sdl(void) {
 }
 
 void reset_sdl(void) {
-  clear(surface->pixels);
+  sdl_clear(surface->pixels);
 }
 
 
@@ -154,20 +140,20 @@ void sdl_check() {
             case SDLK_q: ev = event_data_new(EVENT_QUIT);
                          event_post(ev);
                          break;
-            case SDLK_r: ev = event_data_new(EVENT_RELOAD);
+            case SDLK_r: ev = event_data_new(EVENT_RESET);
                          event_post(ev);
                          break;
             case SDLK_MINUS:
                          if(ZOOM>1) {
                            ZOOM--;
                            rerect();
-                           redraw(pixels);
+                           sdl_redraw(pixels);
                          }
                          break;
             case SDLK_EQUALS:
                          ZOOM++;
                          rerect();
-                         redraw(pixels);
+                         sdl_redraw(pixels);
                          break;
           }
         } 
@@ -185,7 +171,7 @@ void sdl_check() {
         if(event.window.event == SDL_WINDOWEVENT_RESIZED) {
           screen = SDL_GetWindowSurface(window);
           rerect();
-          redraw(pixels);
+          sdl_redraw(pixels);
         }
     }
   }
@@ -201,41 +187,3 @@ void *sdl_loop(void *x) {
   }
 }
 
-
-///////
-
-int _redraw(lua_State *l) {
-  lua_check_num_args(0);
-  redraw(pixels);
-  lua_settop(l, 0);
-  return 0;
-}
-
-int _clear(lua_State *l) {
-  lua_check_num_args(0);
-  clear(surface->pixels);
-  lua_settop(l, 0);
-  return 0;
-}
-
-int _pixel(lua_State *l) {
-  lua_check_num_args(3);
-  double x = luaL_checknumber(l, 1);
-  double y = luaL_checknumber(l, 2);
-  double c = luaL_checknumber(l, 3);
-  pixel(surface->pixels,x,y,c);
-  lua_settop(l, 0);
-  return 0;
-}
-
-int _line(lua_State *l) {
-  lua_check_num_args(5);
-  double x1 = luaL_checknumber(l, 1);
-  double y1 = luaL_checknumber(l, 2);
-  double x2 = luaL_checknumber(l, 3);
-  double y2 = luaL_checknumber(l, 4);
-  double c = luaL_checknumber(l, 5);
-  line(surface->pixels,x1,y1,x2,y2,c);
-  lua_settop(l, 0);
-  return 0;
-}

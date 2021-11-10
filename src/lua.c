@@ -8,6 +8,7 @@
 
 #include "lua.h"
 #include "grid.h"
+#include "interface.h"
 #include "osc.h"
 #include "metro.h"
 #include "sdl.h"
@@ -23,10 +24,10 @@ void init_lua() {
   L = luaL_newstate();
   luaL_openlibs(L);
 
-  register_metro();
   register_osc();
   register_grid();
-  register_sdl();
+
+  init_interface();
 
   //printf(">> running core.lua\n");
   if (luaL_dostring(L, core) != LUA_OK) printf("ERROR: core.lua");

@@ -59,11 +59,6 @@ static void metro_sleep(struct metro *t);
 static void metro_reset(struct metro *t, int stage);
 static void metro_cancel(struct metro *t);
 
-// lua functions
-
-static int _start(lua_State *l);
-static int _stop(lua_State *l);
-
 //------------------------
 //---- extern definitions
 
@@ -72,13 +67,6 @@ void init_metro(void) {
     metros[i].status = METRO_STATUS_STOPPED;
     metros[i].seconds = 1.0;
   }
-}
-
-void register_metro() {
-  lua_newtable(L);
-  lua_reg_func("start",_start);
-  lua_reg_func("stop",_stop);
-  lua_setglobal(L,"metro");
 }
 
 void deinit_metro() {
@@ -281,29 +269,6 @@ void metro_cancel(struct metro *t) {
     } else {
         t->status = METRO_STATUS_STOPPED;
     }
-}
-
-// lua functions
-
-static int _start(lua_State *l) {
-  //printf("metro start\n");
-  lua_check_num_args(4);
-  double idx = luaL_checknumber(l, 1) - 1; // convert to 1-based
-  double seconds = luaL_checknumber(l, 2);
-  double count = luaL_checknumber(l, 3);
-  double stage = luaL_checknumber(l, 4);
-  metro_start(idx, seconds, count, stage);
-  lua_settop(l, 0);
-  return 0;
-}
-
-static int _stop(lua_State *l) {
-  //printf("metro stop\n");
-  lua_check_num_args(1);
-  double idx = luaL_checknumber(l, 1);
-  metro_stop(idx);
-  lua_settop(l, 0);
-  return 0;
 }
 
 
