@@ -22,7 +22,6 @@
 // norns
 #include "event.h"
 #include "metro.h"
-#include "lua.h"
 
 #define MAX_NUM_METROS_OK 36
 

@@ -6,7 +6,6 @@
 
 #include <lo/lo.h>
 
-#include "lua.h"
 #include "event.h"
 
 char *osc_port = "10011";

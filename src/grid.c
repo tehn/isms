@@ -6,7 +6,6 @@
 #include <monome.h>
 
 #include "event.h"
-#include "lua.h"
 
 static int dirty[2] = {0,0};
 static int connected = 0;

@@ -3,12 +3,6 @@
 #include <pthread.h>
 #include <unistd.h>
 
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
-
-#include "lua.h"
-
 #include "event.h"
 #include "sdl.h"
 

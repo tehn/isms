@@ -16,6 +16,7 @@ static int _grid_led(lua_State *l);
 static int _grid_all(lua_State *l);
 static int _metro_start(lua_State *l);
 static int _metro_stop(lua_State *l);
+static int _midi_send(lua_State *l);
 static int _osc_send(lua_State *l);
 static int _sdl_redraw(lua_State *l);
 static int _sdl_clear(lua_State *l);
@@ -38,6 +39,10 @@ void init_interface(void) {
   lua_reg_func("start",_metro_start);
   lua_reg_func("stop",_metro_stop);
   lua_setglobal(L,"metro");
+  // midi
+  lua_newtable(L);
+  lua_reg_func("send",_midi_send);
+  lua_setglobal(L,"midi");
   // osc
   lua_newtable(L);
   lua_reg_func("send",_osc_send);
@@ -114,6 +119,21 @@ static int _metro_stop(lua_State *l) {
   lua_settop(l, 0);
   return 0;
 }
+
+
+//////// midi
+
+static int _midi_send(lua_State *l) {
+  lua_check_num_args(3);
+  uint8_t d0 = luaL_checknumber(l, 1);
+  uint8_t d1 = luaL_checknumber(l, 2);
+  uint8_t d2 = luaL_checknumber(l, 3);
+  // midi_send(d0,d1,d2);
+  printf("midi send: %d %d %d\n",d0,d1,d2);
+  lua_settop(l, 0);
+  return 0;
+}
+
 
 
 //////// osc
@@ -289,6 +309,19 @@ void handle_metro(int idx, int stage) {
   //if (!(lua_pcall(L, 2, 0, 0) == LUA_OK)) {
   //printf("Error on run method\n");
   //}
+}
+
+
+//////// midi
+
+void handle_midi(uint8_t d0, uint8_t d1, uint8_t d2) {
+  lua_getglobal(L, "midi");
+  lua_getfield(L, -1, "receive");
+  lua_remove(L, -2);
+  lua_pushinteger(L, d0);
+  lua_pushinteger(L, d1);
+  lua_pushinteger(L, d2);
+  l_report(L, l_docall(L, 3, 0));
 }
 
 
