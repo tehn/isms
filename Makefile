@@ -11,9 +11,9 @@ INC_DIRS := $(shell find $(SRC_DIRS) -type d)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 #CPPFLAGS = $(INC_FLAGS) -MMD -MP -ggdb
-CFLAGS=-I/usr/include -I/usr/local/include -std=c11 -Wall \
-			 -L/usr/local/lib -lSDL2 -llua -lm -ldl -llo -lmonome -lasound \
-			 -pthread -D_GNU_SOURCE
+CFLAGS=-I/usr/include -I/usr/local/include \
+			 -L/usr/local/lib -lSDL2 -llua -lm -ldl -llo -lmonome -lasound -ludev -levdev \
+			 -std=c11 -Wall -pthread -D_GNU_SOURCE
 
 # main target (C)
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
@@ -22,7 +22,7 @@ $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
 # c source
 $(BUILD_DIR)/%.c.o: %.c
 	$(MKDIR_P) $(dir $@)
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+	$(CC) $(CPPFLAGS) $(INC_FLAGS) $(CFLAGS) -c $< -o $@
 
 core:
 	echo 'const char* core = " \' > src/core.h
