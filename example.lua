@@ -25,8 +25,8 @@ end
 
 metro.tick = function(i,s)
   print("metro",i,s)
-  grid.all(s)
-  grid.redraw()
+  --grid.all(s)
+  --grid.redraw()
 end
 
 metro.start(1,0.1,5,0);

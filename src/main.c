@@ -5,8 +5,9 @@
 
 #include "lo/lo.h"
 
+#include "device.h"
+#include "device_monitor.h"
 #include "event.h"
-#include "grid.h"
 #include "input.h"
 #include "interface.h"
 #include "metro.h"
@@ -28,17 +29,19 @@ int main(int argc, char **argv) {
   init_osc();
   init_socket();
   init_metro();
-  init_grid();
   init_sdl();
   init_lua();
+  init_dev();
 
   lua_run(script);
+
+  dev_monitor_scan();
 
   printf(">> starting event loop\n");
   event_loop();
 
+  deinit_dev();
   deinit_lua();
-  deinit_grid();
   deinit_sdl();
   deinit_metro();
   deinit_osc();

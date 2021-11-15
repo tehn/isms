@@ -11,12 +11,12 @@
 #include <pthread.h>
 #include <lo/lo.h>
 
+#include "device.h"
 #include "event.h"
 #include "lua.h"
 #include "sdl.h"
 #include "osc.h"
 #include "interface.h"
-#include "grid.h"
 
 //--- types and vars
 
@@ -180,13 +180,20 @@ static void handle_event(union event_data *ev) {
       handle_osc(ev->osc.from_host, ev->osc.from_port, ev->osc.path, ev->osc.msg);
       break;
     case EVENT_GRID:
-      //printf("grid: %d %d %d\n", ev->grid.x, ev->grid.y, ev->grid.z);
-      handle_grid(ev->grid.x, ev->grid.y, ev->grid.z);
+      handle_grid(ev->grid.id,ev->grid.x, ev->grid.y, ev->grid.state);
       break;
     case EVENT_MIDI:
       //printf(">> MIDI: %d %d %d\n", ev->midi.data[0], ev->midi.data[1], ev->midi.data[2]);
-      handle_midi(ev->midi.data[0], ev->midi.data[1], ev->midi.data[2]);
+      handle_midi(ev->midi.id,ev->midi.data[0], ev->midi.data[1], ev->midi.data[2]);
       break;
+    case EVENT_DEVICE_ADD:
+      switch(ev->device_add.type) {
+        case DEV_TYPE_MONOME:
+          handle_monome_add(ev->device_add.dev);
+          break;
+        default:
+          break;
+      }
   }
 
   event_data_free(ev);

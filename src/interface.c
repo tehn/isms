@@ -3,7 +3,6 @@
 #include <lo/lo.h>
 
 #include "event.h"
-#include "grid.h"
 #include "interface.h"
 #include "lua.h"
 #include "metro.h"
@@ -72,28 +71,34 @@ int _isms_reset(lua_State *l) {
 //////// grid
 
 static int _grid_redraw(lua_State *l) {
-  lua_check_num_args(0);
-  grid_redraw();
+  lua_check_num_args(1);
+  luaL_checktype(l, 1, LUA_TLIGHTUSERDATA);
+  struct dev_monome *md = lua_touserdata(l, 1);
+  dev_monome_refresh(md);
   lua_settop(l, 0);
-  return 0; 
+  return 0;
 }
 
 static int _grid_led(lua_State *l) {
-  lua_check_num_args(3);
-  int x = luaL_checknumber(l, 1);
-  int y = luaL_checknumber(l, 2);
-  int z = luaL_checknumber(l, 3);
-  grid_led(x,y,z);
+  lua_check_num_args(4);
+  luaL_checktype(l, 1, LUA_TLIGHTUSERDATA);
+  struct dev_monome *md = lua_touserdata(l, 1);
+  int x = (int)luaL_checkinteger(l, 2) - 1; // convert from 1-base
+  int y = (int)luaL_checkinteger(l, 3) - 1; // convert from 1-base
+  int z = (int)luaL_checkinteger(l, 4);     // don't convert value!
+  dev_monome_grid_set_led(md, x, y, z);
   lua_settop(l, 0);
-  return 0; 
+  return 0;
 }
 
 static int _grid_all(lua_State *l) {
-  lua_check_num_args(1);
-  int z = luaL_checknumber(l, 1);
-  grid_all(z);
+  lua_check_num_args(2);
+  luaL_checktype(l, 1, LUA_TLIGHTUSERDATA);
+  struct dev_monome *md = lua_touserdata(l, 1);
+  int z = (int)luaL_checkinteger(l, 2); // don't convert value!
+  dev_monome_all_led(md, z);
   lua_settop(l, 0);
-  return 0; 
+  return 0;
 }
 
 
@@ -285,14 +290,31 @@ void handle_reset() {
 
 //////// grid
 
-void handle_grid(uint8_t x, uint8_t y, uint8_t z) {
+void handle_monome_add(void *mdev) {
+  struct dev_monome *md = (struct dev_monome *)mdev;
+  int id = md->dev.id;
+  const char *serial = md->dev.serial;
+  const char *name = md->dev.name;
+  lua_getglobal(L, "grid");
+  lua_getfield(L, -1, "add");
+  lua_remove(L, -2);
+  lua_pushinteger(L, id + 1); // convert to 1-base
+  lua_pushstring(L, serial);
+  lua_pushstring(L, name);
+  lua_pushlightuserdata(L, mdev);
+  l_report(L, l_docall(L, 4, 0));
+}
+
+
+void handle_grid(uint8_t i, uint8_t x, uint8_t y, uint8_t state) {
   lua_getglobal(L, "grid");
   lua_getfield(L, -1, "key");
   lua_remove(L, -2);
+  lua_pushinteger(L, i);
   lua_pushinteger(L, x);
   lua_pushinteger(L, y);
-  lua_pushinteger(L, z);
-  l_report(L, l_docall(L, 3, 0));
+  lua_pushinteger(L, state);
+  l_report(L, l_docall(L, 4, 0));
 }
 
 
@@ -314,14 +336,15 @@ void handle_metro(int idx, int stage) {
 
 //////// midi
 
-void handle_midi(uint8_t d0, uint8_t d1, uint8_t d2) {
+void handle_midi(uint8_t i, uint8_t d0, uint8_t d1, uint8_t d2) {
   lua_getglobal(L, "midi");
   lua_getfield(L, -1, "receive");
   lua_remove(L, -2);
+  lua_pushinteger(L, i);
   lua_pushinteger(L, d0);
   lua_pushinteger(L, d1);
   lua_pushinteger(L, d2);
-  l_report(L, l_docall(L, 3, 0));
+  l_report(L, l_docall(L, 4, 0));
 }
 
 

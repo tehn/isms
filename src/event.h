@@ -64,7 +64,6 @@ struct event_grid {
   uint8_t x;
   uint8_t y;
   uint8_t state;
-  uint8_t z;
 };
 
 struct event_midi {

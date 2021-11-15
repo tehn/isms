@@ -7,11 +7,7 @@
 #include <lauxlib.h>
 
 #include "lua.h"
-#include "grid.h"
 #include "interface.h"
-#include "osc.h"
-#include "metro.h"
-#include "sdl.h"
 
 #include "core.h"
 
