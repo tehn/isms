@@ -9,6 +9,15 @@
 #include "osc.h"
 #include "sdl.h"
 
+static inline void push_isms_func(const char *field, const char *func) {
+  lua_getglobal(L, "isms");
+  lua_getfield(L, -1, field);
+  lua_remove(L, -2);
+  lua_getfield(L, -1, func);
+  lua_remove(L, -2);
+}
+
+
 static int _isms_reset(lua_State *l);
 static int _grid_redraw(lua_State *l);
 static int _grid_led(lua_State *l);
@@ -295,7 +304,7 @@ void handle_monome_add(void *mdev) {
   int id = md->dev.id;
   const char *serial = md->dev.serial;
   const char *name = md->dev.name;
-  lua_getglobal(L, "grid");
+  lua_getglobal(L, "monome");
   lua_getfield(L, -1, "add");
   lua_remove(L, -2);
   lua_pushinteger(L, id + 1); // convert to 1-base
@@ -305,6 +314,11 @@ void handle_monome_add(void *mdev) {
   l_report(L, l_docall(L, 4, 0));
 }
 
+void handle_monome_remove(int id) {
+  push_isms_func("monome", "remove");
+  lua_pushinteger(L, id + 1); // convert to 1-base
+  l_report(L, l_docall(L, 1, 0));
+}
 
 void handle_grid(uint8_t i, uint8_t x, uint8_t y, uint8_t state) {
   lua_getglobal(L, "grid");
@@ -336,15 +350,33 @@ void handle_metro(int idx, int stage) {
 
 //////// midi
 
-void handle_midi(uint8_t i, uint8_t d0, uint8_t d1, uint8_t d2) {
-  lua_getglobal(L, "midi");
-  lua_getfield(L, -1, "receive");
-  lua_remove(L, -2);
-  lua_pushinteger(L, i);
-  lua_pushinteger(L, d0);
-  lua_pushinteger(L, d1);
-  lua_pushinteger(L, d2);
-  l_report(L, l_docall(L, 4, 0));
+void handle_midi_add(void *p) {
+    struct dev_midi *dev = (struct dev_midi *)p;
+    struct dev_common *base = (struct dev_common *)p;
+    int id = base->id;
+
+    push_isms_func("midi", "add");
+    lua_pushinteger(L, id + 1); // convert to 1-base
+    lua_pushstring(L, base->name);
+    lua_pushlightuserdata(L, dev);
+    l_report(L, l_docall(L, 3, 0));
+}
+
+void handle_midi_remove(int id) {
+    push_isms_func("midi", "remove");
+    lua_pushinteger(L, id + 1); // convert to 1-base
+    l_report(L, l_docall(L, 1, 0));
+}
+
+void handle_midi(int id, uint8_t *data, size_t nbytes) {
+  push_isms_func("midi", "event");
+  lua_pushinteger(L, id + 1); // convert to 1-base
+  lua_createtable(L, nbytes, 0);
+  for (size_t i = 0; i < nbytes; i++) {
+    lua_pushinteger(L, data[i]);
+    lua_rawseti(L, -2, i + 1);
+  }
+  l_report(L, l_docall(L, 2, 0));
 }
 
 
@@ -362,7 +394,7 @@ void handle_osc(char *from_host, char *from_port, char *path, lo_message msg) {
   lua_getglobal(L, "osc");
   lua_getfield(L, -1, "receive");
   lua_remove(L, -2);
-  //_push_norns_func("osc", "receive");
+  //_push_isms_func("osc", "receive");
 
   lua_pushstring(L, path);
 

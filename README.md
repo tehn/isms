@@ -5,11 +5,9 @@ lua + osc + midi + grid + sdl
 - build: `make`
 - run: `build/isms`
 
-requires lua 5.4, sdl2, libsdl2-ttf
+requires lua 5.4, sdl2, libevdev
 
 only tested on linux (ubuntu), include/lib paths are hardcoded in makefile
-
-`make core` converts `src/core.lua` to `src/core.h` using `sed`
 
 ## currently
 
@@ -20,6 +18,8 @@ only tested on linux (ubuntu), include/lib paths are hardcoded in makefile
 - ctrl-q quits (or close sdl window)
 - ctrl-r reloads lua script
 - remote lua input via UDP on port 11001 ie `echo -n "print('hello')" > /dev/udp/localhost/11001` (set up your editor to send to this port)
+- .vimrc map:
+  map <C-\> :silent .w !xargs echo -n > /dev/udp/localhost/11001<CR>
 - specifying a filename as an argument will run that instead of `example.lua` (ie, if your working directory is elsewhere).
 
 ## design
@@ -29,15 +29,12 @@ attempting to stay as minimal as possible
 
 ## structure
 
-`core.lua` is included in the compiled binary so we don't need to have a library path for essential lua functionality. though in the future it makes sense to have some default locations to look for user libs.
-
 ## TODO
 
 - device management, hotswap detection of grids/midi/etc (udev) --- see norns device
 - midi
 - lua
   - naming conventions
-    - consider putting all callbacks under "event" table
   - utils: sys.time
   - make script/path var available in lua
   - init system with pre/post init, deinit/cleanup pre/post
@@ -47,10 +44,10 @@ attempting to stay as minimal as possible
 - sdl
   - window management
     - auto-scale according to resize
-    - default pixel counts? (script defined?)
+    - default pixel counts? (script redefined?)
   - drawing lib
     - lines/curves/etc
-    - text (libSDL2_ttf)
+    - text
   - mouse events
 - clocks
 - metro allocator (?)
@@ -61,7 +58,6 @@ attempting to stay as minimal as possible
 - lib management and extensibility: suggested best practices, folder structure/etc
 - optimization
   - sdl should probably have its own thread
-- drop sdl for libx11?
 - should udp socket input check incoming ip (restrict to localhost?)
 
 

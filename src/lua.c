@@ -9,8 +9,6 @@
 #include "lua.h"
 #include "interface.h"
 
-#include "core.h"
-
 lua_State *L;
 
 char last_script[64];
@@ -21,7 +19,8 @@ void init_lua() {
   luaL_openlibs(L);
   init_interface();
   //printf(">> running core.lua\n");
-  if (luaL_dostring(L, core) != LUA_OK) printf("ERROR: core.lua");
+  l_dofile(L, "lua/init.lua");
+  //if (luaL_dostring(L, core) != LUA_OK) printf("ERROR: core.lua");
 }
 
 void deinit_lua() {

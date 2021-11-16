@@ -165,8 +165,7 @@ static void handle_event(union event_data *ev) {
       break;
     case EVENT_EXEC_CODE_LINE:
       //printf("e: codeline: %s\n", ev->exec_code_line.line);
-      if (luaL_dostring(L, ev->exec_code_line.line) != LUA_OK)
-	      printf("<fail>\n");
+      l_report(L,luaL_dostring(L, ev->exec_code_line.line));
       break;
     case EVENT_METRO:
       //printf("e: metro: %i %i\n",ev->metro.id, ev->metro.stage);
@@ -183,13 +182,26 @@ static void handle_event(union event_data *ev) {
       handle_grid(ev->grid.id,ev->grid.x, ev->grid.y, ev->grid.state);
       break;
     case EVENT_MIDI:
-      //printf(">> MIDI: %d %d %d\n", ev->midi.data[0], ev->midi.data[1], ev->midi.data[2]);
-      handle_midi(ev->midi.id,ev->midi.data[0], ev->midi.data[1], ev->midi.data[2]);
+      handle_midi(ev->midi.id, ev->midi.data, ev->midi.nbytes);
       break;
     case EVENT_DEVICE_ADD:
       switch(ev->device_add.type) {
         case DEV_TYPE_MONOME:
           handle_monome_add(ev->device_add.dev);
+          break;
+        case DEV_TYPE_MIDI:
+          handle_midi_add(ev->device_add.dev);
+          break;
+        default:
+          break;
+      }
+    case EVENT_DEVICE_REMOVE:
+      switch(ev->device_remove.type) {
+        case DEV_TYPE_MONOME:
+          handle_monome_remove(ev->device_remove.id);
+          break;
+        case DEV_TYPE_MIDI:
+          handle_midi_remove(ev->device_remove.id);
           break;
         default:
           break;

@@ -24,12 +24,6 @@ $(BUILD_DIR)/%.c.o: %.c
 	$(MKDIR_P) $(dir $@)
 	$(CC) $(CPPFLAGS) $(INC_FLAGS) $(CFLAGS) -c $< -o $@
 
-core:
-	echo 'const char* core = " \' > src/core.h
-	sed -e 's/$$/\ \\/' src/core.lua >> src/core.h
-	echo '";' >> src/core.h
-
-
 .PHONY: clean
 clean:
 	$(RM) -r $(BUILD_DIR)

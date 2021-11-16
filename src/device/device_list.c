@@ -55,7 +55,7 @@ void dev_list_init(void) {
 
 union event_data *post_add_event(union dev *d, device_t type) {
   if (d == NULL) {
-    fprintf(stderr, "dev_list_add: error allocating device data\n");
+    //fprintf(stderr, "dev_list_add: error allocating device data\n");
     return NULL;
   }
 
