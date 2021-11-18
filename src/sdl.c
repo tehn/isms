@@ -153,8 +153,8 @@ void sdl_check() {
         event_post(ev);
         break;
       case SDL_WINDOWEVENT:
-        //if(event.window.event == SDL_WINDOWEVENT_EXPOSED)
-        //redraw(pixels);
+        if(event.window.event == SDL_WINDOWEVENT_EXPOSED)
+          sdl_redraw(pixels);
         if(event.window.event == SDL_WINDOWEVENT_RESIZED) {
           screen = SDL_GetWindowSurface(window);
           rerect();
