@@ -29,8 +29,13 @@ int error(char *msg, const char *err) {
 }
 
 void rerect() {
-  rect.x = 0;
-  rect.y = 0;
+  int xsize, ysize, xzoom, yzoom;
+  SDL_GetWindowSize(window, &xsize, &ysize);
+  for(xzoom=1;((1+xzoom)*WIDTH)<=xsize;xzoom++);
+  for(yzoom=1;((1+yzoom)*HEIGHT)<=ysize;yzoom++);
+  ZOOM = xzoom < yzoom ? xzoom : yzoom;
+  rect.x = (xsize-(WIDTH*ZOOM))/2;
+  rect.y = (ysize-(HEIGHT*ZOOM))/2;
   rect.w = WIDTH*ZOOM;
   rect.h = HEIGHT*ZOOM;
   SDL_FillRect(screen, NULL, 0);
@@ -136,18 +141,6 @@ void sdl_check() {
                          break;
             case SDLK_r: ev = event_data_new(EVENT_RESET);
                          event_post(ev);
-                         break;
-            case SDLK_MINUS:
-                         if(ZOOM>1) {
-                           ZOOM--;
-                           rerect();
-                           sdl_redraw(pixels);
-                         }
-                         break;
-            case SDLK_EQUALS:
-                         ZOOM++;
-                         rerect();
-                         sdl_redraw(pixels);
                          break;
           }
         } 
