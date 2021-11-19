@@ -19,7 +19,7 @@ only tested on linux (ubuntu), include/lib paths are hardcoded in makefile
 - ctrl-r reloads lua script
 - remote lua input via UDP on port 11001 ie `echo -n "print('hello')" > /dev/udp/localhost/11001` (set up your editor to send to this port)
 - .vimrc map:
-  map <C-\> :silent .w !xargs echo -n > /dev/udp/localhost/11001<CR>
+  map <C-\> :silent .w !xargs -0 echo -n > /dev/udp/localhost/11001<CR>
 - specifying a filename as an argument will run that instead of `example.lua` (ie, if your working directory is elsewhere).
 
 ## design

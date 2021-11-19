@@ -35,7 +35,7 @@ void *socket_loop(void *x) {
     else {
       buffer[n] = '\0';
       printf("\033[0;31m");
-      printf("%s\n",buffer);
+      printf("%s",buffer); // assuming incoming linebreak?
       printf("\033[0m");
       char *line = malloc((n + 1) * sizeof(char));
       strncpy(line, buffer, n);
