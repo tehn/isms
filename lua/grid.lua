@@ -1,20 +1,60 @@
+local vport = require 'vport'
+
 local Grid = {}
 Grid.__index = Grid
 
 Grid.devices = {}
+Grid.vports = {}
 
+for i=1,4 do
+  Grid.vports[i] = {
+    name = "none",
+    device = nil,
+
+    key = nil,
+
+    led = vport.wrap_method('led'),
+    all = vport.wrap_method('all'),
+    refresh = vport.wrap_method('refresh'),
+    rotation = vport.wrap_method('rotation'),
+    intensity = vport.wrap_method('intensity'),
+
+    cols = 0,
+    rows = 0,
+  }
+end
+
+-- constructor
+-- @tparam integer id : arbitrary numeric identifier
+-- @tparam string serial : serial
+-- @tparam string name : name
+-- @tparam userdata dev : opaque pointer to device
 function Grid.new(id, serial, name, dev)
   local g = setmetatable({}, Grid)
 
   g.id = id
   g.serial = serial
   g.name = name.." "..serial
-  g.dev = dev
-  g.key = nil
-  g.remove = nil
+  g.dev = dev -- opaque pointer
+  g.key = nil -- key event callback
+  g.remove = nil -- device unplug callback
   g.rows = isms.grid_rows(dev)
   g.cols = isms.grid_cols(dev)
   g.port = nil
+
+  -- autofill next postiion
+  local connected = {}
+  for i=1,4 do
+    table.insert(connected, Grid.vports[i].name)
+  end
+  if not tab.contains(connected, g.name) then
+    for i=1,4 do
+      if Grid.vports[i].name == "none" then
+        Grid.vports[i].name = g.name
+        break
+      end
+    end
+  end
 
   return g
 end
@@ -63,12 +103,62 @@ function Grid:intensity(i)
   isms.monome_intensity(self.dev, i)
 end
 
+--- create device, returns object with handler and send.
+-- @static
+-- @tparam integer n : vport index
+function Grid.connect(n)
+  local n = n or 1
+
+  return Grid.vports[n]
+end
+
+--- clear handlers.
+-- @static
+function Grid.cleanup()
+  for i=1,4 do
+    Grid.vports[i].key = nil
+  end
+
+  for _, dev in pairs(Grid.devices) do
+    dev:all(0)
+    dev:refresh()
+    dev.key = nil
+  end
+end
+
+-- update devices.
+-- @static
+function Grid.update_devices()
+  -- build list of available devices
+  Grid.list = {}
+  for _,device in pairs(Grid.devices) do
+    device.port = nil
+  end
+
+  -- connect available devices to vports
+  for i=1,4 do
+    Grid.vports[i].device = nil
+    Grid.vports[i].rows = 0
+    Grid.vports[i].cols = 0       
+
+    for _,device in pairs(Grid.devices) do
+      if device.name == Grid.vports[i].name then
+        Grid.vports[i].device = device
+        Grid.vports[i].rows = device.rows
+        Grid.vports[i].cols = device.cols
+        device.port = i
+      end
+    end
+  end
+end
+
 isms.grid = {}
 
 -- grid add
 isms.grid.add = function(id, serial, name, dev)
   local g = Grid.new(id,serial,name,dev)
   Grid.devices[id] = g
+  Grid.update_devices()
   if Grid.add ~= nil then Grid.add(g) end
 end
 
@@ -76,11 +166,15 @@ end
 isms.grid.remove = function(id)
   local g = Grid.devices[id]
   if g then
+    if Grid.vports[g.port].remove then
+      Grid.vports[g.port].remove()
+    end
     if Grid.remove then
       Grid.remove(Grid.devices[id])
     end
   end
   Grid.devices[id] = nil
+  Grid.update_devices()
 end
 
 -- redefine global grid key input handler
@@ -90,6 +184,14 @@ isms.grid.key = function(id, x, y, s)
     if g.key ~= nil then
       g.key(x, y, s)
     end
+
+    if g.port then
+      if Grid.vports[g.port].key then
+        Grid.vports[g.port].key(x, y, s)
+      end
+    end
+  else
+    error('no entry for grid '..id)
   end
 end
 

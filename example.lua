@@ -39,3 +39,12 @@ grid.key = function(x,y,z)
 end
 
 dofile("test.lua")
+
+m = midi.connect()
+m.event = function(d) tab.print(d) end
+
+w = midi.connect(2)
+--[[
+w:note_on(60,100)
+w:note_off(60,100)
+]]--

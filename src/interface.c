@@ -17,7 +17,6 @@ static inline void push_isms_func(const char *field, const char *func) {
   lua_remove(L, -2);
 }
 
-
 static int _isms_reset(lua_State *l);
 static int _grid_redraw(lua_State *l);
 static int _grid_led(lua_State *l);
@@ -35,6 +34,8 @@ void init_interface(void) {
   // isms
   lua_newtable(L);
   lua_reg_func("reset",_isms_reset);
+    // midi
+  lua_reg_func("midi_send",_midi_send);
   lua_setglobal(L,"isms");
   // grid
   lua_newtable(L);
@@ -47,10 +48,6 @@ void init_interface(void) {
   lua_reg_func("start",_metro_start);
   lua_reg_func("stop",_metro_stop);
   lua_setglobal(L,"metro");
-  // midi
-  lua_newtable(L);
-  lua_reg_func("send",_midi_send);
-  lua_setglobal(L,"midi");
   // osc
   lua_newtable(L);
   lua_reg_func("send",_osc_send);
@@ -136,16 +133,45 @@ static int _metro_stop(lua_State *l) {
 
 
 //////// midi
+// 
+// static int _midi_send(lua_State *l) {
+//   lua_check_num_args(3);
+//   uint8_t d0 = luaL_checknumber(l, 1);
+//   uint8_t d1 = luaL_checknumber(l, 2);
+//   uint8_t d2 = luaL_checknumber(l, 3);
+//   // midi_send(d0,d1,d2);
+//   printf("midi send: %d %d %d\n",d0,d1,d2);
+//   lua_settop(l, 0);
+//   return 0;
+// }
 
-static int _midi_send(lua_State *l) {
-  lua_check_num_args(3);
-  uint8_t d0 = luaL_checknumber(l, 1);
-  uint8_t d1 = luaL_checknumber(l, 2);
-  uint8_t d2 = luaL_checknumber(l, 3);
-  // midi_send(d0,d1,d2);
-  printf("midi send: %d %d %d\n",d0,d1,d2);
-  lua_settop(l, 0);
-  return 0;
+int _midi_send(lua_State *l) {
+    struct dev_midi *md;
+    size_t nbytes;
+    uint8_t *data;
+
+    lua_check_num_args(2);
+
+    luaL_checktype(l, 1, LUA_TLIGHTUSERDATA);
+    md = lua_touserdata(l, 1);
+
+    luaL_checktype(l, 2, LUA_TTABLE);
+    nbytes = lua_rawlen(l, 2);
+    data = malloc(nbytes);
+
+    for (unsigned int i = 1; i <= nbytes; i++) {
+        lua_pushinteger(l, i);
+        lua_gettable(l, 2);
+
+        // TODO: lua_isnumber
+        data[i - 1] = lua_tointeger(l, -1);
+        lua_pop(l, 1);
+    }
+
+    dev_midi_send(md, data, nbytes);
+    free(data);
+
+    return 0;
 }
 
 
