@@ -2,23 +2,23 @@
 print("example.lua -------------> hello there")
 
 for i=0,255 do
-  screen.pixel(i,4,0xFFFF00-i);
-  screen.pixel(i,8,0x00FFFF-i);
-  screen.pixel(i,12,0xFF00FF-i);
+  window.pixel(i,4,0xFFFF00-i);
+  window.pixel(i,8,0x00FFFF-i);
+  window.pixel(i,12,0xFF00FF-i);
 end
 
-screen.redraw()
+window.redraw()
 
 x1,y1,x2,y2,c = 128,80,0,0,0xffffff
 
-key = function(x)
+window.key = function(x)
   x2 = x1
   y2 = y1
   x1 = math.random(192)+32
   y1 = math.random(64)+32
   c = c - 0x111111
-  screen.line(x1,y1,x2,y2,c)
-  screen.redraw()
+  window.line(x1,y1,x2,y2,c)
+  window.redraw()
   osc.send({"localhost",57120},"/n",{x%127})
   print("key: "..x)
 end

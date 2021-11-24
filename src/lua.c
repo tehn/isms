@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
 #include <string.h>
@@ -18,9 +19,11 @@ void init_lua() {
   L = luaL_newstate();
   luaL_openlibs(L);
   init_interface();
+  char *home = getenv("HOME");
+  char cmd[128];
+  snprintf(cmd, 128, "dofile('%s/.local/share/isms/system/init.lua')\n", home);
+  l_dostring(L, cmd, "init");
   //printf(">> running core.lua\n");
-  l_dofile(L, "lua/init.lua");
-  //if (luaL_dostring(L, core) != LUA_OK) printf("ERROR: core.lua");
 }
 
 void deinit_lua() {

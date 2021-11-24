@@ -67,7 +67,7 @@ void init_interface(void) {
   lua_reg_func("clear",_sdl_clear);
   lua_reg_func("pixel",_sdl_pixel);
   lua_reg_func("line",_sdl_line);
-  lua_setglobal(L,"screen");
+  lua_setglobal(L,"window");
 }
 
 
@@ -493,9 +493,20 @@ void handle_osc(char *from_host, char *from_port, char *path, lo_message msg) {
 //////// sdl
 
 void handle_sdl_key(int code) {
-  lua_getglobal(L, "key");
+//  push_isms_func("window", "key");
+//  lua_pushinteger(L, code);
+//  l_report(L, l_docall(L, 1, 0));
+
+  lua_getglobal(L, "window");
+  lua_getfield(L, -1, "key");
+  lua_remove(L, -2);
   lua_pushinteger(L, code);
-  if (!(lua_pcall(L, 1, 0, 0) == LUA_OK)) {
-    printf("bad call to key()\n");
-  }
+  l_report(L, l_docall(L, 1, 0));
+
+
+  //lua_getglobal(L, "key");
+  //lua_pushinteger(L, code);
+  //if (!(lua_pcall(L, 1, 0, 0) == LUA_OK)) {
+  //  printf("bad call to key()\n");
+  //}
 }

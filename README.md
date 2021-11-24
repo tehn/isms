@@ -3,11 +3,13 @@
 lua + osc + midi + grid + sdl
 
 - build: `make`
-- run: `build/isms`
+- install: `sudo make install`
+- run: `isms`
 
 requires lua 5.4, sdl2, libevdev
 
 only tested on linux (ubuntu), include/lib paths are hardcoded in makefile
+
 
 ## currently
 
@@ -22,19 +24,24 @@ only tested on linux (ubuntu), include/lib paths are hardcoded in makefile
   map <C-\> :silent .w !xargs -0 echo -n > /dev/udp/localhost/11001<CR>
 - specifying a filename as an argument will run that instead of `example.lua` (ie, if your working directory is elsewhere).
 
+
 ## design
 
-attempting to stay as minimal as possible
+reconstruction of norns. reconsidering design for use on a computer with large screen and keyboard.
 
 
 ## structure
 
+library folder: `~/.local/share/isms`
+
+`system` subfolder is copied by `make install`. any user libraries can go directly in `~/local/share/isms`.
+
+
 ## TODO
 
-- device management, hotswap detection of grids/midi/etc (udev) --- see norns device
-- midi
+- socket input, allow blocks, not just line
 - lua
-  - naming conventions
+  - naming conventions (callbacks)
   - utils: sys.time
   - make script/path var available in lua
   - init system with pre/post init, deinit/cleanup pre/post
@@ -43,7 +50,6 @@ attempting to stay as minimal as possible
 
 - sdl
   - window management
-    - auto-scale according to resize
     - default pixel counts? (script redefined?)
   - drawing lib
     - lines/curves/etc
@@ -64,23 +70,34 @@ attempting to stay as minimal as possible
 ## lua
 
 ```
-screen.pixel(x,y,color)
-screen.line(x1,y1,x2,y2,color)
-screen.redraw()
+window.pixel(x,y,color)
+window.line(x1,y1,x2,y2,color)
+window.redraw()
 
 metro.start(index, time_sec, count, stage)
 metro.stop(index)
 
-grid.all(z)
-grid.led(x,y,z)
-grid.redraw()
+g = grid.connect()
+g.all(z)
+g.led(x,y,z)
+g.redraw()
+
+m = midi.connect() -- more TODO
 
 -- events
 metro.tick(index, stage)
-key(code)
-grid.key(x,y,z)
+window.key(code)
 osc.receive(path, args, from)
+g.key(x,y,z)
+m.receive -- TODO
 ```
+
+
+## acknowledgements
+
+- based heavily on `matron` from norns, written by @catfact
+- sdl use patterned on work by @neauoire
+- additional thanks to @artem, @ngwese, and @csboling
 
 
 ## reference
