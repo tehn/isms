@@ -34,15 +34,24 @@ void init_interface(void) {
   // isms
   lua_newtable(L);
   lua_reg_func("reset",_isms_reset);
-    // midi
+  // midi
   lua_reg_func("midi_send",_midi_send);
-  lua_setglobal(L,"isms");
   // grid
-  lua_newtable(L);
-  lua_reg_func("redraw",_grid_redraw);
-  lua_reg_func("led",_grid_led);
-  lua_reg_func("all",_grid_all);
-  lua_setglobal(L,"grid");
+  lua_reg_func("grid_redraw", &_grid_redraw);
+  lua_reg_func("grid_led", &_grid_led);
+  lua_reg_func("grid_all", &_grid_all);
+  //lua_register_norns("grid_rows", &_grid_rows);
+  //lua_register_norns("grid_cols", &_grid_cols);
+  //lua_register_norns("grid_set_rotation", &_grid_set_rotation);
+
+  lua_setglobal(L,"isms");
+
+  // grid
+  //lua_newtable(L);
+  //lua_reg_func("redraw",_grid_redraw);
+  //lua_reg_func("led",_grid_led);
+  //lua_reg_func("all",_grid_all);
+  //lua_setglobal(L,"grid");
   // metro
   lua_newtable(L);
   lua_reg_func("start",_metro_start);
@@ -89,9 +98,9 @@ static int _grid_led(lua_State *l) {
   lua_check_num_args(4);
   luaL_checktype(l, 1, LUA_TLIGHTUSERDATA);
   struct dev_monome *md = lua_touserdata(l, 1);
-  int x = (int)luaL_checkinteger(l, 2) - 1; // convert from 1-base
-  int y = (int)luaL_checkinteger(l, 3) - 1; // convert from 1-base
-  int z = (int)luaL_checkinteger(l, 4);     // don't convert value!
+  int x = (int)luaL_checkinteger(l, 2);
+  int y = (int)luaL_checkinteger(l, 3);
+  int z = (int)luaL_checkinteger(l, 4);
   dev_monome_grid_set_led(md, x, y, z);
   lua_settop(l, 0);
   return 0;
@@ -101,7 +110,7 @@ static int _grid_all(lua_State *l) {
   lua_check_num_args(2);
   luaL_checktype(l, 1, LUA_TLIGHTUSERDATA);
   struct dev_monome *md = lua_touserdata(l, 1);
-  int z = (int)luaL_checkinteger(l, 2); // don't convert value!
+  int z = (int)luaL_checkinteger(l, 2);
   dev_monome_all_led(md, z);
   lua_settop(l, 0);
   return 0;
@@ -330,9 +339,7 @@ void handle_monome_add(void *mdev) {
   int id = md->dev.id;
   const char *serial = md->dev.serial;
   const char *name = md->dev.name;
-  lua_getglobal(L, "monome");
-  lua_getfield(L, -1, "add");
-  lua_remove(L, -2);
+  push_isms_func("grid", "add");
   lua_pushinteger(L, id + 1); // convert to 1-base
   lua_pushstring(L, serial);
   lua_pushstring(L, name);
@@ -341,16 +348,14 @@ void handle_monome_add(void *mdev) {
 }
 
 void handle_monome_remove(int id) {
-  push_isms_func("monome", "remove");
+  push_isms_func("grid", "remove");
   lua_pushinteger(L, id + 1); // convert to 1-base
   l_report(L, l_docall(L, 1, 0));
 }
 
 void handle_grid(uint8_t i, uint8_t x, uint8_t y, uint8_t state) {
-  lua_getglobal(L, "grid");
-  lua_getfield(L, -1, "key");
-  lua_remove(L, -2);
-  lua_pushinteger(L, i);
+  push_isms_func("grid", "key");
+  lua_pushinteger(L, i + 1);
   lua_pushinteger(L, x);
   lua_pushinteger(L, y);
   lua_pushinteger(L, state);

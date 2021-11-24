@@ -15,7 +15,7 @@ for i=1,4 do
 
     led = vport.wrap_method('led'),
     all = vport.wrap_method('all'),
-    refresh = vport.wrap_method('refresh'),
+    redraw = vport.wrap_method('redraw'),
     rotation = vport.wrap_method('rotation'),
     intensity = vport.wrap_method('intensity'),
 
@@ -38,8 +38,8 @@ function Grid.new(id, serial, name, dev)
   g.dev = dev -- opaque pointer
   g.key = nil -- key event callback
   g.remove = nil -- device unplug callback
-  g.rows = isms.grid_rows(dev)
-  g.cols = isms.grid_cols(dev)
+  g.rows = 8 --isms.grid_rows(dev)
+  g.cols = 16 --isms.grid_cols(dev)
   g.port = nil
 
   -- autofill next postiion
@@ -63,8 +63,8 @@ end
 -- user scripts can redefine
 -- @static
 -- @param dev : a Grid table
-function Grid.add(dev)
-  print("grid added:", dev.id, dev.name, dev.serial)
+function Grid.add(d)
+  print("grid added:", d.id, d.name, d.serial)
 end
 
 --- static callback when any grid device is removed;
@@ -84,18 +84,18 @@ end
 -- @tparam integer y : row index (1-based!)
 -- @tparam integer val : LED brightness in [0, 15]
 function Grid:led(x, y, val)
-  isms.grid_set_led(self.dev, x, y, val)
+  isms.grid_led(self.dev, x, y, val)
 end
 
 --- set state of all LEDs on this grid device.
 -- @tparam integer val : LED brightness in [0, 15]
 function Grid:all(val)
-  isms.grid_all_led(self.dev, val)
+  isms.grid_all(self.dev, val)
 end
 
 --- update any dirty quads on this grid device.
-function Grid:refresh()
-  isms.monome_refresh(self.dev)
+function Grid:redraw()
+  isms.grid_redraw(self.dev)
 end
 
 --- intensity
@@ -121,7 +121,7 @@ function Grid.cleanup()
 
   for _, dev in pairs(Grid.devices) do
     dev:all(0)
-    dev:refresh()
+    dev:redraw()
     dev.key = nil
   end
 end
@@ -206,7 +206,7 @@ grid.connect( port )          create a grid table using device [port]
                                 [level] range is 0..15
 .all( level )                 set all grid LED to [level]
                                 [level] range is 0..15
-.refresh()                    update the grid LED state
+.redraw()                     update the grid LED state
 
 --------------------------------------------------------------------------------
 -- example
@@ -229,7 +229,7 @@ end
 draw_grid()
   g.all(0)
   g.led(lx,ly,lz)
-  g.refresh()
+  g.redraw()
 end
 --------------------------------------------------------------------------------
 ]]      

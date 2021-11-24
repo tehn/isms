@@ -31,11 +31,12 @@ end
 
 metro.start(1,0.1,5,0)
 
-grid.key = function(x,y,z)
+g = grid.connect()
+g.key = function(x,y,z)
   print("grid",x,y,z)
   osc.send({"localhost",57120},"/n",{(7-y)*5+x+30})
-  grid.led(x,y,15);
-  grid.redraw();
+  g:led(x,y,15);
+  g:redraw();
 end
 
 dofile("test.lua")
