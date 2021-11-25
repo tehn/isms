@@ -21,6 +21,9 @@ typedef enum {
   EVENT_HID,
   EVENT_DEVICE_ADD,
   EVENT_DEVICE_REMOVE,
+  EVENT_CLOCK_START,
+  EVENT_CLOCK_STOP,
+  EVENT_CLOCK_RESUME,
 } event_t;
 
 extern void init_event(void);
@@ -99,6 +102,21 @@ struct event_device_remove {
   uint8_t id;
 };
 
+struct event_clock_resume {
+    struct event_common common;
+    uint32_t thread_id;
+    double value;
+};
+
+struct event_clock_start {
+    struct event_common common;
+};
+
+struct event_clock_stop {
+    struct event_common common;
+};
+
+
 union event_data {
   uint32_t type;
   struct event_exec_code_line exec_code_line;
@@ -111,5 +129,6 @@ union event_data {
   struct event_hid hid;
   struct event_device_add device_add;
   struct event_device_remove device_remove;
+  struct event_clock_resume clock_resume;
 };
 

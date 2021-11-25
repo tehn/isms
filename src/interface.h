@@ -14,4 +14,7 @@ extern void handle_midi_remove(int id);
 extern void handle_midi(int id, uint8_t *data, size_t nbytes);
 extern void handle_osc(char *from_host, char *from_port, char *path, lo_message msg);
 extern void handle_sdl_key(int code);
+extern void handle_clock_resume(const int thread_id, double value);
+extern void handle_clock_start();
+extern void handle_clock_stop();
 

@@ -6,6 +6,7 @@ print("lua init >> package.path: "..package.path)
 tab = require('tabutil')
 midi = require('midi')
 grid = require('grid')
+clock = require('clock')
 
 function window.key(x) print('window key: '..x) end
 function osc.receive(path, args, from) print('osc: '..path) end

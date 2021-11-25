@@ -206,6 +206,16 @@ static void handle_event(union event_data *ev) {
         default:
           break;
       }
+    case EVENT_CLOCK_RESUME:
+      handle_clock_resume(ev->clock_resume.thread_id, ev->clock_resume.value);
+      break;
+    case EVENT_CLOCK_START:
+      handle_clock_start();
+      break;
+    case EVENT_CLOCK_STOP:
+      handle_clock_stop();
+      break;
+
   }
 
   event_data_free(ev);

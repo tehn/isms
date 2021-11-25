@@ -7,6 +7,11 @@
 
 #include "device.h"
 #include "device_monitor.h"
+#include "clock.h"
+#include "clocks/clock_crow.h"
+#include "clocks/clock_internal.h"
+#include "clocks/clock_midi.h"
+#include "clocks/clock_scheduler.h"
 #include "event.h"
 #include "input.h"
 #include "interface.h"
@@ -26,6 +31,13 @@ int main(int argc, char **argv) {
 
   init_event();
   init_input();
+
+  clock_init();
+  clock_internal_init();
+  clock_midi_init();
+  clock_crow_init();
+  clock_scheduler_init();
+
   init_osc();
   init_socket();
   init_metro();
@@ -41,10 +53,11 @@ int main(int argc, char **argv) {
   event_loop();
 
   deinit_dev();
+  deinit_osc();
+  //clock_deinit(); // TODO this is segfaulting
+  deinit_metro();
   deinit_lua();
   deinit_sdl();
-  deinit_metro();
-  deinit_osc();
 
   printf(">> farewell.\n");
   return 0;

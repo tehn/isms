@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <lo/lo.h>
 
+#include "clock.h"
+#include "clocks/clock_crow.h"
+#include "clocks/clock_internal.h"
+#include "clocks/clock_scheduler.h"
 #include "event.h"
 #include "interface.h"
 #include "lua.h"
@@ -29,6 +33,17 @@ static int _sdl_redraw(lua_State *l);
 static int _sdl_clear(lua_State *l);
 static int _sdl_pixel(lua_State *l);
 static int _sdl_line(lua_State *l);
+static int _clock_schedule_sleep(lua_State *l);
+static int _clock_schedule_sync(lua_State *l);
+static int _clock_cancel(lua_State *l);
+static int _clock_internal_set_tempo(lua_State *l);
+static int _clock_internal_start(lua_State *l);
+static int _clock_internal_stop(lua_State *l);
+static int _clock_crow_in_div(lua_State *l);
+static int _clock_set_source(lua_State *l);
+static int _clock_get_time_beats(lua_State *l);
+static int _clock_get_tempo(lua_State *l);
+
 
 void init_interface(void) {
   // isms
@@ -40,18 +55,22 @@ void init_interface(void) {
   lua_reg_func("grid_redraw", &_grid_redraw);
   lua_reg_func("grid_led", &_grid_led);
   lua_reg_func("grid_all", &_grid_all);
-  //lua_register_norns("grid_rows", &_grid_rows);
-  //lua_register_norns("grid_cols", &_grid_cols);
-  //lua_register_norns("grid_set_rotation", &_grid_set_rotation);
+  //lua_reg_func("grid_rows", &_grid_rows);
+  //lua_reg_func("grid_cols", &_grid_cols);
+  //lua_reg_func("grid_set_rotation", &_grid_set_rotation);
+  lua_reg_func("clock_schedule_sleep", &_clock_schedule_sleep);
+  lua_reg_func("clock_schedule_sync", &_clock_schedule_sync);
+  lua_reg_func("clock_cancel", &_clock_cancel);
+  lua_reg_func("clock_internal_set_tempo", &_clock_internal_set_tempo);
+  lua_reg_func("clock_internal_start", &_clock_internal_start);
+  lua_reg_func("clock_internal_stop", &_clock_internal_stop);
+  lua_reg_func("clock_crow_in_div", &_clock_crow_in_div);
+  lua_reg_func("clock_set_source", &_clock_set_source);
+  lua_reg_func("clock_get_time_beats", &_clock_get_time_beats);
+  lua_reg_func("clock_get_tempo", &_clock_get_tempo);
 
   lua_setglobal(L,"isms");
 
-  // grid
-  //lua_newtable(L);
-  //lua_reg_func("redraw",_grid_redraw);
-  //lua_reg_func("led",_grid_led);
-  //lua_reg_func("all",_grid_all);
-  //lua_setglobal(L,"grid");
   // metro
   lua_newtable(L);
   lua_reg_func("start",_metro_start);
@@ -155,32 +174,32 @@ static int _metro_stop(lua_State *l) {
 // }
 
 int _midi_send(lua_State *l) {
-    struct dev_midi *md;
-    size_t nbytes;
-    uint8_t *data;
+  struct dev_midi *md;
+  size_t nbytes;
+  uint8_t *data;
 
-    lua_check_num_args(2);
+  lua_check_num_args(2);
 
-    luaL_checktype(l, 1, LUA_TLIGHTUSERDATA);
-    md = lua_touserdata(l, 1);
+  luaL_checktype(l, 1, LUA_TLIGHTUSERDATA);
+  md = lua_touserdata(l, 1);
 
-    luaL_checktype(l, 2, LUA_TTABLE);
-    nbytes = lua_rawlen(l, 2);
-    data = malloc(nbytes);
+  luaL_checktype(l, 2, LUA_TTABLE);
+  nbytes = lua_rawlen(l, 2);
+  data = malloc(nbytes);
 
-    for (unsigned int i = 1; i <= nbytes; i++) {
-        lua_pushinteger(l, i);
-        lua_gettable(l, 2);
+  for (unsigned int i = 1; i <= nbytes; i++) {
+    lua_pushinteger(l, i);
+    lua_gettable(l, 2);
 
-        // TODO: lua_isnumber
-        data[i - 1] = lua_tointeger(l, -1);
-        lua_pop(l, 1);
-    }
+    // TODO: lua_isnumber
+    data[i - 1] = lua_tointeger(l, -1);
+    lua_pop(l, 1);
+  }
 
-    dev_midi_send(md, data, nbytes);
-    free(data);
+  dev_midi_send(md, data, nbytes);
+  free(data);
 
-    return 0;
+  return 0;
 }
 
 
@@ -317,6 +336,81 @@ int _sdl_line(lua_State *l) {
   return 0;
 }
 
+int _clock_schedule_sleep(lua_State *l) {
+  lua_check_num_args(2);
+  int coro_id = (int)luaL_checkinteger(l, 1);
+  double seconds = luaL_checknumber(l, 2);
+
+  if (seconds < 0) { seconds = 0; }
+
+  clock_scheduler_schedule_sleep(coro_id, seconds);
+
+  return 0;
+}
+
+int _clock_schedule_sync(lua_State *l) {
+  int coro_id = (int)luaL_checkinteger(l, 1);
+  double sync_beat = luaL_checknumber(l, 2);
+  double offset = luaL_optnumber(l, 3, 0);
+
+  if (sync_beat <= 0) {
+    luaL_error(l, "invalid sync beat: %f", sync_beat);
+  } else {
+    clock_scheduler_schedule_sync(coro_id, sync_beat, offset);
+  }
+
+  return 0;
+}
+
+int _clock_cancel(lua_State *l) {
+  lua_check_num_args(1);
+  int coro_id = (int)luaL_checkinteger(l, 1);
+  clock_scheduler_clear(coro_id);
+  return 0;
+}
+
+int _clock_internal_set_tempo(lua_State *l) {
+  lua_check_num_args(1);
+  double bpm = luaL_checknumber(l, 1);
+  clock_internal_set_tempo(bpm);
+  return 0;
+}
+
+int _clock_internal_start(lua_State *l) {
+  clock_internal_restart();
+  return 0;
+}
+
+int _clock_internal_stop(lua_State *l) {
+  clock_internal_stop();
+  return 0;
+}
+
+int _clock_crow_in_div(lua_State *l) {
+  lua_check_num_args(1);
+  int div = (int)luaL_checkinteger(l, 1);
+  clock_crow_in_div(div);
+  return 0;
+}
+
+int _clock_set_source(lua_State *l) {
+  lua_check_num_args(1);
+  int source = (int)luaL_checkinteger(l, 1);
+  clock_set_source(source);
+  return 0;
+}
+
+int _clock_get_time_beats(lua_State *l) {
+  lua_pushnumber(l, clock_get_beats());
+  return 1;
+}
+
+int _clock_get_tempo(lua_State *l) {
+  lua_pushnumber(l, clock_get_tempo());
+  return 1;
+}
+
+
 
 ////////////////////////////////////////////////////////////////
 // handlers
@@ -382,21 +476,21 @@ void handle_metro(int idx, int stage) {
 //////// midi
 
 void handle_midi_add(void *p) {
-    struct dev_midi *dev = (struct dev_midi *)p;
-    struct dev_common *base = (struct dev_common *)p;
-    int id = base->id;
+  struct dev_midi *dev = (struct dev_midi *)p;
+  struct dev_common *base = (struct dev_common *)p;
+  int id = base->id;
 
-    push_isms_func("midi", "add");
-    lua_pushinteger(L, id + 1); // convert to 1-base
-    lua_pushstring(L, base->name);
-    lua_pushlightuserdata(L, dev);
-    l_report(L, l_docall(L, 3, 0));
+  push_isms_func("midi", "add");
+  lua_pushinteger(L, id + 1); // convert to 1-base
+  lua_pushstring(L, base->name);
+  lua_pushlightuserdata(L, dev);
+  l_report(L, l_docall(L, 3, 0));
 }
 
 void handle_midi_remove(int id) {
-    push_isms_func("midi", "remove");
-    lua_pushinteger(L, id + 1); // convert to 1-base
-    l_report(L, l_docall(L, 1, 0));
+  push_isms_func("midi", "remove");
+  lua_pushinteger(L, id + 1); // convert to 1-base
+  l_report(L, l_docall(L, 1, 0));
 }
 
 void handle_midi(int id, uint8_t *data, size_t nbytes) {
@@ -493,9 +587,9 @@ void handle_osc(char *from_host, char *from_port, char *path, lo_message msg) {
 //////// sdl
 
 void handle_sdl_key(int code) {
-//  push_isms_func("window", "key");
-//  lua_pushinteger(L, code);
-//  l_report(L, l_docall(L, 1, 0));
+  //  push_isms_func("window", "key");
+  //  lua_pushinteger(L, code);
+  //  l_report(L, l_docall(L, 1, 0));
 
   lua_getglobal(L, "window");
   lua_getfield(L, -1, "key");
@@ -510,3 +604,26 @@ void handle_sdl_key(int code) {
   //  printf("bad call to key()\n");
   //}
 }
+
+//////// clock
+
+void handle_clock_resume(const int coro_id, double value) {
+  lua_getglobal(L, "clock");
+  lua_getfield(L, -1, "resume");
+  lua_remove(L, -2);
+  lua_pushinteger(L, coro_id);
+  lua_pushnumber(L, value);
+  l_report(L, l_docall(L, 2, 0));
+}
+
+void handle_clock_start() {
+  push_isms_func("clock", "start");
+  l_report(L, l_docall(L, 0, 0));
+}
+
+void handle_clock_stop() {
+  push_isms_func("clock", "stop");
+  l_report(L, l_docall(L, 0, 0));
+}
+
+
