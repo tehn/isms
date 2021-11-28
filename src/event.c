@@ -165,7 +165,7 @@ static void handle_event(union event_data *ev) {
       break;
     case EVENT_EXEC_CODE_LINE:
       //printf("e: codeline: %s\n", ev->exec_code_line.line);
-      l_report(L,luaL_dostring(L, ev->exec_code_line.line));
+      lua_run(ev->exec_code_line.line);
       break;
     case EVENT_METRO:
       //printf("e: metro: %i %i\n",ev->metro.id, ev->metro.stage);

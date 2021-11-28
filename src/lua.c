@@ -12,18 +12,10 @@
 
 lua_State *L;
 
-char last_script[64];
-
 void init_lua() {
   //printf(">> LUA: init\n");
   L = luaL_newstate();
   luaL_openlibs(L);
-  init_interface();
-  char *home = getenv("HOME");
-  char cmd[128];
-  snprintf(cmd, 128, "dofile('%s/.local/share/isms/system/init.lua')\n", home);
-  l_dostring(L, cmd, "init");
-  //printf(">> running core.lua\n");
 }
 
 void deinit_lua() {
@@ -31,10 +23,8 @@ void deinit_lua() {
   lua_close(L);
 }
 
-void lua_run(char *script) {
-  //printf(">> running %s\n", script);
-  l_dofile(L, script); 
-  strcpy(last_script,script);
+void lua_run(char *line) {
+  l_report(L,luaL_dostring(L, line));
 }
 
 //////////////////////////////////////////////////////////////////////////////

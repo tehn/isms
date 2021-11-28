@@ -63,7 +63,7 @@ int dev_hid_init(void *self) {
     int fd = open(d->base.path, O_RDONLY);
 
     if (fd < 0) {
-        fprintf(stderr, "failed to open hid device: %s (%s)\n", d->base.path, d->base.name);
+        //fprintf(stderr, "failed to open hid device: %s (%s)\n", d->base.path, d->base.name); // TODO: this is annoying because some builtin devices always fail
         return -1;
     }
 

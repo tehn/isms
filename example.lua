@@ -1,10 +1,12 @@
 --- script
 print("example.lua -------------> hello there")
 
+window.clear()
+
 for i=0,255 do
-  window.pixel(i,4,0xFFFF00-i);
-  window.pixel(i,8,0x00FFFF-i);
-  window.pixel(i,12,0xFF00FF-i);
+  window.pixel(i,4,0xFFFF00-i)
+  window.pixel(i,8,0x00FFFF-i)
+  window.pixel(i,12,0xFF00FF-i)
 end
 
 window.redraw()

@@ -21,7 +21,6 @@ static inline void push_isms_func(const char *field, const char *func) {
   lua_remove(L, -2);
 }
 
-static int _isms_reset(lua_State *l);
 static int _grid_redraw(lua_State *l);
 static int _grid_led(lua_State *l);
 static int _grid_all(lua_State *l);
@@ -46,9 +45,7 @@ static int _clock_get_tempo(lua_State *l);
 
 
 void init_interface(void) {
-  // isms
   lua_newtable(L);
-  lua_reg_func("reset",_isms_reset);
   // midi
   lua_reg_func("midi_send",_midi_send);
   // grid
@@ -87,19 +84,13 @@ void init_interface(void) {
   lua_reg_func("pixel",_sdl_pixel);
   lua_reg_func("line",_sdl_line);
   lua_setglobal(L,"window");
+
+  char *home = getenv("HOME");
+  char cmd[128];
+  snprintf(cmd, 128, "dofile('%s/.local/share/isms/system/init.lua')\n", home);
+  l_dostring(L, cmd, "init");
 }
 
-
-//////// isms
-
-int _isms_reset(lua_State *l) {
-  lua_check_num_args(0);
-  union event_data *ev;
-  ev = event_data_new(EVENT_RESET);
-  event_post(ev);
-  lua_settop(l, 0);
-  return 0;
-}
 
 
 //////// grid
@@ -418,12 +409,7 @@ int _clock_get_tempo(lua_State *l) {
 //////// isms
 
 void handle_reset() {
-  deinit_metro(); // stops running metros
-  clock_scheduler_clear_all(); // clear running clocks
-  deinit_lua();
-  reset_sdl();
-  init_lua();
-  lua_run(last_script);
+  lua_run("isms.run()");
 }
 
 
