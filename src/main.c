@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
 
   deinit_dev();
   deinit_osc();
-  //clock_deinit(); // TODO this is segfaulting
+  //clock_deinit(); // TODO closing jack client causes segfault?
   deinit_metro();
   deinit_lua();
   deinit_sdl();

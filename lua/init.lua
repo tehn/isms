@@ -1,7 +1,7 @@
 local home = os.getenv('HOME')
 package.path = home..'/.local/share/isms/?.lua;'..package.path
 package.path = home..'/.local/share/isms/system/?.lua;'..package.path
-print("lua init >> package.path: "..package.path)
+--print("lua init >> package.path: "..package.path)
 
 tab = require('tabutil')
 midi = require('midi')

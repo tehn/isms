@@ -418,7 +418,8 @@ int _clock_get_tempo(lua_State *l) {
 //////// isms
 
 void handle_reset() {
-  deinit_metro();
+  deinit_metro(); // stops running metros
+  clock_scheduler_clear_all(); // clear running clocks
   deinit_lua();
   reset_sdl();
   init_lua();
@@ -596,13 +597,6 @@ void handle_sdl_key(int code) {
   lua_remove(L, -2);
   lua_pushinteger(L, code);
   l_report(L, l_docall(L, 1, 0));
-
-
-  //lua_getglobal(L, "key");
-  //lua_pushinteger(L, code);
-  //if (!(lua_pcall(L, 1, 0, 0) == LUA_OK)) {
-  //  printf("bad call to key()\n");
-  //}
 }
 
 //////// clock

@@ -195,6 +195,7 @@ static void handle_event(union event_data *ev) {
         default:
           break;
       }
+      break;
     case EVENT_DEVICE_REMOVE:
       switch(ev->device_remove.type) {
         case DEV_TYPE_MONOME:
@@ -206,6 +207,7 @@ static void handle_event(union event_data *ev) {
         default:
           break;
       }
+      break;
     case EVENT_CLOCK_RESUME:
       handle_clock_resume(ev->clock_resume.thread_id, ev->clock_resume.value);
       break;
