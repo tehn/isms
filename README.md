@@ -4,7 +4,7 @@ lua + osc + midi + grid + sdl
 
 - build: `make`
 - install: `sudo make install`
-- run: `isms`
+- run: `isms example.lua`
 
 requires lua 5.4, sdl2, libevdev
 
@@ -22,7 +22,6 @@ only tested on linux (ubuntu), include/lib paths are hardcoded in makefile
 - remote lua input via UDP on port 11001 ie `echo -n "print('hello')" > /dev/udp/localhost/11001` (set up your editor to send to this port)
 - .vimrc map:
   map <C-\> :silent .w !xargs -0 echo -n > /dev/udp/localhost/11001<CR>
-- specifying a filename as an argument will run that instead of `example.lua` (ie, if your working directory is elsewhere).
 
 
 ## design
@@ -34,11 +33,11 @@ reconstruction of norns. reconsidering design for use on a computer with large s
 
 library folder: `~/.local/share/isms`
 
-`system` subfolder is copied by `make install`. any user libraries can go directly in `~/local/share/isms`.
+`system` subfolder is copied by `make install`. any user libraries can go directly in `~/.local/share/isms`.
 
 
 ## TODO
-
+```
 - socket input, allow blocks, not just line
 - lua
   - naming conventions (callbacks)
@@ -46,36 +45,38 @@ library folder: `~/.local/share/isms`
   - make script/path var available in lua
   - init system with pre/post init, deinit/cleanup pre/post
     - anticipate mods (?)
-- abandon repl in favor of socket style? (just because it's incomplete and maybe not worth it)
+- abandon repl in favor of socket style? (just because it's incomplete and maybe not worth it) or do minimal (add up-arrow for one level of history)
+- color coding for where text is coming from
 
 - sdl
-  - window management
-    - default pixel counts? (script redefined?)
   - drawing lib
     - lines/curves/etc
     - text
   - mouse events
-- clocks
 - metro allocator (?)
+- crow
 
 (and)
 
 - makefile improvements
-- lib management and extensibility: suggested best practices, folder structure/etc
 - optimization
   - sdl should probably have its own thread
-- should udp socket input check incoming ip (restrict to localhost?)
+- should udp socket input check incoming ip (restrict to localhost?) or arg to disable
+```
 
 
 ## lua
 
 ```
+window.init(x,y)
 window.pixel(x,y,color)
 window.line(x1,y1,x2,y2,color)
 window.redraw()
 
 metro.start(index, time_sec, count, stage)
 metro.stop(index)
+
+clock -- TODO
 
 g = grid.connect()
 g.all(z)
@@ -97,7 +98,7 @@ m.receive -- TODO
 
 - based heavily on `matron` from norns, written by @catfact
 - sdl use patterned on work by @neauoire
-- additional thanks to @artem, @ngwese, and @csboling
+- additional thanks to @artem (clocks), @ngwese, and @csboling
 
 
 ## reference
