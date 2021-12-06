@@ -38,3 +38,14 @@ function isms.run(file)
   end
 end
 
+
+function help(topic)
+  local help_topics = "help(topic): grid, clock"
+  if topic == nil then
+    print(help_topics)
+  elseif type(topic)=="table" then
+    if topic.help then
+      print(topic.help)
+    end
+  end
+end

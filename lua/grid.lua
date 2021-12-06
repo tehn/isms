@@ -197,40 +197,15 @@ end
 
 Grid.help = [[
 --------------------------------------------------------------------------------
-grid.connect( port )          create a grid table using device [port]
+g = grid.connect( port )      create a grid table using device [port]
                                 default [port] 1 if unspecified
-                              (returns) grid table
-.key( x, y, z )               function called with incoming grid key event
-                                this should be redefined by the script
-.led( x, y, level )           set LED at [x,y] to [level]
-                                [level] range is 0..15
-.all( level )                 set all grid LED to [level]
-                                [level] range is 0..15
-.redraw()                     update the grid LED state
+                                (returns) grid table
 
---------------------------------------------------------------------------------
--- example
+g:led( x, y, level )          set LED at [x,y] to [level]
+g:all( level )                set all grid LED to [level]
+g:redraw()                    update the grid LED state
 
-lx,ly,lz = 0,0,0
-
--- connect grid
-g = grid.connect()
-
--- key function
-g.key = function(x,y,z)
-  print(x,y,z)
-  lx = x
-  ly = y
-  lz = z*15
-  draw_grid()
-end
-
--- simple draw function
-draw_grid()
-  g.all(0)
-  g.led(lx,ly,lz)
-  g.redraw()
-end
+g.key( x, y, z )              function called with incoming grid key event
 --------------------------------------------------------------------------------
 ]]      
 

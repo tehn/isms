@@ -175,21 +175,6 @@ clock.get_tempo()             (returns) current tempo
 clock.get_beat_sec()          (returns) length of a single beat at current
                                 tempo in seconds
 --------------------------------------------------------------------------------
--- example
-
--- start a clock with calling function [loop]
-function init()
-  clock.run(loop)
-end
-
--- this function loops forever, printing at 1 second intervals 
-function loop()
-  while true do
-    print("so true")
-    clock.sleep(1)
-  end
-end
---------------------------------------------------------------------------------
 ]]
 
 return clock

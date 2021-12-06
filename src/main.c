@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
   init_osc();
   init_socket();
   init_metro();
-  init_sdl();
+  //init_sdl();
   init_lua();
   init_interface();
   init_dev();

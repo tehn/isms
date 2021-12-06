@@ -19,6 +19,9 @@ int WIDTH = 256;
 int HEIGHT = 128;
 int ZOOM = 4;
 
+static int active = 0;
+int sdl_active() { return active; }
+
 void *sdl_loop(void *);
 
 void sdl_check();
@@ -28,7 +31,7 @@ int error(char *msg, const char *err) {
   return 0;
 }
 
-void rerect() {
+void window_rect() {
   int xsize, ysize, xzoom, yzoom;
   SDL_GetWindowSize(window, &xsize, &ysize);
   for(xzoom=1;((1+xzoom)*WIDTH)<=xsize;xzoom++);
@@ -79,8 +82,12 @@ void sdl_redraw(uint32_t *dst) {
   SDL_UpdateWindowSurface(window);
 }
 
-int init_sdl(void) {
+int init_sdl(int x, int y) {
   //printf(">> SDL: init\n");
+  if(active) return 0; // already initialized
+
+  WIDTH = x;
+  HEIGHT = y;
 
   if(SDL_Init(SDL_INIT_VIDEO) < 0)
     return error("Init", SDL_GetError());
@@ -96,7 +103,7 @@ int init_sdl(void) {
 
   surface = SDL_CreateRGBSurface(0, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
   screen = SDL_GetWindowSurface(window);
-  rerect();
+  window_rect();
 
   sdl_clear(surface->pixels);
 
@@ -105,20 +112,18 @@ int init_sdl(void) {
     return error("SDL", "pthread failed");
   }
 
+  active = 1;
   return 1;
 }
 
 void deinit_sdl(void) {
+  if(active==0) return;
   //printf(">> SDL: deinit\n");
   pthread_cancel(p);
   SDL_DestroyWindow(window);
   window = NULL;
   SDL_FreeSurface(surface);
   SDL_Quit();
-}
-
-void reset_sdl(void) {
-  sdl_clear(surface->pixels);
 }
 
 
@@ -157,7 +162,7 @@ void sdl_check() {
           sdl_redraw(pixels);
         if(event.window.event == SDL_WINDOWEVENT_RESIZED) {
           screen = SDL_GetWindowSurface(window);
-          rerect();
+          window_rect();
           sdl_redraw(pixels);
         }
     }

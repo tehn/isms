@@ -1,6 +1,7 @@
 --- script
 print("example.lua -------------> hello there")
 
+window.init(256,128)
 window.clear()
 
 for i=0,255 do

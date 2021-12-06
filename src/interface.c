@@ -28,6 +28,7 @@ static int _metro_start(lua_State *l);
 static int _metro_stop(lua_State *l);
 static int _midi_send(lua_State *l);
 static int _osc_send(lua_State *l);
+static int _sdl_init(lua_State *l);
 static int _sdl_redraw(lua_State *l);
 static int _sdl_clear(lua_State *l);
 static int _sdl_pixel(lua_State *l);
@@ -79,6 +80,7 @@ void init_interface(void) {
   lua_setglobal(L,"osc");
   // sdl
   lua_newtable(L);
+  lua_reg_func("init",_sdl_init);
   lua_reg_func("redraw",_sdl_redraw);
   lua_reg_func("clear",_sdl_clear);
   lua_reg_func("pixel",_sdl_pixel);
@@ -290,6 +292,15 @@ static int _osc_send(lua_State *l) {
 
 
 //////// sdl
+
+int _sdl_init(lua_State *l) {
+  lua_check_num_args(2);
+  double x = luaL_checknumber(l, 1);
+  double y = luaL_checknumber(l, 2);
+  init_sdl(x,y);
+  lua_settop(l, 0);
+  return 0;
+}
 
 int _sdl_redraw(lua_State *l) {
   lua_check_num_args(0);
