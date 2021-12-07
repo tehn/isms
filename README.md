@@ -38,30 +38,28 @@ library folder: `~/.local/share/isms`
 
 ## TODO
 ```
-- socket input, allow blocks, not just line
 - lua
   - naming conventions (callbacks)
-  - utils: sys.time
-  - make script/path var available in lua
-  - init system with pre/post init, deinit/cleanup pre/post
-    - anticipate mods (?)
-- abandon repl in favor of socket style? (just because it's incomplete and maybe not worth it) or do minimal (add up-arrow for one level of history)
-- color coding for where text is coming from
-
 - sdl
-  - drawing lib
-    - lines/curves/etc
-    - text
+  - text
+  - more drawing functions
   - mouse events
 - metro allocator (?)
 - crow
+- socket input, allow blocks, not just line
+- abandon repl in favor of socket style?
+  - or do minimal (add up-arrow for one level of history)
+- color coding for where text is coming from
 
 (and)
 
 - makefile improvements
 - optimization
   - sdl should probably have its own thread
-- should udp socket input check incoming ip (restrict to localhost?) or arg to disable
+- should udp socket input check incoming ip (restrict to localhost?)
+  - or arg to disable
+- init system with pre/post init, deinit/cleanup pre/post
+  - anticipate mods (?)
 ```
 
 

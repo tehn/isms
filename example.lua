@@ -1,6 +1,8 @@
 --- script
 print("example.lua -------------> hello there")
 
+g = grid.connect()
+
 window.init(256,128)
 window.clear()
 
@@ -28,13 +30,12 @@ end
 
 metro.tick = function(i,s)
   print("metro",i,s)
-  --grid.all(s)
-  --grid.redraw()
+  grid.all(s)
+  grid.redraw()
 end
 
 metro.start(1,0.1,5,0)
 
-g = grid.connect()
 g.key = function(x,y,z)
   print("grid",x,y,z)
   osc.send({"localhost",57120},"/n",{(7-y)*5+x+30})
