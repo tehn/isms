@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <jack/jack.h>
+#include <time.h>
 
 #include "clock.h"
 #include "clocks/clock_internal.h"
@@ -12,22 +12,14 @@
 #include "event.h"
 
 static clock_source_t clock_source;
-static jack_client_t *jack_client;
-static jack_nframes_t jack_sample_rate;
 
 void clock_init() {
-  if ((jack_client = jack_client_open("matron-clock", JackNoStartServer, NULL)) == 0) {
-    fprintf(stderr, "failed to create JACK client\n");
-    exit(1);
-  }
-
-  jack_sample_rate = jack_get_sample_rate(jack_client);
   clock_set_source(CLOCK_SOURCE_INTERNAL);
 }
 
 void clock_deinit() {
   printf("clock >> deinit\n");
-  jack_client_close(jack_client);
+  // TODO cancel threads?
 }
 
 void clock_reference_init(clock_reference_t *reference) {
@@ -36,7 +28,9 @@ void clock_reference_init(clock_reference_t *reference) {
 }
 
 double clock_get_system_time() {
-  return (double) jack_frame_time(jack_client) / jack_sample_rate;
+  struct timespec spec;
+  clock_gettime(CLOCK_MONOTONIC, &spec);
+  return spec.tv_sec + (spec.tv_nsec / 1.0e9);
 }
 
 double clock_get_beats() {

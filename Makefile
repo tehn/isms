@@ -12,7 +12,7 @@ INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 #CPPFLAGS = $(INC_FLAGS) -MMD -MP -ggdb
 CFLAGS=-I/usr/include -I/usr/local/include \
-  -L/usr/local/lib -lSDL2 -llua -lm -ldl -llo -lmonome -lasound -ludev -levdev -ljack \
+  -L/usr/local/lib -lSDL2 -llua -lm -ldl -llo -lmonome -lasound -ludev -levdev \
   -std=c11 -Wall -pthread -D_GNU_SOURCE
 
 # main target (C)
@@ -42,5 +42,4 @@ install:
 .PHONY: run
 run: $(BIN)
 	./build/isms
-
 
