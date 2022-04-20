@@ -30,8 +30,8 @@ end
 
 metro.tick = function(i,s)
   print("metro",i,s)
-  grid.all(s)
-  grid.redraw()
+  g:all(s)
+  g:redraw()
 end
 
 metro.start(1,0.1,5,0)
@@ -53,3 +53,4 @@ w = midi.connect(2)
 w:note_on(60,100)
 w:note_off(60,100)
 ]]--
+
