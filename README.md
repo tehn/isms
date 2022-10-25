@@ -1,12 +1,12 @@
 # isms
 
-lua + osc + midi + grid + sdl
+lua + osc + midi + grid + crow + sdl + clocks
 
 - build: `make`
 - install: `sudo make install`
 - run: `isms example.lua`
 
-requires lua 5.4, sdl2, libevdev
+requires lua 5.4, sdl2, libevdev, libmonome
 
 only tested on linux (ubuntu), include/lib paths are hardcoded in makefile
 
@@ -38,8 +38,9 @@ library folder: `~/.local/share/isms`
 
 ## TODO
 ```
+- rework/redesign/eliminate vports
 - lua
-  - naming conventions (callbacks)
+  - naming conventions (callbacks) --- event table?
 - sdl
   - text
   - more drawing functions
@@ -58,8 +59,6 @@ library folder: `~/.local/share/isms`
   - sdl should probably have its own thread
 - should udp socket input check incoming ip (restrict to localhost?)
   - or arg to disable
-- init system with pre/post init, deinit/cleanup pre/post
-  - anticipate mods (?)
 ```
 
 

@@ -46,6 +46,11 @@ static void *input_run(void *p) {
         quit = true;
         continue;
       }
+      else if (rxbuf[0] == 'r') {
+	fprintf(stderr, ">> script reload");
+        event_post(event_data_new(EVENT_RESET));
+        continue;
+      }
     }
     if (nb > 0) {
       // event handler must free this chunk!
