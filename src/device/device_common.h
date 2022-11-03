@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <pthread.h>
 
 typedef enum {
     // libmonome devices
