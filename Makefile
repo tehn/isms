@@ -10,6 +10,13 @@ DEPS := $(OBJS:.o=.d)
 INC_DIRS := $(shell find $(SRC_DIRS) -type d)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
+ifneq ("$(SUDO_USER)", "")
+	REAL_USER := $(SUDO_USER)
+	REAL_USER_HOME := $(shell eval echo "~$$SUDO_USER")
+else
+	REAL_USER := $(USER)
+	REAL_USER_HOME := $(HOME)
+endif
 #CPPFLAGS = $(INC_FLAGS) -MMD -MP -ggdb
 CFLAGS=-I/usr/include -I/usr/local/include \
   -L/usr/local/lib -lSDL2 -llua -lm -ldl -llo -lmonome -lasound -ludev -levdev \
@@ -34,9 +41,9 @@ MKDIR_P ?= mkdir -p
 
 .PHONY: install
 install:
-	@echo ">> installing libs to $(HOME)/.local/share/isms"
-	$(MKDIR_P) $$HOME/.local/share/isms/system
-	cp lua/* $$HOME/.local/share/isms/system/
+	@echo ">> installing libs to $(REAL_USER_HOME)/.local/share/isms"
+	$(MKDIR_P) $$REAL_USER_HOME/.local/share/isms/system
+	cp lua/* $$REAL_USER_HOME/.local/share/isms/system/
 	cp build/isms /usr/local/bin/
 
 .PHONY: run
