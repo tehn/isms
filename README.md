@@ -13,6 +13,7 @@ only tested on linux (ubuntu), include/lib paths are hardcoded in makefile
 
 ## currently
 
+- install with `make; sudo make install` then run with `isms example.lua` 
 - `example.lua` is run at startup, creating a new window which accepts key input to place a random pixel line and send an OSC message to supercollider
 - `example.scd` will provide a rudimentary osc-listening synth for testing OSC
 - if found, connects to grid at `/dev/ttyACM0` and sends OSC on key input
@@ -31,9 +32,9 @@ reconstruction of norns. reconsidering design for use on a computer with large s
 
 ## structure
 
-library folder: `~/.local/share/isms`
+library folder: `/usr/local/share/isms`
 
-`system` subfolder is copied by `make install`. any user libraries can go directly in `~/.local/share/isms`.
+`system` subfolder is copied by `make install`. any user libraries can go directly in `/usr/local/share/isms`.
 
 
 ## TODO

@@ -34,9 +34,10 @@ MKDIR_P ?= mkdir -p
 
 .PHONY: install
 install:
-	@echo ">> installing libs to $(HOME)/.local/share/isms"
-	$(MKDIR_P) $$HOME/.local/share/isms/system
-	cp lua/* $$HOME/.local/share/isms/system/
+	@echo ">> installing libs to /usr/local/share/isms"
+	$(MKDIR_P) /usr/local/share/isms/system
+	cp lua/* /usr/local/share/isms/system/
+	@echo ">> installing binary to /usr/local/bin"
 	cp build/isms /usr/local/bin/
 
 .PHONY: run

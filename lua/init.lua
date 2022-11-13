@@ -1,6 +1,8 @@
 local home = os.getenv('HOME')
-package.path = home..'/.local/share/isms/?.lua;'..package.path
-package.path = home..'/.local/share/isms/system/?.lua;'..package.path
+package.path = '/usr/local/share/isms/?.lua;'..package.path
+--package.path = home..'/.local/share/isms/?.lua;'..package.path
+package.path = '/usr/local/share/isms/system/?.lua;'..package.path
+--package.path = home..'/.local/share/isms/system/?.lua;'..package.path
 --print("lua init >> package.path: "..package.path)
 
 function window.key(x) print('window key: '..x) end

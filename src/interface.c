@@ -87,9 +87,10 @@ void init_interface(void) {
   lua_reg_func("line",_sdl_line);
   lua_setglobal(L,"window");
 
-  char *home = getenv("HOME");
+  //char *home = getenv("HOME");
   char cmd[128];
-  snprintf(cmd, 128, "dofile('%s/.local/share/isms/system/init.lua')\n", home);
+  //snprintf(cmd, 128, "dofile('%s/.local/share/isms/system/init.lua')\n", home);
+  snprintf(cmd, 128, "dofile('/usr/local/share/isms/system/init.lua')\n");
   l_dostring(L, cmd, "init");
 }
 
