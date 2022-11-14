@@ -9,9 +9,9 @@ function window.key(x) print('window key: '..x) end
 function osc.receive(path, args, from) print('osc: '..path) end
 function metro.tick(i,stage) print('metro: '..i..' '..stage) end
 
+require('grid')
 tab = require('tabutil')
 midi = require('midi')
-grid = require('grid')
 clock = require('clock')
 
 isms.state = {}
