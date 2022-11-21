@@ -1,6 +1,6 @@
 # isms
 
-lua + osc + midi + grid + crow + sdl + clocks
+lua + osc + grid + midi + crow + sdl + clocks
 
 - build: `make`
 - install: `sudo make install`
@@ -25,11 +25,6 @@ only tested on linux (ubuntu), include/lib paths are hardcoded in makefile
   map <C-\> :silent .w !xargs -0 echo -n > /dev/udp/localhost/11001<CR>
 
 
-## design
-
-reconstruction of norns. reconsidering design for use on a computer with large screen and keyboard.
-
-
 ## structure
 
 library folder: `/usr/local/share/isms`
@@ -39,26 +34,23 @@ library folder: `/usr/local/share/isms`
 
 ## TODO
 ```
-- rework/redesign/eliminate vports
 - lua
   - naming conventions (callbacks) --- event table?
 - sdl
   - text
   - more drawing functions
-  - mouse events
-- metro allocator (?)
+  - mouse events (?)
+
+- socket input: allow blocks, not just line
+- repl history (readline/etc)
+- repl: fix color coding (where text is coming from)
+- refine device management (remove vports)
 - crow
-- socket input, allow blocks, not just line
-- abandon repl in favor of socket style?
-  - or do minimal (add up-arrow for one level of history)
-- color coding for where text is coming from
-
-(and)
-
+- metro allocator (?)
 - makefile improvements
 - optimization
   - sdl should probably have its own thread
-- should udp socket input check incoming ip (restrict to localhost?)
+- security: should udp socket input check incoming ip (restrict to localhost?)
   - or arg to disable
 ```
 
@@ -77,9 +69,9 @@ metro.stop(index)
 clock -- TODO
 
 g = grid.connect()
-g.all(z)
-g.led(x,y,z)
-g.redraw()
+g:all(z)
+g:led(x,y,z)
+g:redraw()
 
 m = midi.connect() -- more TODO
 
@@ -93,6 +85,8 @@ m.receive -- TODO
 
 
 ## acknowledgements
+
+reconstruction of norns. reconsidering design for use on a computer with large screen and keyboard.
 
 - based heavily on `matron` from norns, written by @catfact
 - sdl use patterned on work by @neauoire
