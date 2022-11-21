@@ -40,9 +40,6 @@ library folder: `/usr/local/share/isms`
 ## TODO
 ```
 - rework/redesign/eliminate vports
-  - just use grid functions directly
-  - id start with 1, increment for new devices, resume id for reconnection
-  - config file for auto-population (ie, assigned id per serial)
 - lua
   - naming conventions (callbacks) --- event table?
 - sdl
