@@ -34,16 +34,14 @@ library folder: `/usr/local/share/isms`
 
 ## TODO
 ```
-- lua
-  - naming conventions (callbacks) --- event table?
 - sdl
   - text
   - more drawing functions
   - mouse events (?)
-
 - socket input: allow blocks, not just line
 - repl history (readline/etc)
 - repl: fix color coding (where text is coming from)
+- naming conventions: handlers (direct vs. isms table, somewhat relates to vports)
 - refine device management (remove vports)
 - crow
 - metro allocator (?)
