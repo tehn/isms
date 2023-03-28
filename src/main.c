@@ -21,6 +21,8 @@
 #include "sdl.h"
 #include "socket.h"
 
+#define DEFAULT_OSC_PORT			10011
+#define DEFAULT_SOCKET_PORT		11001
 
 int main(int argc, char **argv) {
   printf("isms ////////\n");
@@ -34,8 +36,8 @@ int main(int argc, char **argv) {
   clock_crow_init();
   clock_scheduler_init();
 
-  init_osc();
-  init_socket();
+  init_osc(DEFAULT_OSC_PORT);
+  init_socket(DEFAULT_SOCKET_PORT);
   init_metro();
   init_lua();
   init_interface();

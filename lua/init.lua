@@ -1,6 +1,5 @@
 package.path = '/usr/local/share/isms/?.lua;'..package.path
 package.path = '/usr/local/share/isms/system/?.lua;'..package.path
-print(">> packages: /usr/local/share/isms")
 --local home = os.getenv('HOME')
 --package.path = home..'/.local/share/isms/?.lua;'..package.path
 --package.path = home..'/.local/share/isms/system/?.lua;'..package.path

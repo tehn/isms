@@ -4,7 +4,7 @@
 
 extern char *osc_port;
 
-void init_osc(void);
+void init_osc(int);
 void register_osc(void);
 void deinit_osc(void);
 

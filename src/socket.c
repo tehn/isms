@@ -10,7 +10,6 @@
 
 #include "event.h"
 
-#define SOCKET_PORT	 11001
 #define SOCKET_LEN   1024
 
 static pthread_t p;
@@ -47,28 +46,29 @@ void *socket_loop(void *x) {
   }
 }
 
-void init_socket(void) {
+void init_socket(int port) {
+	int ret;
+
 	if ( (sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ) {
 		printf(">> SOCKET: init fail\n");
 		exit(1);
 	}
-	
-	memset(&addr_here, 0, sizeof(addr_here));
-	addr_here.sin_family = AF_INET;
-	addr_here.sin_addr.s_addr = INADDR_ANY;
-	addr_here.sin_port = htons(SOCKET_PORT);
-	
-	if ( bind(sockfd, (const struct sockaddr *)&addr_here, sizeof(addr_here)) < 0 ) {
-		printf(">> SOCKET: init fail bind\n");
+
+	do {
+		memset(&addr_here, 0, sizeof(addr_here));
+		addr_here.sin_family = AF_INET;
+		addr_here.sin_addr.s_addr = INADDR_ANY;
+		addr_here.sin_port = htons(port);
+		ret = bind(sockfd, (const struct sockaddr *)&addr_here, sizeof(addr_here)) < 0; 
+		if(ret) port++;
+	} while(ret);
+
+	if (pthread_create(&p, NULL, socket_loop, 0)) {
+		printf(">> SOCKET: init fail pthread\n");
 		exit(1);
 	}
-	
-  if (pthread_create(&p, NULL, socket_loop, 0)) {
-    printf(">> SOCKET: init fail pthread\n");
-    exit(1);
-  }
 
-  printf(">> SOCKET port 11001\n");
+  printf("socket\t\t%d\n",port);
 }
 
 
