@@ -8,6 +8,7 @@ extern void deinit_metro(void);
 
 extern void metro_start(int idx, double seconds, int count, int stage);
 extern void metro_stop(int idx);
+extern void metro_clear(void);
 
 // set period of metro
 // NB: if the metro is running, its hard to say if new value will take effect

@@ -77,12 +77,11 @@ metro.stop(index)
 
 clock -- TODO
 
-g = grid.connect()
-g:all(z)
-g:led(x,y,z)
-g:redraw()
+grid.all(id,z)
+grid.led(id,x,y,z)
+grid.redraw(id)
 
-m = midi.connect() -- more TODO
+-- MIDI
 
 -- events
 metro.tick(index, stage)
@@ -90,6 +89,17 @@ window.key(code)
 osc.receive(path, args, from)
 g.key(x,y,z)
 m.receive -- TODO
+
+? proposed:
+event.metro.tick(index, stage)
+event.window.key(code)
+event.osc.receive(...)
+event.grid.key(id,x,y,z)
+event.midi.noteon(id,note,vel,ch)
+
+event.grid.add(id,serial)
+event.grid.remove(id,serial)
+event.midi.add(id,...)
 ```
 
 

@@ -2,7 +2,7 @@
 
 #include <stdbool.h>
 #include <lo/lo.h>
-#include "device.h"
+//#include "device.h"
 
 extern bool quit;
 
@@ -92,13 +92,13 @@ struct event_hid {
 
 struct event_device_add {
   struct event_common common;
-  device_t type;
+  //device_t type;
   void *dev;
 };
 
 struct event_device_remove {
   struct event_common common;
-  device_t type;
+  //device_t type;
   uint8_t id;
 };
 

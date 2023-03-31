@@ -11,7 +11,7 @@
 #include <pthread.h>
 #include <lo/lo.h>
 
-#include "device.h"
+//#include "device.h"
 #include "event.h"
 #include "lua.h"
 #include "sdl.h"
@@ -185,6 +185,7 @@ static void handle_event(union event_data *ev) {
       handle_midi(ev->midi.id, ev->midi.data, ev->midi.nbytes);
       break;
     case EVENT_DEVICE_ADD:
+			/*
       switch(ev->device_add.type) {
         case DEV_TYPE_MONOME:
           handle_monome_add(ev->device_add.dev);
@@ -195,8 +196,10 @@ static void handle_event(union event_data *ev) {
         default:
           break;
       }
+			*/
       break;
     case EVENT_DEVICE_REMOVE:
+			/*
       switch(ev->device_remove.type) {
         case DEV_TYPE_MONOME:
           handle_monome_remove(ev->device_remove.id);
@@ -207,6 +210,7 @@ static void handle_event(union event_data *ev) {
         default:
           break;
       }
+			*/
       break;
     case EVENT_CLOCK_RESUME:
       handle_clock_resume(ev->clock_resume.thread_id, ev->clock_resume.value);
