@@ -154,32 +154,38 @@ void lo_error_handler(int num, const char *m, const char *path) {
 }
 
 void monome_all(int index, int z) {
-	memset(device[index].quad, z, sizeof(char)*256);
-	for(int i=0;i<4;i++) device[index].dirty[i] = true;
+	if(device[index].connected) {
+		memset(device[index].quad, z, sizeof(char)*256);
+		for(int i=0;i<4;i++) device[index].dirty[i] = true;
+	}
 }
 
 void monome_led(int index, int x, int y, int z) {
-	int quad = (x/8)+((y/8)*2);
-	device[index].quad[quad][(x%8)+(y%8)*8]=z;
-	device[index].dirty[quad] = true;
+	if(device[index].connected) {
+		int quad = (x/8)+((y/8)*2);
+		device[index].quad[quad][(x%8)+(y%8)*8]=z;
+		device[index].dirty[quad] = true;
+	}
 }
 
 void monome_redraw(int index) {
-	static int offx[] = {0,8,0,8}; // could do this with some bits instead
-	static int offy[] = {0,0,8,8};
-	for(int i=0;i<4;i++) {
-		if(device[index].dirty[i]) {
-			//printf("dirty: %d\n",i);
-			lo_message msg = lo_message_new();
-      lo_message_add_int32(msg, offx[i]);
-      lo_message_add_int32(msg, offy[i]);
-			for(int d=0;d<64;d++)
-				lo_message_add_int32(msg, device[index].quad[i][d]);
-			//printf("%s : ",device[index].mappath);
-			//lo_message_pp(msg);
-			lo_send_message(device[index].addr, device[index].mappath, msg);
-			lo_message_free(msg);
-			device[index].dirty[i] = false;
+	if(device[index].connected) {
+		static int offx[] = {0,8,0,8}; // could do this with some bits instead
+		static int offy[] = {0,0,8,8};
+		for(int i=0;i<4;i++) {
+			if(device[index].dirty[i]) {
+				//printf("dirty: %d\n",i);
+				lo_message msg = lo_message_new();
+				lo_message_add_int32(msg, offx[i]);
+				lo_message_add_int32(msg, offy[i]);
+				for(int d=0;d<64;d++)
+					lo_message_add_int32(msg, device[index].quad[i][d]);
+				//printf("%s : ",device[index].mappath);
+				//lo_message_pp(msg);
+				lo_send_message(device[index].addr, device[index].mappath, msg);
+				lo_message_free(msg);
+				device[index].dirty[i] = false;
+			}
 		}
 	}
 }
