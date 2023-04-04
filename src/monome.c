@@ -18,7 +18,8 @@ static lo_address sosc;
 typedef struct {
 	bool assigned;
 	bool connected;
-	char serial[8];
+	char serial[10];
+	char name[32];
 	int port;
 	lo_address addr;
 	char quad[4][64];
@@ -49,6 +50,7 @@ void init_monome() {
   lo_server_thread_add_method(st, NULL, NULL, osc_serialosc, NULL);
 	lo_server_thread_start(st);
 	sosc = lo_address_new(NULL, "12002");
+	lo_send(sosc, "/serialosc/notify", "si", "localhost", port);
 	lo_send(sosc, "/serialosc/list", "si", "localhost", port);
 }
 
@@ -69,7 +71,7 @@ int rlookup(char *s) {
 void focus(int i) {
 	lo_send(device[i].addr, "/sys/port", "i", port);
 	lo_send(device[i].addr, "/sys/prefix", "s", device[i].serial);
-	printf("## focus [%d]\n",i);
+	printf("## grid focus [%d]\n",i);
 }
 
 int osc_serialosc(const char *path, const char *types, lo_arg **argv, int argc, lo_message msg, void *user_data) {
@@ -87,25 +89,40 @@ int osc_serialosc(const char *path, const char *types, lo_arg **argv, int argc, 
 					device[i].connected = true;
 					device[i].port = argv[2]->i;
 					strcpy(device[i].serial,&argv[0]->s);
+					strcpy(device[i].name,&argv[1]->s);
 					sprintf(device[i].mappath,"/%s/grid/led/level/map",&argv[0]->s);
 					char p[6];
 					sprintf(p,"%d",argv[2]->i);
 					device[i].addr = lo_address_new(NULL, p);
-					printf("## new/add [%d] %s\n",i,device[i].serial);
+					printf("## grid new/add [%d] %s '%s'\n",i,device[i].serial,device[i].name);
 					focus(i);
-					// TODO: event add
+					union event_data *ev = event_data_new(EVENT_GRID_ADD);
+					ev->grid_add.id = i;
+					ev->grid_add.serial = device[i].serial;
+					ev->grid_add.name = device[i].name;
+					event_post(ev);
 				}
 			} else { // RECONNECT
-				device[pos].connected = false;
-				printf("## add [%d] %s\n",pos,device[pos].serial);
-				// TODO: event add
+				if(!device[pos].connected) { // filter duplicate serialosc notification
+					device[pos].connected = true;
+					printf("## grid add [%d] %s\n",pos,device[pos].serial);
+					union event_data *ev = event_data_new(EVENT_GRID_ADD);
+					ev->grid_add.id = pos;
+					ev->grid_add.serial = device[pos].serial;
+					ev->grid_add.name = device[pos].name;
+					event_post(ev);
+				}
 			}
 		}
 		else if(strstr(path,"remove")!=NULL) {
 			int pos = rlookup(&argv[0]->s);
-			device[pos].connected = false;
-			printf("## remove [%d] %s\n",pos,device[pos].serial);
-			// TODO: event remove
+			if(device[pos].connected) { // filter duplicate serialosc notifications
+				device[pos].connected = false;
+				printf("## grid remove [%d] %s\n",pos,device[pos].serial);
+				union event_data *ev = event_data_new(EVENT_GRID_REMOVE);
+				ev->grid_remove.id = pos;
+				event_post(ev);
+			}
 		}
 		lo_send(sosc, "/serialosc/notify", "si", "localhost", port);
 	} else {

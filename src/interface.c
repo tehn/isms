@@ -21,6 +21,15 @@ static inline void push_isms_func(const char *field, const char *func) {
   lua_getfield(L, -1, func);
   lua_remove(L, -2);
 }
+
+static inline void push_event_func(const char *field, const char *func) {
+  lua_getglobal(L, "event");
+  lua_getfield(L, -1, field);
+  lua_remove(L, -2);
+  lua_getfield(L, -1, func);
+  lua_remove(L, -2);
+}
+
 static int _nop(lua_State *l);
 static int _grid_redraw(lua_State *l);
 static int _grid_led(lua_State *l);
@@ -69,10 +78,8 @@ void init_interface(void) {
   lua_reg_func("redraw", &_grid_redraw);
   lua_reg_func("led", &_grid_led);
   lua_reg_func("all", &_grid_all);
-  //lua_reg_func("rows", &_grid_rows);
-  //lua_reg_func("cols", &_grid_cols);
-  //lua_reg_func("set_rotation", &_grid_set_rotation);
-  lua_reg_func("key",_nop); // init empty callback (not sure this is necessary?)
+  //lua_reg_func("intensity", &_grid_rotation);
+  //lua_reg_func("rotation", &_grid_intensity);
 	lua_setglobal(L, "grid");
   // metro
   lua_newtable(L);
@@ -94,15 +101,15 @@ void init_interface(void) {
   lua_reg_func("key",_nop); // init empty callback
   lua_setglobal(L,"window");
 
-	/*
 	// events
 	lua_newtable(L);
 	// grid
 	lua_newtable(L);
-  lua_reg_func("key",_nop); // init empty callback
+  lua_reg_func("key",&_nop); // init empty callback
+  lua_reg_func("add",&_nop); // init empty callback
+  lua_reg_func("remove",&_nop); // init empty callback
 	lua_setfield(L, -2, "grid");
 	lua_setglobal(L, "event");
-	*/
 
   printf("lib\t\t/usr/local/share/isms/\n");
   //char *home = getenv("HOME");
@@ -452,39 +459,27 @@ void handle_reset() {
 
 //////// grid
 
-void handle_monome_add(void *mdev) {
-	/*
-  struct dev_monome *md = (struct dev_monome *)mdev;
-  int id = md->dev.id;
-  const char *serial = md->dev.serial;
-  const char *name = md->dev.name;
-  push_isms_func("grid", "add");
-  lua_pushinteger(L, id + 1); // convert to 1-base
-  lua_pushstring(L, serial);
-  lua_pushstring(L, name);
-  lua_pushlightuserdata(L, mdev);
-  l_report(L, l_docall(L, 4, 0));
-	*/
-}
-
-void handle_monome_remove(int id) {
-	/*
-  push_isms_func("grid", "remove");
-  lua_pushinteger(L, id + 1); // convert to 1-base
-  l_report(L, l_docall(L, 1, 0));
-	*/
-}
-
 void handle_grid(uint8_t i, uint8_t x, uint8_t y, uint8_t state) {
-  lua_getglobal(L, "grid");
-  lua_getfield(L, -1, "key");
-  lua_remove(L, -2);
-  //push_isms_func("grid", "key");
+  push_event_func("grid", "key");
   lua_pushinteger(L, i);
   lua_pushinteger(L, x);
   lua_pushinteger(L, y);
   lua_pushinteger(L, state);
   l_report(L, l_docall(L, 4, 0));
+}
+
+void handle_grid_add(uint8_t id, char *serial, char *name) {
+  push_event_func("grid", "add");
+  lua_pushinteger(L, id);
+  lua_pushstring(L, serial);
+  lua_pushstring(L, name);
+  l_report(L, l_docall(L, 3, 0));
+}
+
+void handle_grid_remove(uint8_t id) {
+  push_event_func("grid", "remove");
+  lua_pushinteger(L, id);
+  l_report(L, l_docall(L, 1, 0));
 }
 
 

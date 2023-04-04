@@ -43,9 +43,9 @@ library folder: `/usr/local/share/isms`
 - consider implications of running multiple instances
   - osc port assignments (ie auto-increment if requested is taken)
   - grid/midi "focus"
-- naming conventions: handlers (direct vs. isms table, somewhat relates to vports)
-  - function event["grid_key"](x,y,z) or
-    event["grid_key"] = gridkey
+- naming convention for event handlers
+  - function event.grid.key(x,y,z)
+- config file (pre-run) for setting "reserved" grid/midi slots (ie serial numbers)
 - makefile improvements
   - consider cmake
 
@@ -87,8 +87,8 @@ grid.redraw(id)
 metro.tick(index, stage)
 window.key(code)
 osc.receive(path, args, from)
-g.key(x,y,z)
-m.receive -- TODO
+grid.key(x,y,z)
+midi.receive
 
 ? proposed:
 event.metro.tick(index, stage)
@@ -96,7 +96,6 @@ event.window.key(code)
 event.osc.receive(...)
 event.grid.key(id,x,y,z)
 event.midi.noteon(id,note,vel,ch)
-
 event.grid.add(id,serial)
 event.grid.remove(id,serial)
 event.midi.add(id,...)
@@ -105,7 +104,7 @@ event.midi.add(id,...)
 
 ## acknowledgements
 
-reconstruction of norns. reconsidering design for use on a computer with large screen and keyboard.
+reimagining of norns. reconsidering design for use on a computer with large screen and keyboard.
 
 - based heavily on `matron` from norns, written by @catfact
 - sdl use patterned on work by @neauoire
