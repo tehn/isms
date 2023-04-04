@@ -105,10 +105,13 @@ void init_interface(void) {
 	lua_newtable(L);
 	// grid
 	lua_newtable(L);
-  lua_reg_func("key",&_nop); // init empty callback
-  lua_reg_func("add",&_nop); // init empty callback
-  lua_reg_func("remove",&_nop); // init empty callback
+  lua_reg_func("key",&_nop);
+  lua_reg_func("add",&_nop);
+  lua_reg_func("remove",&_nop);
 	lua_setfield(L, -2, "grid");
+	lua_newtable(L);
+  lua_reg_func("tick",&_nop);
+	lua_setfield(L, -2, "metro");
 	lua_setglobal(L, "event");
 
   printf("lib\t\t/usr/local/share/isms/\n");
@@ -487,9 +490,10 @@ void handle_grid_remove(uint8_t id) {
 
 void handle_metro(int idx, int stage) {
   //printf("e: metro: %i %i\n",idx, stage);
-  lua_getglobal(L, "metro");
-  lua_getfield(L, -1, "tick");
-  lua_remove(L, -2);
+	push_event_func("metro", "tick");
+  //lua_getglobal(L, "metro");
+  //lua_getfield(L, -1, "tick");
+  //lua_remove(L, -2);
   lua_pushinteger(L, idx + 1);   // convert to 1-based
   lua_pushinteger(L, stage + 1); // convert to 1-based
   l_report(L, l_docall(L, 2, 0));

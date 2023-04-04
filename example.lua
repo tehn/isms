@@ -28,7 +28,7 @@ window.key = function(x)
   print("key: "..x)
 end
 
-metro.tick = function(i,s)
+event.metro.tick = function(i,s)
   print("metro",i,s)
   grid.all(0,s)
   grid.redraw(0)
@@ -36,7 +36,7 @@ end
 
 metro.start(1,0.1,5,0)
 
-grid.key = function(i,x,y,z)
+event.grid.key = function(i,x,y,z)
   print("grid",x,y,z)
   osc.send({"localhost",57120},"/n",{(7-y)*5+x+30})
   grid.led(0,x,y,15);
