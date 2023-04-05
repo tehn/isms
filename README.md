@@ -37,14 +37,16 @@ library folder: `/usr/local/share/isms`
 ## TODO
 ```
 - linux-macos compatibility
-  - grid: use serialosc instead of libmonome (removes udev)
+  x grid: use serialosc instead of libmonome (removes udev)
   - midi: use portmidi https://github.com/PortMidi/PortMidi
-- refine device management (remove vports)
+x refine device management (remove vports)
 - consider implications of running multiple instances
-  - osc port assignments (ie auto-increment if requested is taken)
+  x osc port assignments (ie auto-increment if requested is taken)
   - grid/midi "focus"
 - naming convention for event handlers
-  - function event.grid.key(x,y,z)
+  x function event.grid.key(x,y,z)
+	x done: grid, metro
+	- todo: clock, sdl
 - config file (pre-run) for setting "reserved" grid/midi slots (ie serial numbers)
 - makefile improvements
   - consider cmake
@@ -56,11 +58,13 @@ library folder: `/usr/local/share/isms`
 - socket input: allow blocks, not just line
 - repl history (readline/etc)
 - repl: fix color coding (where text is coming from)
-- metro allocator (?)
+
 - optimization
   - sdl should probably have its own thread
 - security: should udp socket input check incoming ip (restrict to localhost?)
   - or arg to disable
+
+- metro allocator (?)
 ```
 
 
@@ -84,20 +88,17 @@ grid.redraw(id)
 -- MIDI
 
 -- events
-metro.tick(index, stage)
 window.key(code)
 osc.receive(path, args, from)
-grid.key(x,y,z)
-midi.receive
 
-? proposed:
+-- events
 event.metro.tick(index, stage)
 event.window.key(code)
 event.osc.receive(...)
 event.grid.key(id,x,y,z)
-event.midi.noteon(id,note,vel,ch)
 event.grid.add(id,serial)
 event.grid.remove(id,serial)
+event.midi.noteon(id,note,vel,ch)
 event.midi.add(id,...)
 ```
 
