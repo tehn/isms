@@ -10,10 +10,9 @@ DEPS := $(OBJS:.o=.d)
 INC_DIRS := $(shell find $(SRC_DIRS) -type d)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-#CPPFLAGS = $(INC_FLAGS) -MMD -MP -ggdb
 CFLAGS=-I/usr/include -I/usr/local/include -I/usr/include/lua5.4 \
-	   -L/usr/local/lib -lSDL2 -llua5.4 -lm -ldl -llo -lmonome -lasound -ludev -levdev \
   -std=c11 -Wall -pthread -D_GNU_SOURCE
+LDFLAGS=-L/usr/local/lib -lSDL2 -llua5.4 -lm -ldl -llo -lmonome
 
 # main target (C)
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
