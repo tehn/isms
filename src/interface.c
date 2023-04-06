@@ -115,10 +115,10 @@ void init_interface(void) {
 	lua_setglobal(L, "event");
 
   printf("lib\t\t/usr/local/share/isms/\n");
-  //char *home = getenv("HOME");
+  char *home = getenv("HOME");
   char cmd[128];
-  //snprintf(cmd, 128, "dofile('%s/.local/share/isms/system/init.lua')\n", home);
-  snprintf(cmd, 128, "dofile('/usr/local/share/isms/system/init.lua')\n");
+  snprintf(cmd, 128, "dofile('%s/.local/share/isms/system/init.lua')\n", home);
+  //snprintf(cmd, 128, "dofile('/usr/local/share/isms/system/init.lua')\n");
   l_dostring(L, cmd, "init");
 }
 

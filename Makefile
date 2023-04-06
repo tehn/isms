@@ -31,15 +31,13 @@ clean:
 
 MKDIR_P ?= mkdir -p
 
+.PHONY: install-lib
+install-lib:
+	@echo ">> installing libs to ~/.local/share/isms"
+	$(MKDIR_P) ~/.local/share/isms/system
+	cp lua/* ~/.local/share/isms/system/
+
 .PHONY: install
 install:
-	@echo ">> installing libs to /usr/local/share/isms"
-	$(MKDIR_P) /usr/local/share/isms/system
-	cp lua/* /usr/local/share/isms/system/
 	@echo ">> installing binary to /usr/local/bin"
 	cp build/isms /usr/local/bin/
-
-.PHONY: run
-run: $(BIN)
-	./build/isms
-
