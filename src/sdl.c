@@ -177,7 +177,7 @@ void *sdl_loop(void *x) {
   while(1) {
     ev = event_data_new(EVENT_SDL_CHECK);
     event_post(ev);
-    sleep(0.001);
+    sleep(0.005);
   }
 }
 

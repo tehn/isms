@@ -67,6 +67,7 @@ void init_socket(int port) {
 		printf(">> SOCKET: init fail pthread\n");
 		exit(1);
 	}
+	pthread_setname_np(p, "socket");
 
   printf("socket\t\t%d\n",port);
 }

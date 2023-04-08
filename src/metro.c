@@ -19,7 +19,7 @@
 #include <limits.h>
 #include <time.h>
 
-// norns
+#include "platform_clock.h"
 #include "event.h"
 #include "metro.h"
 
@@ -245,7 +245,7 @@ void metro_sleep(struct metro *t) {
 	t->time += t->delta;
 	ts.tv_sec = t->time / 1000000000;
 	ts.tv_nsec = t->time % 1000000000;
-	clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &ts, NULL);
+	platform_clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &ts, NULL);
 }
 
 void metro_wait(int idx) {

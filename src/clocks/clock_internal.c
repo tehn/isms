@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "platform_clock.h"
 #include "clock.h"
 #include "clock_scheduler.h"
 #include "clock_internal.h"
@@ -30,7 +31,7 @@ static void clock_internal_sleep(double seconds) {
     ts.tv_sec = seconds;
     ts.tv_nsec = (seconds - ts.tv_sec) * 1000000000;
 
-    clock_nanosleep(CLOCK_MONOTONIC, 0, &ts, NULL);
+    platform_clock_nanosleep(CLOCK_MONOTONIC, 0, &ts, NULL);
 }
 
 static void *clock_internal_thread_run(void *p) {

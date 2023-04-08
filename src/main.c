@@ -5,8 +5,6 @@
 
 #include "lo/lo.h"
 
-//#include "device.h"
-//#include "device_monitor.h"
 #include "clock.h"
 #include "clocks/clock_internal.h"
 #include "clocks/clock_midi.h"
@@ -62,5 +60,4 @@ int main(int argc, char **argv) {
   printf(">> farewell.\n");
   return 0;
 }
-
 
