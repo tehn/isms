@@ -111,6 +111,7 @@ int init_sdl(int x, int y) {
   if (pthread_create(&p, NULL, sdl_loop, 0)) {
     return error("SDL", "pthread failed");
   }
+	pthread_setname_np(p, "sdl");
 
   active = 1;
   return 1;
@@ -169,6 +170,7 @@ void sdl_check() {
   }
 }
 
+// FIXME: this is high-cpu
 void *sdl_loop(void *x) {
   (void)x;
   union event_data *ev;

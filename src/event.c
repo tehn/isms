@@ -11,7 +11,6 @@
 #include <pthread.h>
 #include <lo/lo.h>
 
-//#include "device.h"
 #include "event.h"
 #include "lua.h"
 #include "sdl.h"

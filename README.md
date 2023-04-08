@@ -36,9 +36,11 @@ library folder: `/usr/local/share/isms`
 
 ## TODO
 ```
+- cpu usage at rest
 - linux-macos compatibility
   x grid: use serialosc instead of libmonome (removes udev)
   - midi: use portmidi https://github.com/PortMidi/PortMidi
+	- clock_nanosleep
 x refine device management (remove vports)
 - consider implications of running multiple instances
   x osc port assignments (ie auto-increment if requested is taken)
