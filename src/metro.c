@@ -245,6 +245,8 @@ void metro_sleep(struct metro *t) {
 	t->time += t->delta;
 	ts.tv_sec = t->time / 1000000000;
 	ts.tv_nsec = t->time % 1000000000;
+	fprintf(stderr, "metro_sleep; delta = %llu, time = %llu, sec = %ld, nsec = %ld", 
+	t->delta, t->time, ts.tv_sec, ts.tv_nsec);
 	platform_clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &ts, NULL);
 }
 
