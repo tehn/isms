@@ -10,9 +10,9 @@ DEPS := $(OBJS:.o=.d)
 INC_DIRS := $(shell find $(SRC_DIRS) -type d)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-CFLAGS=-I/usr/include -I/usr/local/include -I/usr/include/lua5.4 \
-  -std=c11 -O2 -Wall -pthread -D_GNU_SOURCE
-LDFLAGS=-L/usr/local/lib -lSDL2 -llua5.4 -lm -ldl -llo -lmonome
+CFLAGS=-I/usr/include -I/opt/homebrew/include -I/opt/homebrew/include/lua5.4 \
+  -std=c11 -O2 -Wall -pthread -D_GNU_SOURCE -DPLATFORM_MACH=1
+LDFLAGS=-L/opt/homebrew/lib -lSDL2 -llua5.4 -lm -ldl -llo -lmonome
 
 # main target (C)
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)

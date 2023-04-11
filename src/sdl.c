@@ -111,7 +111,7 @@ int init_sdl(int x, int y) {
   if (pthread_create(&p, NULL, sdl_loop, 0)) {
     return error("SDL", "pthread failed");
   }
-	pthread_setname_np(p, "sdl");
+	//pthread_setname_np(p, "sdl");
 
   active = 1;
   return 1;
@@ -177,7 +177,7 @@ void *sdl_loop(void *x) {
   while(1) {
     ev = event_data_new(EVENT_SDL_CHECK);
     event_post(ev);
-    sleep(0.005);
+    usleep(1000);
   }
 }
 
