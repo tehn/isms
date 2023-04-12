@@ -34,7 +34,7 @@ event.metro.tick = function(i,s)
   grid.redraw(0)
 end
 
-metro.start(1,0.1,5,0)
+metro.start(1,0.5,15,0)
 
 event.grid.key = function(i,x,y,z)
   print("grid",x,y,z)

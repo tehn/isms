@@ -36,6 +36,7 @@ static int emulated_clock_nanosleep(clockid_t clock_id, int flags,
 				uint64_t target_ticks;
 				if (flags & TIMER_ABSTIME) {
 					target_ticks = nanos_to_ticks(nanos);
+					printf("%llu\n%llu = %llu\n",mach_absolute_time(),target_ticks,nanos);
 				} else {
 					target_ticks = mach_absolute_time() + nanos_to_ticks(nanos);
 				}

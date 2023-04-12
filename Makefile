@@ -11,14 +11,14 @@ INC_DIRS := $(shell find $(SRC_DIRS) -type d)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 # homebrew
-# MACOS_PKG_INC = /usr/local/include
-# MACOS_PKG_LIB = /usr/local/lib
-# LUALIB = lua5.4
+MACOS_PKG_INC = /opt/homebrew/include
+MACOS_PKG_LIB = /opt/homebrew/lib
+LUALIB = lua5.4
 
 # macports
-MACOS_PKG_INC = /opt/local/include
-MACOS_PKG_LIB = /opt/local/lib
-LUALIB = lua
+#MACOS_PKG_INC = /opt/local/include
+#MACOS_PKG_LIB = /opt/local/lib
+#LUALIB = lua
 
 
 INC := -I/usr/include \
