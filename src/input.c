@@ -45,9 +45,8 @@ static void *input_run(void *p) {
         event_post(event_data_new(EVENT_QUIT));
         quit = true;
         continue;
-      }
-      else if (rxbuf[0] == 'r') {
-	fprintf(stderr, ">> script reload");
+      } else if (rxbuf[0] == 'r') {
+        fprintf(stderr, ">> script reload");
         event_post(event_data_new(EVENT_RESET));
         continue;
       }
@@ -73,7 +72,7 @@ void init_input(void) {
     fprintf(stderr, "input_init(): error in pthread_attr_init(): %d\n", s);
   }
   s = pthread_create(&pid, &attr, &input_run, NULL);
-	pthread_setname_np(pid, "input");
+  pthread_setname_np(pid, "input");
 
   if (s != 0) {
     fprintf(stderr, "input_init(): error in pthread_create(): %d\n", s);

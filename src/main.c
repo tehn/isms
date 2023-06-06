@@ -1,6 +1,6 @@
-#include <stdlib.h>
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "lo/lo.h"
@@ -12,15 +12,15 @@
 #include "event.h"
 #include "input.h"
 #include "interface.h"
+#include "lua.h"
 #include "metro.h"
 #include "monome.h"
-#include "lua.h"
 #include "osc.h"
 #include "sdl.h"
 #include "socket.h"
 
-#define DEFAULT_OSC_PORT			10011
-#define DEFAULT_SOCKET_PORT		11001
+#define DEFAULT_OSC_PORT 10011
+#define DEFAULT_SOCKET_PORT 11001
 
 int main(int argc, char **argv) {
   printf("isms ////////\n");
@@ -35,15 +35,15 @@ int main(int argc, char **argv) {
 
   init_osc(DEFAULT_OSC_PORT);
   init_socket(DEFAULT_SOCKET_PORT);
-	init_monome();
+  init_monome();
   init_metro();
   init_lua();
   init_interface();
 
-  if(argc>1) {
+  if (argc > 1) {
     char cmd[64];
     snprintf(cmd, 64, "isms.run('%s')\n", argv[1]);
-    printf(">>>> %s\n",cmd);
+    printf(">>>> %s\n", cmd);
     lua_run(cmd);
   }
 
@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
   event_loop();
 
   deinit_osc();
-	deinit_monome();
+  deinit_monome();
   clock_deinit();
   deinit_metro();
   deinit_lua();
@@ -60,4 +60,3 @@ int main(int argc, char **argv) {
   printf(">> farewell.\n");
   return 0;
 }
-

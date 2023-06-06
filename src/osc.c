@@ -12,27 +12,28 @@ char osc_port[6];
 
 static lo_server_thread st;
 
-static int osc_receive(const char *path, const char *types, lo_arg **argv, int argc, lo_message msg, void *user_data);
+static int osc_receive(const char *path, const char *types, lo_arg **argv,
+                       int argc, lo_message msg, void *user_data);
 static void lo_error_handler(int num, const char *m, const char *path);
 
 void init_osc(int port) {
-	do {
-		sprintf(osc_port,"%d",port);
-		st = lo_server_thread_new(osc_port, lo_error_handler);
-		if(!st) port++;
-	} while(!st);
+  do {
+    sprintf(osc_port, "%d", port);
+    st = lo_server_thread_new(osc_port, lo_error_handler);
+    if (!st)
+      port++;
+  } while (!st);
 
-	printf("osc\t\t%s\n",osc_port);
+  printf("osc\t\t%s\n", osc_port);
 
-	lo_server_thread_add_method(st, NULL, NULL, osc_receive, NULL);
-	lo_server_thread_start(st);
+  lo_server_thread_add_method(st, NULL, NULL, osc_receive, NULL);
+  lo_server_thread_start(st);
 }
 
-void deinit_osc() {
-  lo_server_thread_free(st);
-}
+void deinit_osc() { lo_server_thread_free(st); }
 
-int osc_receive(const char *path, const char *types, lo_arg **argv, int argc, lo_message msg, void *user_data) {
+int osc_receive(const char *path, const char *types, lo_arg **argv, int argc,
+                lo_message msg, void *user_data) {
   (void)types;
   (void)argv;
   (void)argc;
@@ -56,6 +57,5 @@ int osc_receive(const char *path, const char *types, lo_arg **argv, int argc, lo
 }
 
 void lo_error_handler(int num, const char *m, const char *path) {
-  //printf("#### liblo error %d in path %s: %s\n", num, path, m);
+  // printf("#### liblo error %d in path %s: %s\n", num, path, m);
 }
-

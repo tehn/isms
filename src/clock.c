@@ -13,9 +13,7 @@
 
 static clock_source_t clock_source;
 
-void clock_init() {
-  clock_set_source(CLOCK_SOURCE_INTERNAL);
-}
+void clock_init() { clock_set_source(CLOCK_SOURCE_INTERNAL); }
 
 void clock_deinit() {
   printf("clock >> deinit\n");
@@ -37,18 +35,18 @@ double clock_get_beats() {
   double beat;
 
   switch (clock_source) {
-    case CLOCK_SOURCE_INTERNAL:
-      beat = clock_internal_get_beat();
-      break;
-    case CLOCK_SOURCE_MIDI:
-      beat = clock_midi_get_beat();
-      break;
-    case CLOCK_SOURCE_CROW:
-      // TODO beat = clock_crow_get_beat();
-      break;
-    default:
-      beat = 0;
-      break;
+  case CLOCK_SOURCE_INTERNAL:
+    beat = clock_internal_get_beat();
+    break;
+  case CLOCK_SOURCE_MIDI:
+    beat = clock_midi_get_beat();
+    break;
+  case CLOCK_SOURCE_CROW:
+    // TODO beat = clock_crow_get_beat();
+    break;
+  default:
+    beat = 0;
+    break;
   }
 
   return beat;
@@ -58,7 +56,8 @@ double clock_get_reference_beat(clock_reference_t *reference) {
   pthread_mutex_lock(&(reference->lock));
 
   double current_time = clock_get_system_time();
-  double beat = reference->beat + ((current_time - reference->last_beat_time) / reference->beat_duration);
+  double beat = reference->beat + ((current_time - reference->last_beat_time) /
+                                   reference->beat_duration);
 
   pthread_mutex_unlock(&(reference->lock));
 
@@ -69,18 +68,18 @@ double clock_get_tempo() {
   double tempo;
 
   switch (clock_source) {
-    case CLOCK_SOURCE_INTERNAL:
-      tempo = clock_internal_get_tempo();
-      break;
-    case CLOCK_SOURCE_MIDI:
-      tempo = clock_midi_get_tempo();
-      break;
-    case CLOCK_SOURCE_CROW:
-      // TODO tempo = clock_crow_get_tempo();
-      break;
-    default:
-      tempo = 0;
-      break;
+  case CLOCK_SOURCE_INTERNAL:
+    tempo = clock_internal_get_tempo();
+    break;
+  case CLOCK_SOURCE_MIDI:
+    tempo = clock_midi_get_tempo();
+    break;
+  case CLOCK_SOURCE_CROW:
+    // TODO tempo = clock_crow_get_tempo();
+    break;
+  default:
+    tempo = 0;
+    break;
   }
 
   return tempo;
@@ -96,7 +95,8 @@ double clock_get_reference_tempo(clock_reference_t *reference) {
   return tempo;
 }
 
-void clock_update_source_reference(clock_reference_t *reference, double beat, double beat_duration) {
+void clock_update_source_reference(clock_reference_t *reference, double beat,
+                                   double beat_duration) {
   pthread_mutex_lock(&(reference->lock));
 
   double current_time = clock_get_system_time();

@@ -1,6 +1,6 @@
+#include <lo/lo.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <lo/lo.h>
 
 #include "clock.h"
 #include "clocks/clock_crow.h"
@@ -55,12 +55,11 @@ static int _clock_set_source(lua_State *l);
 static int _clock_get_time_beats(lua_State *l);
 static int _clock_get_tempo(lua_State *l);
 
-
 void init_interface(void) {
   lua_newtable(L);
   // midi
-  lua_reg_func("midi_send",_midi_send);
-	// clock
+  lua_reg_func("midi_send", _midi_send);
+  // clock
   lua_reg_func("clock_schedule_sleep", &_clock_schedule_sleep);
   lua_reg_func("clock_schedule_sync", &_clock_schedule_sync);
   lua_reg_func("clock_cancel", &_clock_cancel);
@@ -71,65 +70,68 @@ void init_interface(void) {
   lua_reg_func("clock_set_source", &_clock_set_source);
   lua_reg_func("clock_get_time_beats", &_clock_get_time_beats);
   lua_reg_func("clock_get_tempo", &_clock_get_tempo);
-  lua_setglobal(L,"isms");
+  lua_setglobal(L, "isms");
 
-	// grid
+  // grid
   lua_newtable(L);
   lua_reg_func("redraw", &_grid_redraw);
   lua_reg_func("led", &_grid_led);
   lua_reg_func("all", &_grid_all);
-  //lua_reg_func("intensity", &_grid_rotation);
-  //lua_reg_func("rotation", &_grid_intensity);
-	lua_setglobal(L, "grid");
+  // lua_reg_func("intensity", &_grid_rotation);
+  // lua_reg_func("rotation", &_grid_intensity);
+  lua_setglobal(L, "grid");
   // metro
   lua_newtable(L);
-  lua_reg_func("start",_metro_start);
-  lua_reg_func("stop",_metro_stop);
-  lua_reg_func("clear",_metro_clear);
-  lua_setglobal(L,"metro");
+  lua_reg_func("start", _metro_start);
+  lua_reg_func("stop", _metro_stop);
+  lua_reg_func("clear", _metro_clear);
+  lua_setglobal(L, "metro");
   // osc
   lua_newtable(L);
-  lua_reg_func("send",_osc_send);
-  lua_setglobal(L,"osc");
+  lua_reg_func("send", _osc_send);
+  lua_setglobal(L, "osc");
   // sdl
   lua_newtable(L);
-  lua_reg_func("init",_sdl_init);
-  lua_reg_func("redraw",_sdl_redraw);
-  lua_reg_func("clear",_sdl_clear);
-  lua_reg_func("pixel",_sdl_pixel);
-  lua_reg_func("line",_sdl_line);
-  lua_reg_func("key",_nop); // init empty callback
-  lua_setglobal(L,"window");
+  lua_reg_func("init", _sdl_init);
+  lua_reg_func("redraw", _sdl_redraw);
+  lua_reg_func("clear", _sdl_clear);
+  lua_reg_func("pixel", _sdl_pixel);
+  lua_reg_func("line", _sdl_line);
+  lua_reg_func("key", _nop); // init empty callback
+  lua_setglobal(L, "window");
 
-	// events
-	lua_newtable(L);
-	// grid
-	lua_newtable(L);
-  lua_reg_func("key",&_nop);
-  lua_reg_func("add",&_nop);
-  lua_reg_func("remove",&_nop);
-	lua_setfield(L, -2, "grid");
-	lua_newtable(L);
-  lua_reg_func("tick",&_nop);
-	lua_setfield(L, -2, "metro");
-	lua_setglobal(L, "event");
+  // events
+  lua_newtable(L);
+  // grid
+  lua_newtable(L);
+  lua_reg_func("key", &_nop);
+  lua_reg_func("add", &_nop);
+  lua_reg_func("remove", &_nop);
+  lua_setfield(L, -2, "grid");
+  lua_newtable(L);
+  lua_reg_func("tick", &_nop);
+  lua_setfield(L, -2, "metro");
+  lua_setglobal(L, "event");
 
   printf("lib\t\t/usr/local/share/isms/\n");
   char *home = getenv("HOME");
   char cmd[128];
   snprintf(cmd, 128, "dofile('%s/.local/share/isms/system/init.lua')\n", home);
-  //snprintf(cmd, 128, "dofile('/usr/local/share/isms/system/init.lua')\n");
+  // snprintf(cmd, 128, "dofile('/usr/local/share/isms/system/init.lua')\n");
   l_dostring(L, cmd, "init");
 }
 
-static int _nop(lua_State *l) { (void)l; return 0; }
+static int _nop(lua_State *l) {
+  (void)l;
+  return 0;
+}
 
 //////// grid
 
 static int _grid_redraw(lua_State *l) {
   lua_check_num_args(1);
   int i = (int)luaL_checkinteger(l, 1);
-	monome_redraw(i);
+  monome_redraw(i);
   lua_settop(l, 0);
   return 0;
 }
@@ -140,7 +142,7 @@ static int _grid_led(lua_State *l) {
   int x = (int)luaL_checkinteger(l, 2);
   int y = (int)luaL_checkinteger(l, 3);
   int z = (int)luaL_checkinteger(l, 4);
-	monome_led(i, x, y, z);
+  monome_led(i, x, y, z);
   lua_settop(l, 0);
   return 0;
 }
@@ -149,16 +151,15 @@ static int _grid_all(lua_State *l) {
   lua_check_num_args(2);
   int i = (int)luaL_checkinteger(l, 1);
   int z = (int)luaL_checkinteger(l, 2);
-	monome_all(i, z);
+  monome_all(i, z);
   lua_settop(l, 0);
   return 0;
 }
 
-
 //////// metro
 
 static int _metro_start(lua_State *l) {
-  //printf("metro start\n");
+  // printf("metro start\n");
   lua_check_num_args(4);
   double idx = luaL_checknumber(l, 1) - 1; // convert to 1-based
   double seconds = luaL_checknumber(l, 2);
@@ -170,7 +171,7 @@ static int _metro_start(lua_State *l) {
 }
 
 static int _metro_stop(lua_State *l) {
-  //printf("metro stop\n");
+  // printf("metro stop\n");
   lua_check_num_args(1);
   double idx = luaL_checknumber(l, 1);
   metro_stop(idx);
@@ -179,16 +180,15 @@ static int _metro_stop(lua_State *l) {
 }
 
 static int _metro_clear(lua_State *l) {
-  //printf("metro stop\n");
+  // printf("metro stop\n");
   lua_check_num_args(0);
   metro_clear();
   lua_settop(l, 0);
   return 0;
 }
 
-
 //////// midi
-// 
+//
 // static int _midi_send(lua_State *l) {
 //   lua_check_num_args(3);
 //   uint8_t d0 = luaL_checknumber(l, 1);
@@ -223,18 +223,15 @@ int _midi_send(lua_State *l) {
     lua_pop(l, 1);
   }
 
-	(void)md;
-  //dev_midi_send(md, data, nbytes);
-	printf("midi send\n");
+  (void)md;
+  // dev_midi_send(md, data, nbytes);
+  printf("midi send\n");
   free(data);
 
   return 0;
 }
 
-
-
 //////// osc
-
 
 static int _osc_send(lua_State *l) {
   const char *host = NULL;
@@ -288,26 +285,26 @@ static int _osc_send(lua_State *l) {
       int argtype = lua_type(l, -1);
 
       switch (argtype) {
-        case LUA_TNIL:
-          lo_message_add_nil(msg);
-          break;
-        case LUA_TNUMBER:
-          lo_message_add_float(msg, lua_tonumber(l, -1));
-          break;
-        case LUA_TBOOLEAN:
-          if (lua_toboolean(l, -1)) {
-            lo_message_add_true(msg);
-          } else {
-            lo_message_add_false(msg);
-          }
-          break;
-        case LUA_TSTRING:
-          lo_message_add_string(msg, lua_tostring(l, -1));
-          break;
-        default:
-          lo_message_free(msg);
-          luaL_error(l, "invalid osc argument type %s", lua_typename(l, argtype));
-          break;
+      case LUA_TNIL:
+        lo_message_add_nil(msg);
+        break;
+      case LUA_TNUMBER:
+        lo_message_add_float(msg, lua_tonumber(l, -1));
+        break;
+      case LUA_TBOOLEAN:
+        if (lua_toboolean(l, -1)) {
+          lo_message_add_true(msg);
+        } else {
+          lo_message_add_false(msg);
+        }
+        break;
+      case LUA_TSTRING:
+        lo_message_add_string(msg, lua_tostring(l, -1));
+        break;
+      default:
+        lo_message_free(msg);
+        luaL_error(l, "invalid osc argument type %s", lua_typename(l, argtype));
+        break;
       } /* switch */
 
       lua_pop(l, 1);
@@ -326,14 +323,13 @@ static int _osc_send(lua_State *l) {
   return 0;
 }
 
-
 //////// sdl
 
 int _sdl_init(lua_State *l) {
   lua_check_num_args(2);
   double x = luaL_checknumber(l, 1);
   double y = luaL_checknumber(l, 2);
-  init_sdl(x,y);
+  init_sdl(x, y);
   lua_settop(l, 0);
   return 0;
 }
@@ -357,7 +353,7 @@ int _sdl_pixel(lua_State *l) {
   double x = luaL_checknumber(l, 1);
   double y = luaL_checknumber(l, 2);
   double c = luaL_checknumber(l, 3);
-  sdl_pixel(surface->pixels,x,y,c);
+  sdl_pixel(surface->pixels, x, y, c);
   lua_settop(l, 0);
   return 0;
 }
@@ -369,7 +365,7 @@ int _sdl_line(lua_State *l) {
   double x2 = luaL_checknumber(l, 3);
   double y2 = luaL_checknumber(l, 4);
   double c = luaL_checknumber(l, 5);
-  sdl_line(surface->pixels,x1,y1,x2,y2,c);
+  sdl_line(surface->pixels, x1, y1, x2, y2, c);
   lua_settop(l, 0);
   return 0;
 }
@@ -379,7 +375,9 @@ int _clock_schedule_sleep(lua_State *l) {
   int coro_id = (int)luaL_checkinteger(l, 1);
   double seconds = luaL_checknumber(l, 2);
 
-  if (seconds < 0) { seconds = 0; }
+  if (seconds < 0) {
+    seconds = 0;
+  }
 
   clock_scheduler_schedule_sleep(coro_id, seconds);
 
@@ -448,17 +446,12 @@ int _clock_get_tempo(lua_State *l) {
   return 1;
 }
 
-
-
 ////////////////////////////////////////////////////////////////
 // handlers
 
 //////// isms
 
-void handle_reset() {
-  lua_run("isms.run()");
-}
-
+void handle_reset() { lua_run("isms.run()"); }
 
 //////// grid
 
@@ -485,61 +478,58 @@ void handle_grid_remove(uint8_t id) {
   l_report(L, l_docall(L, 1, 0));
 }
 
-
 //////// metro
 
 void handle_metro(int idx, int stage) {
-  //printf("e: metro: %i %i\n",idx, stage);
-	push_event_func("metro", "tick");
-  //lua_getglobal(L, "metro");
-  //lua_getfield(L, -1, "tick");
-  //lua_remove(L, -2);
+  // printf("e: metro: %i %i\n",idx, stage);
+  push_event_func("metro", "tick");
+  // lua_getglobal(L, "metro");
+  // lua_getfield(L, -1, "tick");
+  // lua_remove(L, -2);
   lua_pushinteger(L, idx + 1);   // convert to 1-based
   lua_pushinteger(L, stage + 1); // convert to 1-based
   l_report(L, l_docall(L, 2, 0));
-  //if (!(lua_pcall(L, 2, 0, 0) == LUA_OK)) {
-  //printf("Error on run method\n");
-  //}
+  // if (!(lua_pcall(L, 2, 0, 0) == LUA_OK)) {
+  // printf("Error on run method\n");
+  // }
 }
-
 
 //////// midi
 
 void handle_midi_add(void *p) {
-	/*
-  struct dev_midi *dev = (struct dev_midi *)p;
-  struct dev_common *base = (struct dev_common *)p;
-  int id = base->id;
+  /*
+struct dev_midi *dev = (struct dev_midi *)p;
+struct dev_common *base = (struct dev_common *)p;
+int id = base->id;
 
-  push_isms_func("midi", "add");
-  lua_pushinteger(L, id + 1); // convert to 1-base
-  lua_pushstring(L, base->name);
-  lua_pushlightuserdata(L, dev);
-  l_report(L, l_docall(L, 3, 0));
-	*/
+push_isms_func("midi", "add");
+lua_pushinteger(L, id + 1); // convert to 1-base
+lua_pushstring(L, base->name);
+lua_pushlightuserdata(L, dev);
+l_report(L, l_docall(L, 3, 0));
+  */
 }
 
 void handle_midi_remove(int id) {
-	/*
-  push_isms_func("midi", "remove");
-  lua_pushinteger(L, id + 1); // convert to 1-base
-  l_report(L, l_docall(L, 1, 0));
-	*/
+  /*
+push_isms_func("midi", "remove");
+lua_pushinteger(L, id + 1); // convert to 1-base
+l_report(L, l_docall(L, 1, 0));
+  */
 }
 
 void handle_midi(int id, uint8_t *data, size_t nbytes) {
-	/*
-  push_isms_func("midi", "event");
-  lua_pushinteger(L, id + 1); // convert to 1-base
-  lua_createtable(L, nbytes, 0);
-  for (size_t i = 0; i < nbytes; i++) {
-    lua_pushinteger(L, data[i]);
-    lua_rawseti(L, -2, i + 1);
-  }
-  l_report(L, l_docall(L, 2, 0));
-	*/
+  /*
+push_isms_func("midi", "event");
+lua_pushinteger(L, id + 1); // convert to 1-base
+lua_createtable(L, nbytes, 0);
+for (size_t i = 0; i < nbytes; i++) {
+lua_pushinteger(L, data[i]);
+lua_rawseti(L, -2, i + 1);
 }
-
+l_report(L, l_docall(L, 2, 0));
+  */
+}
 
 //////// osc
 
@@ -562,50 +552,51 @@ void handle_osc(char *from_host, char *from_port, char *path, lo_message msg) {
   lua_createtable(L, argc, 0);
   for (int i = 0; i < argc; i++) {
     switch (types[i]) {
-      case LO_INT32:
-        lua_pushinteger(L, argv[i]->i);
-        break;
-      case LO_FLOAT:
-        lua_pushnumber(L, argv[i]->f);
-        break;
-      case LO_STRING:
-        lua_pushstring(L, &argv[i]->s);
-        break;
-      case LO_BLOB:
-        lua_pushlstring(L, lo_blob_dataptr((lo_blob)argv[i]), lo_blob_datasize((lo_blob)argv[i]));
-        break;
-      case LO_INT64:
-        lua_pushinteger(L, argv[i]->h);
-        break;
-      case LO_DOUBLE:
-        lua_pushnumber(L, argv[i]->d);
-        break;
-      case LO_SYMBOL:
-        lua_pushstring(L, &argv[i]->S);
-        break;
-      case LO_CHAR:
-        lua_pushlstring(L, (const char *)&argv[i]->c, 1);
-        break;
-      case LO_MIDI:
-        lua_pushlstring(L, (const char *)&argv[i]->m, 4);
-        break;
-      case LO_TRUE:
-        lua_pushboolean(L, 1);
-        break;
-      case LO_FALSE:
-        lua_pushboolean(L, 0);
-        break;
-      case LO_NIL:
-        lua_pushnil(L);
-        break;
-      case LO_INFINITUM:
-        // FIXME: build error despite -std=c11
-        //lua_pushnumber(L, INFINITY);
-        break;
-      default:
-        fprintf(stderr, "unknown osc typetag: %c\n", types[i]);
-        lua_pushnil(L);
-        break;
+    case LO_INT32:
+      lua_pushinteger(L, argv[i]->i);
+      break;
+    case LO_FLOAT:
+      lua_pushnumber(L, argv[i]->f);
+      break;
+    case LO_STRING:
+      lua_pushstring(L, &argv[i]->s);
+      break;
+    case LO_BLOB:
+      lua_pushlstring(L, lo_blob_dataptr((lo_blob)argv[i]),
+                      lo_blob_datasize((lo_blob)argv[i]));
+      break;
+    case LO_INT64:
+      lua_pushinteger(L, argv[i]->h);
+      break;
+    case LO_DOUBLE:
+      lua_pushnumber(L, argv[i]->d);
+      break;
+    case LO_SYMBOL:
+      lua_pushstring(L, &argv[i]->S);
+      break;
+    case LO_CHAR:
+      lua_pushlstring(L, (const char *)&argv[i]->c, 1);
+      break;
+    case LO_MIDI:
+      lua_pushlstring(L, (const char *)&argv[i]->m, 4);
+      break;
+    case LO_TRUE:
+      lua_pushboolean(L, 1);
+      break;
+    case LO_FALSE:
+      lua_pushboolean(L, 0);
+      break;
+    case LO_NIL:
+      lua_pushnil(L);
+      break;
+    case LO_INFINITUM:
+      // FIXME: build error despite -std=c11
+      // lua_pushnumber(L, INFINITY);
+      break;
+    default:
+      fprintf(stderr, "unknown osc typetag: %c\n", types[i]);
+      lua_pushnil(L);
+      break;
     } /* switch */
     lua_rawseti(L, -2, i + 1);
   }
@@ -618,7 +609,6 @@ void handle_osc(char *from_host, char *from_port, char *path, lo_message msg) {
 
   l_report(L, l_docall(L, 3, 0));
 }
-
 
 //////// sdl
 
@@ -654,5 +644,3 @@ void handle_clock_stop() {
   push_isms_func("clock", "stop");
   l_report(L, l_docall(L, 0, 0));
 }
-
-

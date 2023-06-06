@@ -1,31 +1,29 @@
-#include <stdlib.h>
-#include <stdio.h>
 #include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
+#include <lauxlib.h>
 #include <lua.h>
 #include <lualib.h>
-#include <lauxlib.h>
 
-#include "lua.h"
 #include "interface.h"
+#include "lua.h"
 
 lua_State *L;
 
 void init_lua() {
-  //printf(">> LUA: init\n");
+  // printf(">> LUA: init\n");
   L = luaL_newstate();
   luaL_openlibs(L);
 }
 
 void deinit_lua() {
-  //printf(">> LUA: deinit\n");
+  // printf(">> LUA: deinit\n");
   lua_close(L);
 }
 
-void lua_run(char *line) {
-  l_report(L,luaL_dostring(L, line));
-}
+void lua_run(char *line) { l_report(L, luaL_dostring(L, line)); }
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -39,7 +37,6 @@ static void lstop(lua_State *L, lua_Debug *ar) {
   lua_sethook(L, NULL, 0, 0); /* reset hook */
   luaL_error(L, "interrupted!");
 }
-
 
 /*
  ** Function to be called at a C signal. Because a C signal cannot
@@ -57,17 +54,18 @@ static void laction(int i) {
  */
 static int msghandler(lua_State *L) {
   const char *msg = lua_tostring(L, 1);
-  if (msg == NULL) {                           /* is error object not a
-                                                * string?
-                                                * */
+  if (msg == NULL) {                         /* is error object not a
+                                              * string?
+                                              * */
     if (luaL_callmeta(L, 1, "__tostring") && /* does it have a
                                               * metamethod
                                               **/
         (lua_type(L, -1) == LUA_TSTRING)) {  /* that produces a string?
                                               **/
-      return 1;                            /* that is the message */
+      return 1;                              /* that is the message */
     } else {
-      msg = lua_pushfstring(L, "(error object is a %s value)", luaL_typename(L, 1));
+      msg = lua_pushfstring(L, "(error object is a %s value)",
+                            luaL_typename(L, 1));
     }
   }
   luaL_traceback(L, L, msg, 1); /* append a standard traceback */

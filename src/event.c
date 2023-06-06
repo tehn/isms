@@ -8,14 +8,14 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <pthread.h>
 #include <lo/lo.h>
+#include <pthread.h>
 
 #include "event.h"
-#include "lua.h"
-#include "sdl.h"
-#include "osc.h"
 #include "interface.h"
+#include "lua.h"
+#include "osc.h"
+#include "sdl.h"
 
 //--- types and vars
 
@@ -98,15 +98,15 @@ union event_data *event_data_new(event_t type) {
 
 void event_data_free(union event_data *ev) {
   switch (ev->type) {
-    case EVENT_EXEC_CODE_LINE:
-      free(ev->exec_code_line.line);
-      break;
-    case EVENT_OSC:
-      free(ev->osc.path);
-      free(ev->osc.from_host);
-      free(ev->osc.from_port);
-      lo_message_free(ev->osc.msg);
-      break;
+  case EVENT_EXEC_CODE_LINE:
+    free(ev->exec_code_line.line);
+    break;
+  case EVENT_OSC:
+    free(ev->osc.path);
+    free(ev->osc.from_host);
+    free(ev->osc.from_port);
+    lo_message_free(ev->osc.msg);
+    break;
   }
   free(ev);
 }
@@ -153,54 +153,52 @@ void event_loop(void) {
 
 static void handle_event(union event_data *ev) {
   switch (ev->type) {
-    case EVENT_QUIT:
-      quit = true;
-      break;
-    case EVENT_RESET:
-      handle_reset();
-      break;
-    case EVENT_SDL_CHECK:
-      sdl_check();
-      break;
-    case EVENT_EXEC_CODE_LINE:
-      //printf("e: codeline: %s\n", ev->exec_code_line.line);
-      lua_run(ev->exec_code_line.line);
-      break;
-    case EVENT_METRO:
-      //printf("e: metro: %i %i\n",ev->metro.id, ev->metro.stage);
-      handle_metro(ev->metro.id, ev->metro.stage);
-      break;
-    case EVENT_KEY:
-      //printf("e: key: %i\n",ev->key.scancode);
-      handle_sdl_key(ev->key.scancode);
-      break;
-    case EVENT_OSC:
-      handle_osc(ev->osc.from_host, ev->osc.from_port, ev->osc.path, ev->osc.msg);
-      break;
-    case EVENT_GRID:
-      handle_grid(ev->grid.id,ev->grid.x, ev->grid.y, ev->grid.state);
-      break;
-    case EVENT_GRID_ADD:
-      handle_grid_add(ev->grid_add.id,ev->grid_add.serial, ev->grid_add.name);
-      break;
-    case EVENT_GRID_REMOVE:
-      handle_grid_remove(ev->grid_remove.id);
-      break;
-    case EVENT_MIDI:
-      handle_midi(ev->midi.id, ev->midi.data, ev->midi.nbytes);
-      break;
-    case EVENT_CLOCK_RESUME:
-      handle_clock_resume(ev->clock_resume.thread_id, ev->clock_resume.value);
-      break;
-    case EVENT_CLOCK_START:
-      handle_clock_start();
-      break;
-    case EVENT_CLOCK_STOP:
-      handle_clock_stop();
-      break;
-
+  case EVENT_QUIT:
+    quit = true;
+    break;
+  case EVENT_RESET:
+    handle_reset();
+    break;
+  case EVENT_SDL_CHECK:
+    sdl_check();
+    break;
+  case EVENT_EXEC_CODE_LINE:
+    // printf("e: codeline: %s\n", ev->exec_code_line.line);
+    lua_run(ev->exec_code_line.line);
+    break;
+  case EVENT_METRO:
+    // printf("e: metro: %i %i\n",ev->metro.id, ev->metro.stage);
+    handle_metro(ev->metro.id, ev->metro.stage);
+    break;
+  case EVENT_KEY:
+    // printf("e: key: %i\n",ev->key.scancode);
+    handle_sdl_key(ev->key.scancode);
+    break;
+  case EVENT_OSC:
+    handle_osc(ev->osc.from_host, ev->osc.from_port, ev->osc.path, ev->osc.msg);
+    break;
+  case EVENT_GRID:
+    handle_grid(ev->grid.id, ev->grid.x, ev->grid.y, ev->grid.state);
+    break;
+  case EVENT_GRID_ADD:
+    handle_grid_add(ev->grid_add.id, ev->grid_add.serial, ev->grid_add.name);
+    break;
+  case EVENT_GRID_REMOVE:
+    handle_grid_remove(ev->grid_remove.id);
+    break;
+  case EVENT_MIDI:
+    handle_midi(ev->midi.id, ev->midi.data, ev->midi.nbytes);
+    break;
+  case EVENT_CLOCK_RESUME:
+    handle_clock_resume(ev->clock_resume.thread_id, ev->clock_resume.value);
+    break;
+  case EVENT_CLOCK_START:
+    handle_clock_start();
+    break;
+  case EVENT_CLOCK_STOP:
+    handle_clock_stop();
+    break;
   }
 
   event_data_free(ev);
 }
-
