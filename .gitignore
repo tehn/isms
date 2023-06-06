@@ -1,5 +1,7 @@
 build
 
+*.swp
+
 # Prerequisites
 *.d
 

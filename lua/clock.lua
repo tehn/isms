@@ -79,7 +79,7 @@ clock.resume = function(coro_id, ...)
 end
 
 
-clock.cleanup = function()
+clock.clear = function()
   for id, coro in pairs(clock.threads) do
     if coro then
       clock.cancel(id)

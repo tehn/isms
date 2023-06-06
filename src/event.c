@@ -11,7 +11,6 @@
 #include <pthread.h>
 #include <lo/lo.h>
 
-#include "device.h"
 #include "event.h"
 #include "lua.h"
 #include "sdl.h"
@@ -181,32 +180,14 @@ static void handle_event(union event_data *ev) {
     case EVENT_GRID:
       handle_grid(ev->grid.id,ev->grid.x, ev->grid.y, ev->grid.state);
       break;
+    case EVENT_GRID_ADD:
+      handle_grid_add(ev->grid_add.id,ev->grid_add.serial, ev->grid_add.name);
+      break;
+    case EVENT_GRID_REMOVE:
+      handle_grid_remove(ev->grid_remove.id);
+      break;
     case EVENT_MIDI:
       handle_midi(ev->midi.id, ev->midi.data, ev->midi.nbytes);
-      break;
-    case EVENT_DEVICE_ADD:
-      switch(ev->device_add.type) {
-        case DEV_TYPE_MONOME:
-          handle_monome_add(ev->device_add.dev);
-          break;
-        case DEV_TYPE_MIDI:
-          handle_midi_add(ev->device_add.dev);
-          break;
-        default:
-          break;
-      }
-      break;
-    case EVENT_DEVICE_REMOVE:
-      switch(ev->device_remove.type) {
-        case DEV_TYPE_MONOME:
-          handle_monome_remove(ev->device_remove.id);
-          break;
-        case DEV_TYPE_MIDI:
-          handle_midi_remove(ev->device_remove.id);
-          break;
-        default:
-          break;
-      }
       break;
     case EVENT_CLOCK_RESUME:
       handle_clock_resume(ev->clock_resume.thread_id, ev->clock_resume.value);

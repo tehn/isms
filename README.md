@@ -36,16 +36,20 @@ library folder: `/usr/local/share/isms`
 
 ## TODO
 ```
+- cpu usage at rest
 - linux-macos compatibility
-  - grid: use serialosc instead of libmonome (removes udev)
+  x grid: use serialosc instead of libmonome (removes udev)
   - midi: use portmidi https://github.com/PortMidi/PortMidi
-- refine device management (remove vports)
+	- clock_nanosleep
+x refine device management (remove vports)
 - consider implications of running multiple instances
-  - osc port assignments (ie auto-increment if requested is taken)
+  x osc port assignments (ie auto-increment if requested is taken)
   - grid/midi "focus"
-- naming conventions: handlers (direct vs. isms table, somewhat relates to vports)
-  - function event["grid_key"](x,y,z) or
-    event["grid_key"] = gridkey
+- naming convention for event handlers
+  x function event.grid.key(x,y,z)
+	x done: grid, metro
+	- todo: clock, sdl
+- config file (pre-run) for setting "reserved" grid/midi slots (ie serial numbers)
 - makefile improvements
   - consider cmake
 
@@ -56,11 +60,13 @@ library folder: `/usr/local/share/isms`
 - socket input: allow blocks, not just line
 - repl history (readline/etc)
 - repl: fix color coding (where text is coming from)
-- metro allocator (?)
+
 - optimization
   - sdl should probably have its own thread
 - security: should udp socket input check incoming ip (restrict to localhost?)
   - or arg to disable
+
+- metro allocator (?)
 ```
 
 
@@ -77,25 +83,31 @@ metro.stop(index)
 
 clock -- TODO
 
-g = grid.connect()
-g:all(z)
-g:led(x,y,z)
-g:redraw()
+grid.all(id,z)
+grid.led(id,x,y,z)
+grid.redraw(id)
 
-m = midi.connect() -- more TODO
+-- MIDI
 
 -- events
-metro.tick(index, stage)
 window.key(code)
 osc.receive(path, args, from)
-g.key(x,y,z)
-m.receive -- TODO
+
+-- events
+event.metro.tick(index, stage)
+event.window.key(code)
+event.osc.receive(...)
+event.grid.key(id,x,y,z)
+event.grid.add(id,serial)
+event.grid.remove(id,serial)
+event.midi.noteon(id,note,vel,ch)
+event.midi.add(id,...)
 ```
 
 
 ## acknowledgements
 
-reconstruction of norns. reconsidering design for use on a computer with large screen and keyboard.
+reimagining of norns. reconsidering design for use on a computer with large screen and keyboard.
 
 - based heavily on `matron` from norns, written by @catfact
 - sdl use patterned on work by @neauoire

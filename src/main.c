@@ -5,10 +5,7 @@
 
 #include "lo/lo.h"
 
-#include "device.h"
-#include "device_monitor.h"
 #include "clock.h"
-#include "clocks/clock_crow.h"
 #include "clocks/clock_internal.h"
 #include "clocks/clock_midi.h"
 #include "clocks/clock_scheduler.h"
@@ -16,6 +13,7 @@
 #include "input.h"
 #include "interface.h"
 #include "metro.h"
+#include "monome.h"
 #include "lua.h"
 #include "osc.h"
 #include "sdl.h"
@@ -33,15 +31,14 @@ int main(int argc, char **argv) {
   clock_init();
   clock_internal_init();
   clock_midi_init();
-  clock_crow_init();
   clock_scheduler_init();
 
   init_osc(DEFAULT_OSC_PORT);
   init_socket(DEFAULT_SOCKET_PORT);
+	init_monome();
   init_metro();
   init_lua();
   init_interface();
-  init_dev();
 
   if(argc>1) {
     char cmd[64];
@@ -50,13 +47,11 @@ int main(int argc, char **argv) {
     lua_run(cmd);
   }
 
-  printf(">> device scan\n");
-  dev_monitor_scan();
   printf(">> starting event loop\n");
   event_loop();
 
-  deinit_dev();
   deinit_osc();
+	deinit_monome();
   clock_deinit();
   deinit_metro();
   deinit_lua();
@@ -65,5 +60,4 @@ int main(int argc, char **argv) {
   printf(">> farewell.\n");
   return 0;
 }
-
 

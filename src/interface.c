@@ -10,6 +10,7 @@
 #include "interface.h"
 #include "lua.h"
 #include "metro.h"
+#include "monome.h"
 #include "osc.h"
 #include "sdl.h"
 
@@ -21,11 +22,21 @@ static inline void push_isms_func(const char *field, const char *func) {
   lua_remove(L, -2);
 }
 
+static inline void push_event_func(const char *field, const char *func) {
+  lua_getglobal(L, "event");
+  lua_getfield(L, -1, field);
+  lua_remove(L, -2);
+  lua_getfield(L, -1, func);
+  lua_remove(L, -2);
+}
+
+static int _nop(lua_State *l);
 static int _grid_redraw(lua_State *l);
 static int _grid_led(lua_State *l);
 static int _grid_all(lua_State *l);
 static int _metro_start(lua_State *l);
 static int _metro_stop(lua_State *l);
+static int _metro_clear(lua_State *l);
 static int _midi_send(lua_State *l);
 static int _osc_send(lua_State *l);
 static int _sdl_init(lua_State *l);
@@ -49,13 +60,7 @@ void init_interface(void) {
   lua_newtable(L);
   // midi
   lua_reg_func("midi_send",_midi_send);
-  // grid
-  lua_reg_func("grid_redraw", &_grid_redraw);
-  lua_reg_func("grid_led", &_grid_led);
-  lua_reg_func("grid_all", &_grid_all);
-  //lua_reg_func("grid_rows", &_grid_rows);
-  //lua_reg_func("grid_cols", &_grid_cols);
-  //lua_reg_func("grid_set_rotation", &_grid_set_rotation);
+	// clock
   lua_reg_func("clock_schedule_sleep", &_clock_schedule_sleep);
   lua_reg_func("clock_schedule_sync", &_clock_schedule_sync);
   lua_reg_func("clock_cancel", &_clock_cancel);
@@ -66,13 +71,21 @@ void init_interface(void) {
   lua_reg_func("clock_set_source", &_clock_set_source);
   lua_reg_func("clock_get_time_beats", &_clock_get_time_beats);
   lua_reg_func("clock_get_tempo", &_clock_get_tempo);
-
   lua_setglobal(L,"isms");
 
+	// grid
+  lua_newtable(L);
+  lua_reg_func("redraw", &_grid_redraw);
+  lua_reg_func("led", &_grid_led);
+  lua_reg_func("all", &_grid_all);
+  //lua_reg_func("intensity", &_grid_rotation);
+  //lua_reg_func("rotation", &_grid_intensity);
+	lua_setglobal(L, "grid");
   // metro
   lua_newtable(L);
   lua_reg_func("start",_metro_start);
   lua_reg_func("stop",_metro_stop);
+  lua_reg_func("clear",_metro_clear);
   lua_setglobal(L,"metro");
   // osc
   lua_newtable(L);
@@ -85,47 +98,58 @@ void init_interface(void) {
   lua_reg_func("clear",_sdl_clear);
   lua_reg_func("pixel",_sdl_pixel);
   lua_reg_func("line",_sdl_line);
+  lua_reg_func("key",_nop); // init empty callback
   lua_setglobal(L,"window");
 
+	// events
+	lua_newtable(L);
+	// grid
+	lua_newtable(L);
+  lua_reg_func("key",&_nop);
+  lua_reg_func("add",&_nop);
+  lua_reg_func("remove",&_nop);
+	lua_setfield(L, -2, "grid");
+	lua_newtable(L);
+  lua_reg_func("tick",&_nop);
+	lua_setfield(L, -2, "metro");
+	lua_setglobal(L, "event");
+
   printf("lib\t\t/usr/local/share/isms/\n");
-  //char *home = getenv("HOME");
+  char *home = getenv("HOME");
   char cmd[128];
-  //snprintf(cmd, 128, "dofile('%s/.local/share/isms/system/init.lua')\n", home);
-  snprintf(cmd, 128, "dofile('/usr/local/share/isms/system/init.lua')\n");
+  snprintf(cmd, 128, "dofile('%s/.local/share/isms/system/init.lua')\n", home);
+  //snprintf(cmd, 128, "dofile('/usr/local/share/isms/system/init.lua')\n");
   l_dostring(L, cmd, "init");
 }
 
-
+static int _nop(lua_State *l) { (void)l; return 0; }
 
 //////// grid
 
 static int _grid_redraw(lua_State *l) {
   lua_check_num_args(1);
-  luaL_checktype(l, 1, LUA_TLIGHTUSERDATA);
-  struct dev_monome *md = lua_touserdata(l, 1);
-  dev_monome_refresh(md);
+  int i = (int)luaL_checkinteger(l, 1);
+	monome_redraw(i);
   lua_settop(l, 0);
   return 0;
 }
 
 static int _grid_led(lua_State *l) {
   lua_check_num_args(4);
-  luaL_checktype(l, 1, LUA_TLIGHTUSERDATA);
-  struct dev_monome *md = lua_touserdata(l, 1);
+  int i = (int)luaL_checkinteger(l, 1);
   int x = (int)luaL_checkinteger(l, 2);
   int y = (int)luaL_checkinteger(l, 3);
   int z = (int)luaL_checkinteger(l, 4);
-  dev_monome_grid_set_led(md, x, y, z);
+	monome_led(i, x, y, z);
   lua_settop(l, 0);
   return 0;
 }
 
 static int _grid_all(lua_State *l) {
   lua_check_num_args(2);
-  luaL_checktype(l, 1, LUA_TLIGHTUSERDATA);
-  struct dev_monome *md = lua_touserdata(l, 1);
+  int i = (int)luaL_checkinteger(l, 1);
   int z = (int)luaL_checkinteger(l, 2);
-  dev_monome_all_led(md, z);
+	monome_all(i, z);
   lua_settop(l, 0);
   return 0;
 }
@@ -150,6 +174,14 @@ static int _metro_stop(lua_State *l) {
   lua_check_num_args(1);
   double idx = luaL_checknumber(l, 1);
   metro_stop(idx);
+  lua_settop(l, 0);
+  return 0;
+}
+
+static int _metro_clear(lua_State *l) {
+  //printf("metro stop\n");
+  lua_check_num_args(0);
+  metro_clear();
   lua_settop(l, 0);
   return 0;
 }
@@ -191,7 +223,9 @@ int _midi_send(lua_State *l) {
     lua_pop(l, 1);
   }
 
-  dev_midi_send(md, data, nbytes);
+	(void)md;
+  //dev_midi_send(md, data, nbytes);
+	printf("midi send\n");
   free(data);
 
   return 0;
@@ -428,32 +462,27 @@ void handle_reset() {
 
 //////// grid
 
-void handle_monome_add(void *mdev) {
-  struct dev_monome *md = (struct dev_monome *)mdev;
-  int id = md->dev.id;
-  const char *serial = md->dev.serial;
-  const char *name = md->dev.name;
-  push_isms_func("grid", "add");
-  lua_pushinteger(L, id + 1); // convert to 1-base
-  lua_pushstring(L, serial);
-  lua_pushstring(L, name);
-  lua_pushlightuserdata(L, mdev);
-  l_report(L, l_docall(L, 4, 0));
-}
-
-void handle_monome_remove(int id) {
-  push_isms_func("grid", "remove");
-  lua_pushinteger(L, id + 1); // convert to 1-base
-  l_report(L, l_docall(L, 1, 0));
-}
-
 void handle_grid(uint8_t i, uint8_t x, uint8_t y, uint8_t state) {
-  push_isms_func("grid", "key");
-  lua_pushinteger(L, i + 1);
+  push_event_func("grid", "key");
+  lua_pushinteger(L, i);
   lua_pushinteger(L, x);
   lua_pushinteger(L, y);
   lua_pushinteger(L, state);
   l_report(L, l_docall(L, 4, 0));
+}
+
+void handle_grid_add(uint8_t id, char *serial, char *name) {
+  push_event_func("grid", "add");
+  lua_pushinteger(L, id);
+  lua_pushstring(L, serial);
+  lua_pushstring(L, name);
+  l_report(L, l_docall(L, 3, 0));
+}
+
+void handle_grid_remove(uint8_t id) {
+  push_event_func("grid", "remove");
+  lua_pushinteger(L, id);
+  l_report(L, l_docall(L, 1, 0));
 }
 
 
@@ -461,9 +490,10 @@ void handle_grid(uint8_t i, uint8_t x, uint8_t y, uint8_t state) {
 
 void handle_metro(int idx, int stage) {
   //printf("e: metro: %i %i\n",idx, stage);
-  lua_getglobal(L, "metro");
-  lua_getfield(L, -1, "tick");
-  lua_remove(L, -2);
+	push_event_func("metro", "tick");
+  //lua_getglobal(L, "metro");
+  //lua_getfield(L, -1, "tick");
+  //lua_remove(L, -2);
   lua_pushinteger(L, idx + 1);   // convert to 1-based
   lua_pushinteger(L, stage + 1); // convert to 1-based
   l_report(L, l_docall(L, 2, 0));
@@ -476,6 +506,7 @@ void handle_metro(int idx, int stage) {
 //////// midi
 
 void handle_midi_add(void *p) {
+	/*
   struct dev_midi *dev = (struct dev_midi *)p;
   struct dev_common *base = (struct dev_common *)p;
   int id = base->id;
@@ -485,15 +516,19 @@ void handle_midi_add(void *p) {
   lua_pushstring(L, base->name);
   lua_pushlightuserdata(L, dev);
   l_report(L, l_docall(L, 3, 0));
+	*/
 }
 
 void handle_midi_remove(int id) {
+	/*
   push_isms_func("midi", "remove");
   lua_pushinteger(L, id + 1); // convert to 1-base
   l_report(L, l_docall(L, 1, 0));
+	*/
 }
 
 void handle_midi(int id, uint8_t *data, size_t nbytes) {
+	/*
   push_isms_func("midi", "event");
   lua_pushinteger(L, id + 1); // convert to 1-base
   lua_createtable(L, nbytes, 0);
@@ -502,6 +537,7 @@ void handle_midi(int id, uint8_t *data, size_t nbytes) {
     lua_rawseti(L, -2, i + 1);
   }
   l_report(L, l_docall(L, 2, 0));
+	*/
 }
 
 
