@@ -10,9 +10,24 @@ DEPS := $(OBJS:.o=.d)
 INC_DIRS := $(shell find $(SRC_DIRS) -type d)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-CFLAGS=-I/usr/include -I/opt/homebrew/include -I/opt/homebrew/include/lua5.4 \
-  -std=c11 -O2 -Wall -pthread -D_GNU_SOURCE -DPLATFORM_MACH=1
-LDFLAGS=-L/opt/homebrew/lib -lSDL2 -llua5.4 -lm -ldl -llo -lmonome
+# homebrew
+MACOS_PKG_INC = /opt/homebrew/include
+MACOS_PKG_LIB = /opt/homebrew/lib
+LUALIB = lua5.4
+
+# macports
+#MACOS_PKG_INC = /opt/local/include
+#MACOS_PKG_LIB = /opt/local/lib
+#LUALIB = lua
+
+
+INC := -I/usr/include \
+	-I$(MACOS_PKG_INC) \
+	-I$(MACOS_PKG_INC)/lua5.4 \
+	-I$(MACOS_PKG_INC)/SDL2
+
+CFLAGS= $(INC) -std=c11 -O2 -Wall -pthread -D_GNU_SOURCE -DPLATFORM_MACH=1
+LDFLAGS= -L$(MACOS_PKG_LIB) -lSDL2 -l$(LUALIB) -lm -ldl -llo -lmonome
 
 # main target (C)
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)

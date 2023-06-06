@@ -227,10 +227,23 @@ void *metro_thread_loop(void *metro) {
 	return NULL;
 }
 
+#include <mach/mach_time.h>
+#include <mach/mach.h>
+
+static mach_timebase_info_data_t timebase_info;
+
+static uint64_t ticks_to_nanos(uint64_t abs) {
+    return abs * timebase_info.numer  / timebase_info.denom;
+}
+
 void metro_set_current_time(struct metro *t) {
-	struct timespec time;
-	clock_gettime(CLOCK_MONOTONIC, &time);
-	t->time = (uint64_t)((1000000000 * (int64_t)time.tv_sec) + (int64_t)time.tv_nsec);
+	mach_timebase_info(&timebase_info);
+	uint64_t ticks;
+	ticks = mach_absolute_time();
+	t->time = ticks_to_nanos(ticks);
+	//struct timespec time;
+	//clock_gettime(CLOCK_MONOTONIC, &time);
+	//t->time = (uint64_t)((1000000000 * (int64_t)time.tv_sec) + (int64_t)time.tv_nsec);
 }
 
 void metro_bang(struct metro *t) {
@@ -245,6 +258,8 @@ void metro_sleep(struct metro *t) {
 	t->time += t->delta;
 	ts.tv_sec = t->time / 1000000000;
 	ts.tv_nsec = t->time % 1000000000;
+	fprintf(stderr, "metro_sleep; delta = %llu, time = %llu, sec = %ld, nsec = %ld\n", 
+	t->delta, t->time, ts.tv_sec, ts.tv_nsec);
 	platform_clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &ts, NULL);
 }
 
