@@ -12,7 +12,7 @@ INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 CFLAGS=-I/usr/include -I/usr/local/include -I/usr/include/lua5.4 \
   -std=c11 -O2 -Wall -pthread -D_GNU_SOURCE
-LDFLAGS=-L/usr/local/lib -lSDL2 -llua5.4 -lm -ldl -llo -lmonome
+LDFLAGS=-L/usr/local/lib -lSDL2 -llua5.4 -lm -ldl -llo
 
 # main target (C)
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
