@@ -16,7 +16,7 @@ only tested on linux (ubuntu), include/lib paths are hardcoded in makefile
 
 - install with `make; sudo make install` then run with `isms example.lua` 
 - `example.lua` is run at startup, creating a new window which accepts key input to place a random pixel line and send an OSC message to supercollider
-- `example.scd` will provide a rudimentary osc-listening synth for testing OSC
+- `polyperc.scd` will provide a rudimentary osc-listening synth for testing OSC using SuperCollider
 - if found, connects to grid via serialosc and sends OSC on key input
 - a rudimentary REPL is implemented, try `print('hello')`
 - ctrl-q quits (or close sdl window, or q from repl)
@@ -35,21 +35,13 @@ library folder: `~/.local/share/isms`
 
 ## TODO
 ```
-- waf (!)
 - cpu usage at rest (should be lower)
 - linux-macos compatibility
   - nanosleep fix
-  x grid: use serialosc instead of libmonome (removes udev)
-  - midi: use portmidi https://github.com/PortMidi/PortMidi
-	- clock_nanosleep
-x refine device management (remove vports)
+- midi: use portmidi https://github.com/PortMidi/PortMidi
 - consider implications of running multiple instances
   x osc port assignments (ie auto-increment if requested is taken)
   - grid/midi "focus"
-- naming convention for event handlers
-  x function event.grid.key(x,y,z)
-	x done: grid, metro
-	- todo: clock, sdl
 - config file (pre-run) for setting "reserved" grid/midi slots (ie serial numbers)
   - ~/.local/share/isms/init.lua
 
@@ -73,37 +65,30 @@ x refine device management (remove vports)
 ## lua
 
 ```
+grid.all(id,z)
+grid.led(id,x,y,z)
+grid.redraw(id)
+grid.event.key(x,y,z)
+grid.event.add(id,serial)
+grid.event.remove(id,serial)
+
 window.init(x,y)
 window.pixel(x,y,color)
 window.line(x1,y1,x2,y2,color)
 window.redraw()
+window.event.key(code)
 
 metro.start(index, time_sec, count, stage)
 metro.stop(index)
+metro.event.tick(index, stage)
+
+osc.send(path, args)
+osc.event.receive(path, args, from)
 
 clock -- TODO
+midi -- currently removed, needs reimplementation
 
-grid.all(id,z)
-grid.led(id,x,y,z)
-grid.redraw(id)
-
--- MIDI -- (currently removed, needs reimplementation)
-
--- events
-window.key(code)
-osc.receive(path, args, from)
-
--- events
-event.metro.tick(index, stage)
-event.window.key(code)
-event.osc.receive(...)
-event.grid.key(id,x,y,z)
-event.grid.add(id,serial)
-event.grid.remove(id,serial)
-event.midi.noteon(id,note,vel,ch)
-event.midi.add(id,...)
 ```
-
 
 ## acknowledgements
 

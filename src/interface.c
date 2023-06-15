@@ -23,8 +23,8 @@ static inline void push_isms_func(const char *field, const char *func) {
 }
 
 static inline void push_event_func(const char *field, const char *func) {
-  lua_getglobal(L, "event");
-  lua_getfield(L, -1, field);
+  lua_getglobal(L, field);
+  lua_getfield(L, -1, "event");
   lua_remove(L, -2);
   lua_getfield(L, -1, func);
   lua_remove(L, -2);
@@ -57,8 +57,10 @@ static int _clock_get_tempo(lua_State *l);
 
 void init_interface(void) {
   lua_newtable(L);
+
   // midi
   lua_reg_func("midi_send", _midi_send);
+
   // clock
   lua_reg_func("clock_schedule_sleep", &_clock_schedule_sleep);
   lua_reg_func("clock_schedule_sync", &_clock_schedule_sync);
@@ -79,17 +81,31 @@ void init_interface(void) {
   lua_reg_func("all", &_grid_all);
   // lua_reg_func("intensity", &_grid_rotation);
   // lua_reg_func("rotation", &_grid_intensity);
+  lua_newtable(L); // event
+  lua_reg_func("key", &_nop);
+  lua_reg_func("add", &_nop);
+  lua_reg_func("remove", &_nop);
+  lua_setfield(L, -2, "event");
   lua_setglobal(L, "grid");
+
   // metro
   lua_newtable(L);
   lua_reg_func("start", _metro_start);
   lua_reg_func("stop", _metro_stop);
   lua_reg_func("clear", _metro_clear);
+  lua_newtable(L); // event
+  lua_reg_func("tick", &_nop);
+  lua_setfield(L, -2, "event");
   lua_setglobal(L, "metro");
+
   // osc
   lua_newtable(L);
   lua_reg_func("send", _osc_send);
+  lua_newtable(L); // event
+  lua_reg_func("receive", &_nop);
+  lua_setfield(L, -2, "event");
   lua_setglobal(L, "osc");
+
   // sdl
   lua_newtable(L);
   lua_reg_func("init", _sdl_init);
@@ -97,21 +113,10 @@ void init_interface(void) {
   lua_reg_func("clear", _sdl_clear);
   lua_reg_func("pixel", _sdl_pixel);
   lua_reg_func("line", _sdl_line);
-  lua_reg_func("key", _nop); // init empty callback
+  lua_newtable(L); // event
+  lua_reg_func("nop", &_nop);
+  lua_setfield(L, -2, "event");
   lua_setglobal(L, "window");
-
-  // events
-  lua_newtable(L);
-  // grid
-  lua_newtable(L);
-  lua_reg_func("key", &_nop);
-  lua_reg_func("add", &_nop);
-  lua_reg_func("remove", &_nop);
-  lua_setfield(L, -2, "grid");
-  lua_newtable(L);
-  lua_reg_func("tick", &_nop);
-  lua_setfield(L, -2, "metro");
-  lua_setglobal(L, "event");
 
   printf("lib\t\t/usr/local/share/isms/\n");
   char *home = getenv("HOME");
@@ -483,9 +488,6 @@ void handle_grid_remove(uint8_t id) {
 void handle_metro(int idx, int stage) {
   // printf("e: metro: %i %i\n",idx, stage);
   push_event_func("metro", "tick");
-  // lua_getglobal(L, "metro");
-  // lua_getfield(L, -1, "tick");
-  // lua_remove(L, -2);
   lua_pushinteger(L, idx + 1);   // convert to 1-based
   lua_pushinteger(L, stage + 1); // convert to 1-based
   l_report(L, l_docall(L, 2, 0));
@@ -542,9 +544,10 @@ void handle_osc(char *from_host, char *from_port, char *path, lo_message msg) {
   argc = lo_message_get_argc(msg);
   argv = lo_message_get_argv(msg);
 
-  lua_getglobal(L, "osc");
-  lua_getfield(L, -1, "receive");
-  lua_remove(L, -2);
+	push_event_func("window","key");
+  //lua_getglobal(L, "osc");
+  //lua_getfield(L, -1, "receive");
+  //lua_remove(L, -2);
   //_push_isms_func("osc", "receive");
 
   lua_pushstring(L, path);
@@ -617,9 +620,11 @@ void handle_sdl_key(int code) {
   //  lua_pushinteger(L, code);
   //  l_report(L, l_docall(L, 1, 0));
 
-  lua_getglobal(L, "window");
-  lua_getfield(L, -1, "key");
-  lua_remove(L, -2);
+	push_event_func("window","key");
+  //lua_getglobal(L, "window");
+  //lua_getfield(L, -1, "event");
+  //lua_getfield(L, -2, "key");
+  //lua_remove(L, -3);
   lua_pushinteger(L, code);
   l_report(L, l_docall(L, 1, 0));
 }

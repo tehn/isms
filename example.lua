@@ -14,7 +14,7 @@ window.redraw()
 
 x1,y1,x2,y2,c = 128,80,0,0,0xffffff
 
-window.key = function(x)
+window.event.key = function(x)
   x2 = x1
   y2 = y1
   x1 = math.random(192)+32
@@ -28,7 +28,7 @@ window.key = function(x)
   print("key: "..x)
 end
 
-event.metro.tick = function(i,s)
+metro.event.tick = function(i,s)
   print("metro",i,s)
   grid.all(0,s)
   grid.redraw(0)
@@ -36,19 +36,19 @@ end
 
 metro.start(1,0.1,5,0)
 
-event.grid.key = function(i,x,y,z)
+grid.event.key = function(i,x,y,z)
   print("grid",x,y,z)
-  osc.send({"localhost",57120},"/n",{(7-y)*5+x+30})
+  --osc.send({"localhost",57120},"/n",{(7-y)*5+x+30})
   grid.led(0,x,y,15);
   grid.redraw(0);
 end
 
 dofile("test.lua")
 
-m = midi.connect()
-m.event = function(d) tab.print(d) end
+--m = midi.connect()
+--m.event = function(d) tab.print(d) end
 
-w = midi.connect(2)
+--w = midi.connect(2)
 --[[
 w:note_on(60,100)
 w:note_off(60,100)
