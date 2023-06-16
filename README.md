@@ -12,15 +12,24 @@ apt-get: liblua5.4-dev libsdl2-dev liblo-dev
 
 only tested on linux (ubuntu), include/lib paths are hardcoded in makefile
 
+## install
+
+```
+./waf configure
+./waf
+sudo ./waf install
+sudo ./waf install_lib
+```
+
 ## currently
 
-- install with `make; sudo make install` then run with `isms example.lua` 
-- `example.lua` is run at startup, creating a new window which accepts key input to place a random pixel line and send an OSC message to supercollider
+- `isms example.lua`
+- a new window is created which accepts key input to place a random pixel line and send an OSC message to supercollider
 - `polyperc.scd` will provide a rudimentary osc-listening synth for testing OSC using SuperCollider
 - if found, connects to grid via serialosc and sends OSC on key input
 - a rudimentary REPL is implemented, try `print('hello')`
-- ctrl-q quits (or close sdl window, or q from repl)
-- ctrl-r reloads lua script
+- from graphic window, ctrl-q quits (or close the window), ctrl-r reloads lua script
+- `q` command quits from the repl
 - remote lua input via UDP on port 11001 ie `echo -n "print('hello')" > /dev/udp/localhost/11001` (set up your editor to send to this port)
 - .vimrc map:
   map <C-\> :silent .w !xargs -0 echo -n > /dev/udp/localhost/11001<CR>
@@ -30,7 +39,9 @@ only tested on linux (ubuntu), include/lib paths are hardcoded in makefile
 
 library folder: `~/.local/share/isms`
 
-`system` subfolder is copied by `make install`. any user libraries can go directly in `~/.local/share/isms`.
+- any user libraries can go here, which can be included with `require`
+- `system` subfolder is copied by `./waf install_lib`.
+- `init.lua` will be run at startup, before the script. global configuration data can go here
 
 
 ## TODO
