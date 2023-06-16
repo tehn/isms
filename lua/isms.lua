@@ -35,3 +35,10 @@ function isms.run(file)
   end
 end
 
+-- user config
+local config = home..'/.local/share/isms/init.lua'
+local f=io.open(config,"r")
+if f~=nil then
+	io.close(f)
+	dofile(config)
+end
