@@ -25,7 +25,7 @@ sudo ./waf install_lib
 - if found, connects to grid via serialosc and sends OSC on key input
 - a rudimentary REPL is implemented, try `print('hello')`
 - from graphic window, ctrl-q quits (or close the window), ctrl-r reloads lua script
-- `q` command quits from the repl
+- `q` command quits from the repl, `isms.run()` reloads current file (or clears and loads a different file)
 - remote lua input via UDP on port 11001 ie `echo -n "print('hello')" > /dev/udp/localhost/11001` (set up your editor to send to this port)
 - .vimrc map:
   map <C-\> :silent .w !xargs -0 echo -n > /dev/udp/localhost/11001<CR>
