@@ -2,15 +2,11 @@
 
 lua + clocks + osc + grid + midi + ui
 
-- build: `make`
-- install: `sudo make install`
-- run: `isms example.lua`
-
 requires lua 5.4, sdl2, liblo
 
-apt-get: liblua5.4-dev libsdl2-dev liblo-dev
+(apt-get: liblua5.4-dev libsdl2-dev liblo-dev)
 
-only tested on linux (ubuntu), include/lib paths are hardcoded in makefile
+currently only tested on ubuntu linux 
 
 ## install
 
@@ -23,7 +19,7 @@ sudo ./waf install_lib
 
 ## currently
 
-- `isms example.lua`
+- run `isms example.lua` (or whatever file as argument)
 - a new window is created which accepts key input to place a random pixel line and send an OSC message to supercollider
 - `polyperc.scd` will provide a rudimentary osc-listening synth for testing OSC using SuperCollider
 - if found, connects to grid via serialosc and sends OSC on key input
@@ -33,6 +29,7 @@ sudo ./waf install_lib
 - remote lua input via UDP on port 11001 ie `echo -n "print('hello')" > /dev/udp/localhost/11001` (set up your editor to send to this port)
 - .vimrc map:
   map <C-\> :silent .w !xargs -0 echo -n > /dev/udp/localhost/11001<CR>
+- multiple instances supported, allocated ports shown at startup
 
 
 ## user/system folder structure
