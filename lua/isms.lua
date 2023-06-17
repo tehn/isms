@@ -13,6 +13,7 @@ tab = require('tabutil')
 --midi = require('midi')
 clock = require('clock')
 require('help')
+require('grid')
 
 isms.state = {}
 

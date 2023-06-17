@@ -76,10 +76,16 @@ library folder: `~/.local/share/isms`
 ## lua
 
 ```
+g = grid.connect(id) -- id = index or default 0
+g.all(z)
+g.led(x,y,z)
+g.redraw()
+g.event.key(x,y,z)
+
 grid.all(id,z)
 grid.led(id,x,y,z)
 grid.redraw(id)
-grid.event.key(x,y,z)
+grid.event.key(id,x,y,z)
 grid.event.add(id,serial)
 grid.event.remove(id,serial)
 
