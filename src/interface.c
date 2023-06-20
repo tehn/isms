@@ -497,7 +497,7 @@ void handle_metro(int idx, int stage) {
 
 //////// midi
 
-void handle_midi_add(void *p) {
+void handle_midi_add(uint8_t id, char *name) {
   /*
 struct dev_midi *dev = (struct dev_midi *)p;
 struct dev_common *base = (struct dev_common *)p;
@@ -511,7 +511,7 @@ l_report(L, l_docall(L, 3, 0));
   */
 }
 
-void handle_midi_remove(int id) {
+void handle_midi_remove(uint8_t id) {
   /*
 push_isms_func("midi", "remove");
 lua_pushinteger(L, id + 1); // convert to 1-base
@@ -519,7 +519,7 @@ l_report(L, l_docall(L, 1, 0));
   */
 }
 
-void handle_midi(int id, uint8_t *data, size_t nbytes) {
+void handle_midi(uint8_t id, uint8_t *data, size_t nbytes) {
   /*
 push_isms_func("midi", "event");
 lua_pushinteger(L, id + 1); // convert to 1-base

@@ -189,6 +189,11 @@ static void handle_event(union event_data *ev) {
   case EVENT_MIDI:
     handle_midi(ev->midi.id, ev->midi.data, ev->midi.nbytes);
     break;
+  case EVENT_MIDI_ADD:
+    handle_midi_add(ev->midi_add.id, ev->midi_add.name);
+    break;
+  case EVENT_MIDI_REMOVE:
+    handle_midi_remove(ev->midi_remove.id);
   case EVENT_CLOCK_RESUME:
     handle_clock_resume(ev->clock_resume.thread_id, ev->clock_resume.value);
     break;
