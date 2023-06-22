@@ -10,6 +10,7 @@
 #include "interface.h"
 #include "lua.h"
 #include "metro.h"
+#include "midi.h"
 #include "monome.h"
 #include "osc.h"
 #include "sdl.h"
@@ -192,44 +193,28 @@ static int _metro_clear(lua_State *l) {
 }
 
 //////// midi
-//
-// static int _midi_send(lua_State *l) {
-//   lua_check_num_args(3);
-//   uint8_t d0 = luaL_checknumber(l, 1);
-//   uint8_t d1 = luaL_checknumber(l, 2);
-//   uint8_t d2 = luaL_checknumber(l, 3);
-//   // midi_send(d0,d1,d2);
-//   printf("midi send: %d %d %d\n",d0,d1,d2);
-//   lua_settop(l, 0);
-//   return 0;
-// }
 
 int _midi_send(lua_State *l) {
-  struct dev_midi *md;
   size_t nbytes;
   uint8_t *data;
 
-  lua_check_num_args(2);
+  lua_check_num_args(1);
+  luaL_checktype(l, 1, LUA_TTABLE);
 
-  luaL_checktype(l, 1, LUA_TLIGHTUSERDATA);
-  md = lua_touserdata(l, 1);
-
-  luaL_checktype(l, 2, LUA_TTABLE);
-  nbytes = lua_rawlen(l, 2);
+  nbytes = lua_rawlen(l, 1);
   data = malloc(nbytes);
 
   for (unsigned int i = 1; i <= nbytes; i++) {
     lua_pushinteger(l, i);
-    lua_gettable(l, 2);
+    lua_gettable(l, 1);
 
     // TODO: lua_isnumber
     data[i - 1] = lua_tointeger(l, -1);
     lua_pop(l, 1);
   }
 
-  (void)md;
-  // dev_midi_send(md, data, nbytes);
-  printf("midi send\n");
+  midi_send(data, nbytes);
+
   free(data);
 
   return 0;
@@ -497,39 +482,32 @@ void handle_metro(int idx, int stage) {
 
 //////// midi
 
-void handle_midi_add(uint8_t id, char *name) {
-  /*
-struct dev_midi *dev = (struct dev_midi *)p;
-struct dev_common *base = (struct dev_common *)p;
-int id = base->id;
+// void handle_midi_add(uint8_t id, char *name) {
+//   push_event_func("midi", "add");
+//   lua_pushinteger(L, id);
+//   lua_pushstring(L, name);
+//   l_report(L, l_docall(L, 2, 0));
+// }
 
-push_isms_func("midi", "add");
-lua_pushinteger(L, id + 1); // convert to 1-base
-lua_pushstring(L, base->name);
-lua_pushlightuserdata(L, dev);
-l_report(L, l_docall(L, 3, 0));
-  */
-}
+// void handle_midi_remove(uint8_t id) {
+//   push_event_func("midi", "remove");
+//   lua_pushinteger(L, id);
+//   l_report(L, l_docall(L, 1, 0));
+// }
 
-void handle_midi_remove(uint8_t id) {
-  /*
-push_isms_func("midi", "remove");
-lua_pushinteger(L, id + 1); // convert to 1-base
-l_report(L, l_docall(L, 1, 0));
-  */
-}
+void handle_midi(uint8_t *data, size_t nbytes) {
+  lua_getglobal(L, "midi");
+  lua_getfield(L, -1, "_event");
+  lua_remove(L, -2);
 
-void handle_midi(uint8_t id, uint8_t *data, size_t nbytes) {
-  /*
-push_isms_func("midi", "event");
-lua_pushinteger(L, id + 1); // convert to 1-base
-lua_createtable(L, nbytes, 0);
-for (size_t i = 0; i < nbytes; i++) {
-lua_pushinteger(L, data[i]);
-lua_rawseti(L, -2, i + 1);
-}
-l_report(L, l_docall(L, 2, 0));
-  */
+  lua_createtable(L, nbytes, 0);
+
+  for (size_t i = 0; i < nbytes; i++) {
+    lua_pushinteger(L, data[i]);
+    lua_rawseti(L, -2, i + 1);
+  }
+
+  l_report(L, l_docall(L, 1, 0));
 }
 
 //////// osc
