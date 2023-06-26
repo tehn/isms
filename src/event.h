@@ -19,6 +19,8 @@ typedef enum {
   EVENT_GRID_ADD,        // GRID add
   EVENT_GRID_REMOVE,     // GRID remove
   EVENT_MIDI,            // MIDI event
+  // EVENT_MIDI_ADD,
+  // EVENT_MIDI_REMOVE,
   EVENT_CLOCK_START,
   EVENT_CLOCK_STOP,
   EVENT_CLOCK_RESUME,
@@ -67,13 +69,6 @@ struct event_grid {
   uint8_t state;
 };
 
-struct event_midi {
-  struct event_common common;
-  uint32_t id;
-  uint8_t data[3];
-  size_t nbytes;
-};
-
 struct event_grid_add {
   struct event_common common;
   uint8_t id;
@@ -85,6 +80,25 @@ struct event_grid_remove {
   struct event_common common;
   uint8_t id;
 };
+
+struct event_midi {
+  struct event_common common;
+  // uint32_t id;
+  uint8_t data[3];
+  size_t nbytes;
+};
+
+// struct event_midi_add {
+//   struct event_common common;
+//   uint8_t id;
+//   char *name;
+// };
+
+// struct event_midi_remove {
+//   struct event_common common;
+//   uint8_t id;
+//   char *name;
+// };
 
 struct event_clock_resume {
   struct event_common common;
@@ -106,8 +120,10 @@ union event_data {
   struct event_metro metro;
   struct event_key key;
   struct event_osc osc;
-  struct event_grid grid;
   struct event_midi midi;
+  // struct event_midi_add midi_add;
+  // struct event_midi_remove midi_remove;
+  struct event_grid grid;
   struct event_grid_add grid_add;
   struct event_grid_remove grid_remove;
   struct event_clock_resume clock_resume;

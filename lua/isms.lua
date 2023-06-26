@@ -10,7 +10,7 @@ function osc.receive(path, args, from) print('osc: '..path) end
 function metro.tick(i,stage) print('metro: '..i..' '..stage) end
 
 tab = require('tabutil')
---midi = require('midi')
+midi = require('midi')
 clock = require('clock')
 require('help')
 require('grid')

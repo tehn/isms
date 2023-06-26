@@ -14,6 +14,7 @@
 #include "interface.h"
 #include "lua.h"
 #include "metro.h"
+#include "midi.h"
 #include "monome.h"
 #include "osc.h"
 #include "sdl.h"
@@ -33,6 +34,7 @@ int main(int argc, char **argv) {
   clock_midi_init();
   clock_scheduler_init();
 
+  init_midi();
   init_osc(DEFAULT_OSC_PORT);
   init_socket(DEFAULT_SOCKET_PORT);
   init_monome();
