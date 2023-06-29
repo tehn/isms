@@ -72,7 +72,10 @@ void init_input(void) {
     fprintf(stderr, "input_init(): error in pthread_attr_init(): %d\n", s);
   }
   s = pthread_create(&pid, &attr, &input_run, NULL);
+
+  #ifndef __APPLE__
   pthread_setname_np(pid, "input");
+  #endif
 
   if (s != 0) {
     fprintf(stderr, "input_init(): error in pthread_create(): %d\n", s);

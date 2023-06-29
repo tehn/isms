@@ -67,7 +67,9 @@ void init_socket(int port) {
     printf(">> SOCKET: init fail pthread\n");
     exit(1);
   }
+  #ifndef __APPLE__
   pthread_setname_np(p, "socket");
+  #endif
 
   printf("socket\t\t%d\n", port);
 }

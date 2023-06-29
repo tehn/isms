@@ -1,11 +1,11 @@
 #include <time.h>
 
-#ifdef PLATFORM_MACH
+#include "platform_clock.h"
+
+#ifdef __APPLE__
 #include <mach/mach_time.h>
 #define IV_1E9 1000000000
-#ifndef TIMER_ABSTIME
-#define TIMER_ABSTIME 0x01
-#endif // TIMER_ABSTIME
+
 static int emulated_clock_nanosleep(clockid_t clock_id, int flags,
                                     const struct timespec *rqtp,
                                     struct timespec *rmtp) {
@@ -30,12 +30,12 @@ static int emulated_clock_nanosleep(clockid_t clock_id, int flags,
     break;
   }
 }
-#endif // PLATFORM_MACH
+#endif // __APPLE__
 
 int platform_clock_nanosleep(clockid_t clock_id, int flags,
                              const struct timespec *rqtp,
                              struct timespec *rmtp) {
-#ifdef PLATFORM_MACH
+#ifdef __APPLE__
   emulated_clock_nanosleep(clock_id, flags, rqtp, rmtp);
 #else
   clock_nanosleep(clock_id, flags, rqtp, rmtp);
