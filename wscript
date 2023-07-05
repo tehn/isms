@@ -12,6 +12,12 @@ def options(opt):
 def configure(conf):
     conf.load('compiler_c compiler_cxx')
 
+    conf.env.append_value('CXXFLAGS', '-std=c++11')
+
+    # extra include path for brew-installed SDL
+    if conf.env.DEST_OS == "darwin":
+        conf.env.append_value('CFLAGS', '-I/opt/homebrew/include')
+
     try:
         conf.check_cfg(package='lua54', args='--cflags --libs', uselib_store='LUA')
     except conf.errors.ConfigurationError:
