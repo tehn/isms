@@ -40,6 +40,9 @@ def configure(conf):
             conf.env.append_value('RTMIDI_USE', 'ALSA')
         except conf.errors.ConfigurationError:
             pass
+    elif conf.env.DEST_OS == "darwin":
+        conf.env.append_value('RTMIDI_DEFINES', '__MACOSX_CORE__')
+        conf.env.append_value('RTMIDI_FRAMEWORKS', ['CoreServices', 'CoreAudio', 'CoreMIDI', 'CoreFoundation'])
 
 def build(ctx):
     ctx.stlib(features='cxx',
@@ -51,6 +54,7 @@ def build(ctx):
         source=ctx.path.ant_glob('src/**/*.c'),
         includes=['src', 'src/clock', 'rtmidi'],
         target='isms',
+        framework=ctx.env.RTMIDI_FRAMEWORKS,
         use=['LO', 'LUA', 'SDL2', 'PTHREAD', 'M', 'rtmidi'] + ctx.env.RTMIDI_USE)
 
 def install_lib(ctx):
