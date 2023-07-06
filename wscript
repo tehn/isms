@@ -12,6 +12,12 @@ def options(opt):
 def configure(conf):
     conf.load('compiler_c compiler_cxx')
 
+    conf.env.append_value('CXXFLAGS', '-std=c++11')
+
+    # extra include path for brew-installed SDL
+    if conf.env.DEST_OS == "darwin":
+        conf.env.append_value('CFLAGS', '-I/opt/homebrew/include')
+
     try:
         conf.check_cfg(package='lua54', args='--cflags --libs', uselib_store='LUA')
     except conf.errors.ConfigurationError:
@@ -34,6 +40,9 @@ def configure(conf):
             conf.env.append_value('RTMIDI_USE', 'ALSA')
         except conf.errors.ConfigurationError:
             pass
+    elif conf.env.DEST_OS == "darwin":
+        conf.env.append_value('RTMIDI_DEFINES', '__MACOSX_CORE__')
+        conf.env.append_value('RTMIDI_FRAMEWORKS', ['CoreServices', 'CoreAudio', 'CoreMIDI', 'CoreFoundation'])
 
 def build(ctx):
     ctx.stlib(features='cxx',
@@ -45,6 +54,7 @@ def build(ctx):
         source=ctx.path.ant_glob('src/**/*.c'),
         includes=['src', 'src/clock', 'rtmidi'],
         target='isms',
+        framework=ctx.env.RTMIDI_FRAMEWORKS,
         use=['LO', 'LUA', 'SDL2', 'PTHREAD', 'M', 'rtmidi'] + ctx.env.RTMIDI_USE)
 
 def install_lib(ctx):

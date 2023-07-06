@@ -136,7 +136,9 @@ void clock_scheduler_start() {
   pthread_attr_init(&attr);
   pthread_create(&clock_scheduler_tick_thread, &attr,
                  &clock_scheduler_tick_thread_run, NULL);
+  #ifndef __APPLE__
   pthread_setname_np(clock_scheduler_tick_thread, "clock_sched_tick");
+  #endif
   pthread_attr_destroy(&attr);
 }
 

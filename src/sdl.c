@@ -110,7 +110,9 @@ int init_sdl(int x, int y) {
   if (pthread_create(&p, NULL, sdl_loop, 0)) {
     return error("SDL", "pthread failed");
   }
+  #ifndef __APPLE__
   pthread_setname_np(p, "sdl");
+  #endif
 
   active = 1;
   return 1;
