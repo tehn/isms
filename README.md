@@ -44,8 +44,6 @@ library folder: `~/.local/share/isms`
 ## TODO
 ```
 - cpu usage at rest (should be lower)
-- linux-macos compatibility
-  - nanosleep fix
 - midi: use portmidi https://github.com/PortMidi/PortMidi
 - consider implications of running multiple instances
   x osc port assignments (ie auto-increment if requested is taken)
