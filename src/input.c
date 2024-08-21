@@ -73,7 +73,7 @@ void init_input(void) {
   }
   s = pthread_create(&pid, &attr, &input_run, NULL);
 
-  #ifndef __APPLE__
+  #ifdef _GNU_SOURCE
   pthread_setname_np(pid, "input");
   #endif
 

@@ -166,7 +166,7 @@ void metro_init(struct metro *t, uint64_t nsec, int count) {
     metro_handle_error(res, "pthread_create");
     return;
   } else {
-    #ifndef __APPLE__
+    #ifdef _GNU_SOURCE
     pthread_setname_np(t->tid, "metro_handler)");
     #endif
     t->status = METRO_STATUS_RUNNING;
